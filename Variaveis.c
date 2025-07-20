@@ -43,24 +43,24 @@ int main() {
             continue;
         } else {
             if(op >= 1 && op <= 3) {
-            switch(op) {    
-                case 1: perguntas(); break;
-                case 2:
-                    printCor("Digite a senha: ", 7, 2); // Branco para Verde
-                    if (scanf("%d", &pass) == 1) { // Verifica se é um número inteiro
-                        CleanIn();
-                        if (pass == senha) {
-                            printCor("\nAcesso Permitido!!\n", 10, 7);  // Verde Claro para Branco
-                            if(gabaritoLiberado == 0) {
-                                Load(25, 7, 5); // Branco para Roxo
+                switch(op) {    
+                    case 1: perguntas(); break;
+                    case 2:
+                        printCor("Digite a senha: ", 7, 2); // Branco para Verde
+                        if (scanf("%d", &pass) == 1) { // Verifica se é um número inteiro
+                            CleanIn();
+                            if (pass == senha) {
+                                printCor("\nAcesso Permitido!!\n", 10, 7);  // Verde Claro para Branco
+                                if(gabaritoLiberado == 0) {
+                                    Load(25, 7, 5); // Branco para Roxo
+                                }
+                                system("cls");
+                                gabarito();
+                            } else {
+                                printCor("\nAcesso negado!!\n", 12, 7); // Vermelho Claro para Branco
+                                system("pause");
+                                system("cls");
                             }
-                            system("cls");
-                            gabarito();
-                        } else {
-                            printCor("\nAcesso negado!!\n", 12, 7); // Vermelho Claro para Branco
-                            system("pause");
-                            system("cls");
-                        }
                         } else {
                             CleanIn();
                             printCor("\n\aA senha é composta apenas por números\n", 12, 7);
@@ -71,13 +71,13 @@ int main() {
                     case 3:
                         printCor("\nSaindo...\n", 4, 7); // Vermelho para Branco
                         break;
-            }
+                }
         
-        } else {
-            printCor("\n\aValor inválido!!\n", 12, 7); // Vermelho claro para Branco
-            system("pause");
-            system("cls");
-        }
+            } else {
+                printCor("\n\aValor inválido!!\n", 12, 7); // Vermelho claro para Branco
+                system("pause");
+                system("cls");
+            }
         }
 
     } while(op != 3);
