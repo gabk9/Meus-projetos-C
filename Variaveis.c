@@ -7,8 +7,8 @@
 #include <locale.h>
 #include <stdarg.h>
 
-#define MAXPASSWORD 9999 // Colocado aqui para uma alteraÁ„o mais f·cil
-#define MINPASSWORD 1 // Colocado aqui para uma alteraÁ„o mais f·cil (melhor usar 0 ou 1, o tamanho entre o m·ximo e o mÌnimo nunca muda)
+#define MAXPASSWORD 9999 // Colocado aqui para uma altera√ß√£o mais f√°cil
+#define MINPASSWORD 1 // Colocado aqui para uma altera√ß√£o mais f√°cil (melhor usar 0 ou 1, o tamanho entre o m√°ximo e o m√≠nimo nunca muda)
 
 void setCor(int cor);
 void printCor(const char *texto, int cor, int corF, ...);
@@ -32,12 +32,12 @@ int main() {
 
     do {
         printCor("\n=====ATIVIDADES=====\n", 2, 1); // Verde para Azul
-        type("[1] ComeÁar\n[2] Gabarito\n[3] Sair", 30);
-        printCor("\nEscolha uma opÁ„o: ", 7, 1); // Branco para Azul
+        type("[1] Come√ßar\n[2] Gabarito\n[3] Sair", 30);
+        printCor("\nEscolha uma op√ß√£o: ", 7, 1); // Branco para Azul
         fgets(buffer, sizeof(buffer), stdin);
 
-        if (sscanf(buffer, "%d", &op) != 1) { // LÍ o que vc digitou, guarda em um erray com o "fgets" e depois È analisado para ver se est· de acordo com o tipo de formato
-            printCor("\n\aValor inv·lido!!\n", 12, 7); // Vermelho Claro para Branco
+        if (sscanf(buffer, "%d", &op) != 1) { // L√™ o que vc digitou, guarda em um erray com o "fgets" e depois √© analisado para ver se est√° de acordo com o tipo de formato
+            printCor("\n\aValor inv√°lido!!\n", 12, 7); // Vermelho Claro para Branco
             system("pause");
             system("cls");
             continue;
@@ -47,7 +47,7 @@ int main() {
                     case 1: perguntas(); break;
                     case 2:
                         printCor("Digite a senha: ", 7, 2); // Branco para Verde
-                        if (scanf("%d", &pass) == 1) { // Verifica se È um n˙mero inteiro
+                        if (scanf("%d", &pass) == 1) { // Verifica se √© um n√∫mero inteiro
                             CleanIn();
                             if (pass == senha) {
                                 printCor("\nAcesso Permitido!!\n", 10, 7);  // Verde Claro para Branco
@@ -63,18 +63,16 @@ int main() {
                             }
                         } else {
                             CleanIn();
-                            printCor("\n\aA senha È composta apenas por n˙meros\n", 12, 7);
+                            printCor("\n\aA senha √© composta apenas por n√∫meros\n", 12, 7);
                             system("pause");
                             system("cls");
                         }
                         break;
-                    case 3:
-                        printCor("\nSaindo...\n", 4, 7); // Vermelho para Branco
-                        break;
+                    case 3: nprintCor("\nSaindo...\n", 4, 7); break; // Vermelho para Branco
                 }
         
             } else {
-                printCor("\n\aValor inv·lido!!\n", 12, 7); // Vermelho claro para Branco
+                printCor("\n\aValor inv√°lido!!\n", 12, 7); // Vermelho claro para Branco
                 system("pause");
                 system("cls");
             }
@@ -98,12 +96,12 @@ void perguntas() {
     int i = 0;
 
     const char *perguntas[] = {
-        "[1] Qual tipo armazena valores com ponto flutuante e maior precis„o?\n\n",
-        "[2] Qual tipo de vari·vel serve para ler caracteres alfanumÈricos?\n\n",
-        "[3] Qual desses N√O È um tipo de vari·vel da linguagem C?\n\n",
-        "[4] Qual tipo de vari·vel armazena n˙meros inteiros positivos e negativos?\n\n",
-        "[5] Qual tipo de vari·vel È recomendado para armazenar textos (sequÍncias de caracteres) em C?\n\n",
-        "[6] Qual tipo de vari·vel em C È usado para armazenar n˙meros inteiros muito grandes?\n\n"
+        "[1] Qual tipo armazena valores com ponto flutuante e maior precis√£o?\n\n",
+        "[2] Qual tipo de vari√°vel serve para ler caracteres alfanum√©ricos?\n\n",
+        "[3] Qual desses N√ÉO √© um tipo de vari√°vel da linguagem C?\n\n",
+        "[4] Qual tipo de vari√°vel armazena n√∫meros inteiros positivos e negativos?\n\n",
+        "[5] Qual tipo de vari√°vel √© recomendado para armazenar textos (sequ√™ncias de caracteres) em C?\n\n",
+        "[6] Qual tipo de vari√°vel em C √© usado para armazenar n√∫meros inteiros muito grandes?\n\n"
     };
 
     const char *opcoes[] = {
@@ -141,13 +139,13 @@ void perguntas() {
                         system("cls");
                         break;
                     } else {
-                        printCor("\n\aResposta incorreta! Voltando ao inÌcio.\n", 12, 7); // Vermelho claro para Branco 
+                        printCor("\n\aResposta incorreta! Voltando ao in√≠cio.\n", 12, 7); // Vermelho claro para Branco 
                         system("pause");
                         system("cls");
                         return;
                     }
                 } else {
-                    printCor("\n\aResposta inv·lida! Digite apenas letras e que sejam de A atÈ E.\n", 12, 7); // Vermelho claro para Branco
+                    printCor("\n\aResposta inv√°lida! Digite apenas letras e que sejam de A at√© E.\n", 12, 7); // Vermelho claro para Branco
                     system("pause");
                     system("cls");
                     setCor(10); // Verde claro
@@ -157,8 +155,8 @@ void perguntas() {
             }
         }
 
-        printCor("ParabÈns! VocÍ respondeu todas corretamente!\n", 10, 7); // Verde claro para Branco
-        printf("A senha gerada È: ");
+        printCor("Parab√©ns! Voc√™ respondeu todas corretamente!\n", 10, 7); // Verde claro para Branco
+        printf("A senha gerada √©: ");
         printCor("%d\n", 2, 7, senha); // Verde para Branco
         system("pause");
         system("cls");
@@ -169,12 +167,12 @@ void perguntas() {
 void gabarito() {
     gabaritoLiberado = 1;
     const char *perguntas[] = {
-        "[1] Qual tipo armazena valores com ponto flutuante e maior precis„o?\n\n",
-        "[2] Qual tipo de vari·vel serve para ler caracteres alfanumÈricos?\n\n",
-        "[3] Qual desses N√O È um tipo de vari·vel da linguagem C?\n\n",
-        "[4] Qual tipo de vari·vel armazena n˙meros inteiros positivos e negativos?\n\n",
-        "[5] Qual tipo de vari·vel È recomendado para armazenar textos (sequÍncias de caracteres) em C?\n\n",
-        "[6] Qual tipo de vari·vel em C È usado para armazenar n˙meros inteiros muito grandes?\n\n"
+        "[1] Qual tipo armazena valores com ponto flutuante e maior precis√£o?\n\n",
+        "[2] Qual tipo de vari√°vel serve para ler caracteres alfanum√©ricos?\n\n",
+        "[3] Qual desses N√ÉO √© um tipo de vari√°vel da linguagem C?\n\n",
+        "[4] Qual tipo de vari√°vel armazena n√∫meros inteiros positivos e negativos?\n\n",
+        "[5] Qual tipo de vari√°vel √© recomendado para armazenar textos (sequ√™ncias de caracteres) em C?\n\n",
+        "[6] Qual tipo de vari√°vel em C √© usado para armazenar n√∫meros inteiros muito grandes?\n\n"
     };
 
     const char *opcoes[] = {
@@ -193,7 +191,7 @@ void gabarito() {
         setCor(11); // Aqua claro
         printf("%s", perguntas[i]);
 
-        const char *op = opcoes[i]; // … usado ponteiro porque "opcoes" tambÈm È um
+        const char *op = opcoes[i]; // √â usado ponteiro porque "opcoes" tamb√©m √© um
         char letra = 'a';
 
         while (*op) {
