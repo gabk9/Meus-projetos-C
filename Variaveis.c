@@ -19,6 +19,7 @@ void perguntas();
 void gabarito();
 char respostasUsuario[6] = {0};
 int senha = 0;
+int gabaritoLiberado = 0;
 HANDLE hConsole;
 
 int main() {
@@ -50,7 +51,9 @@ int main() {
                         CleanIn();
                         if (pass == senha) {
                             printCor("\nAcesso Permitido!!\n", 10, 7);  // Verde Claro para Branco
-                            Load(25, 7, 5); // Branco para Roxo
+                            if(gabaritoLiberado == 0) {
+                                Load(25, 7, 5); // Branco para Roxo
+                            }
                             system("cls");
                             gabarito();
                         } else {
@@ -164,6 +167,7 @@ void perguntas() {
 }
 
 void gabarito() {
+    gabaritoLiberado = 1;
     const char *perguntas[] = {
         "[1] Qual tipo armazena valores com ponto flutuante e maior precisão?\n\n",
         "[2] Qual tipo de variável serve para ler caracteres alfanuméricos?\n\n",
