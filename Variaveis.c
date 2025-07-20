@@ -10,9 +10,10 @@
 #define MAXPASSWORD 9999 // Colocado aqui para uma alteração mais fácil
 #define MINPASSWORD 1 // Colocado aqui para uma alteração mais fácil (melhor usar 0 ou 1, o tamanho entre o máximo e o mínimo nunca muda)
 
-void setCor(HANDLE hConsole, int cor);
-void printCor(HANDLE hConsole, const char *texto, int cor, int corF, ...);
+void setCor(int cor);
+void printCor(const char *texto, int cor, int corF, ...);
 void type(const char *texto, int ms);
+void Load(int ms, int Pcolor, int LoadColor);
 void CleanIn();
 void perguntas();
 void gabarito();
@@ -27,15 +28,16 @@ int main() {
     setlocale(LC_ALL, "Portuguese_Brazil");
     srand(time(NULL));
     senha = (rand() % MAXPASSWORD) + MINPASSWORD; 
+    printf("%d", senha);
 
     do {
-        printCor(hConsole, "\n=====ATIVIDADES=====\n", 2, 1); // Verde para Azul
+        printCor("\n=====ATIVIDADES=====\n", 2, 1); // Verde para Azul
         type("[1] Começar\n[2] Gabarito\n[3] Sair", 30);
-        printCor(hConsole, "\nEscolha uma opção: ", 7, 1); // Branco para Azul
+        printCor("\nEscolha uma opção: ", 7, 1); // Branco para Azul
         fgets(buffer, sizeof(buffer), stdin);
 
         if (sscanf(buffer, "%d", &op) != 1) { // Lê o que vc digitou, guarda em um erray com o "fgets" e depois é analisado para ver se está de acordo com o tipo de formato
-            printCor(hConsole, "\n\aValor inválido!!\n", 12, 7); // Vermelho Claro para Branco
+            printCor("\n\aValor inválido!!\n", 12, 7); // Vermelho Claro para Branco
             system("pause");
             system("cls");
             continue;
@@ -44,33 +46,33 @@ int main() {
             switch(op) {    
                 case 1: perguntas(); break;
                 case 2:
-                    printCor(hConsole, "Digite a senha: ", 7, 2); // Branco para Verde
+                    printCor("Digite a senha: ", 7, 2); // Branco para Verde
                     if (scanf("%d", &pass) == 1) { // Verifica se é um número inteiro
                         CleanIn();
                         if (pass == senha) {
-                            printCor(hConsole, "\nAcesso Permitido!!\n", 10, 7);  // Verde Claro para Branco
-                            system("pause");
+                            printCor("\nAcesso Permitido!!\n", 10, 7);  // Verde Claro para Branco
+                            Load(25, 7, 5); // Branco para Roxo
                             system("cls");
                             gabarito();
                         } else {
-                            printCor(hConsole, "\nAcesso negado!!\n", 12, 7); // Vermelho Claro para Branco
+                            printCor("\nAcesso negado!!\n", 12, 7); // Vermelho Claro para Branco
                             system("pause");
                             system("cls");
                         }
                         } else {
                             CleanIn();
-                            printCor(hConsole, "\n\aA senha é composta apenas por números\n", 12, 7);
+                            printCor("\n\aA senha é composta apenas por números\n", 12, 7);
                             system("pause");
                             system("cls");
                         }
                         break;
                     case 3:
-                        printCor(hConsole, "\nSaindo...\n", 4, 7); // Vermelho para Branco
+                        printCor("\nSaindo...\n", 4, 7); // Vermelho para Branco
                         break;
             }
         
         } else {
-            printCor(hConsole, "\n\aValor inválido!!\n", 12, 7); // Vermelho claro para Branco
+            printCor("\n\aValor inválido!!\n", 12, 7); // Vermelho claro para Branco
             system("pause");
             system("cls");
         }
@@ -117,45 +119,45 @@ void perguntas() {
         system("cls");
 
         for (i = 0; i < 6; i++) {
-            setCor(hConsole, 10); // Verde claro
+            setCor(10); // Verde claro
             type(perguntas[i], 30);
-            printCor(hConsole, opcoes[i], 6, 7); // Amarelo para Branco
+            printCor(opcoes[i], 6, 7); // Amarelo para Branco
 
             while (1) {
                 printf("Qual alternativa julga correta? ");
-                setCor(hConsole, 4); // Vermelho
+                setCor(4); // Vermelho
                 scanf("%c", &r);
-                setCor(hConsole, 7); // Branco
+                setCor(7); // Branco
                 CleanIn();
 
                 r = tolower(r);
 
                 if (r >= 'a' && r <= 'e') {
                     if (r == respostasCorretas[i]) {
-                        printCor(hConsole, "\nResposta Correta!\n", 10, 7); // Verde claro para Branco
+                        printCor("\nResposta Correta!\n", 10, 7); // Verde claro para Branco
                         system("pause");
                         system("cls");
                         break;
                     } else {
-                        printCor(hConsole, "\n\aResposta incorreta! Voltando ao início.\n", 12, 7); // Vermelho claro para Branco 
+                        printCor("\n\aResposta incorreta! Voltando ao início.\n", 12, 7); // Vermelho claro para Branco 
                         system("pause");
                         system("cls");
                         return;
                     }
                 } else {
-                    printCor(hConsole, "\n\aResposta inválida! Digite apenas letras e que sejam de A até E.\n", 12, 7); // Vermelho claro para Branco
+                    printCor("\n\aResposta inválida! Digite apenas letras e que sejam de A até E.\n", 12, 7); // Vermelho claro para Branco
                     system("pause");
                     system("cls");
-                    setCor(hConsole, 10); // Verde claro
+                    setCor(10); // Verde claro
                     type(perguntas[i], 30);
-                    printCor(hConsole, opcoes[i], 6, 7); // Amarelo para Branco
+                    printCor(opcoes[i], 6, 7); // Amarelo para Branco
                 }
             }
         }
 
-        printCor(hConsole, "Parabéns! Você respondeu todas corretamente!\n", 10, 7); // Verde claro para Branco
+        printCor("Parabéns! Você respondeu todas corretamente!\n", 10, 7); // Verde claro para Branco
         printf("A senha gerada é: ");
-        printCor(hConsole, "%d\n", 2, 7, senha); // Verde para Branco
+        printCor("%d\n", 2, 7, senha); // Verde para Branco
         system("pause");
         system("cls");
         break;
@@ -185,7 +187,7 @@ void gabarito() {
 
     for (int i = 0; i < 6; i++) {
         system("cls");
-        setCor(hConsole, 11); // Aqua claro
+        setCor(11); // Aqua claro
         printf("%s", perguntas[i]);
 
         const char *op = opcoes[i]; // É usado ponteiro porque "opcoes" também é um
@@ -193,9 +195,9 @@ void gabarito() {
 
         while (*op) {
             if (letra == tolower(respostasCorretas[i])) {
-                setCor(hConsole, 10); // Verde claro
+                setCor(10); // Verde claro
             } else {
-                setCor(hConsole, 6); // Amarelo
+                setCor(6); // Amarelo
             }
 
             while (*op && *op != '\n') {
@@ -206,20 +208,20 @@ void gabarito() {
 
             letra++;
         }
-        printCor(hConsole, "\n\nCorretas\n", 160, 96); // Fundo verde claro com texto preto para fundo Amarelo texto preto
+        printCor("\n\nCorretas\n", 160, 96); // Fundo verde claro com texto preto para fundo Amarelo texto preto
         printf("Incorretas\n\n");
         
-        setCor(hConsole, 7); // Branco
+        setCor(7); // Branco
         system("pause");
     }
     system("cls");
 }
 
-void setCor(HANDLE hConsole, int cor) {
+void setCor(int cor) {
     SetConsoleTextAttribute(hConsole, cor);
 }
 
-void printCor(HANDLE hConsole, const char *texto, int cor, int corF, ...) {
+void printCor(const char *texto, int cor, int corF, ...) {
     SetConsoleTextAttribute(hConsole, cor);
             
     // Esse ngc aqui em baixo eu n consegui fazer sozinho
@@ -235,4 +237,16 @@ void printCor(HANDLE hConsole, const char *texto, int cor, int corF, ...) {
 void CleanIn(){
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
+}
+
+void Load(int ms, int Pcolor, int LoadColor) {
+    SetConsoleTextAttribute(hConsole, Pcolor);
+    printf("\nCarregando...\n");
+    SetConsoleTextAttribute(hConsole, LoadColor);
+    for(int i = 0; i < 100; i++) {
+        printf("\r[%3d%%]", i);
+        fflush(stdout);
+        Sleep(ms);
+    }
+    SetConsoleTextAttribute(hConsole, 7); // Branco
 }
