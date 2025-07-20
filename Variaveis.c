@@ -28,7 +28,6 @@ int main() {
     setlocale(LC_ALL, "Portuguese_Brazil");
     srand(time(NULL));
     senha = (rand() % MAXPASSWORD) + MINPASSWORD; 
-    printf("%d", senha);
 
     do {
         printCor("\n=====ATIVIDADES=====\n", 2, 1); // Verde para Azul
@@ -243,7 +242,7 @@ void Load(int ms, int Pcolor, int LoadColor) {
     SetConsoleTextAttribute(hConsole, Pcolor);
     printf("\nCarregando...\n");
     SetConsoleTextAttribute(hConsole, LoadColor);
-    for(int i = 0; i < 100; i++) {
+    for(int i = 0; i <= 100; i++) {
         printf("\r[%3d%%]", i);
         fflush(stdout);
         Sleep(ms);
