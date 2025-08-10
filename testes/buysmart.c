@@ -120,7 +120,7 @@ int main(int argc, char **argv) {
                 break;
             case 0:
                 printf("\nClosing program, Bye!!\n");
-                goto leave; //* I'm usig goto because why not LOL
+                goto leave; //* I'm using goto because why not LOL
                 break;
             default:
                 errno = EPERM; //* Operation not permited ERROR
