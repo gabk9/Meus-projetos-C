@@ -31,7 +31,6 @@ typedef struct {
 } Item;
 
 
-void CleanIn();
 void Vload(int ms);
 void CleanStr(char *var);
 void type(char *text, int ms);
@@ -521,11 +520,6 @@ void registItem(Item *items, int *totalItems, char *buff) {
 
 void CleanStr(char *var) {
     var[strcspn(var, "\n")] = '\0';
-}
-
-void CleanIn() {
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF);
 }
 
 void type(char *text, int ms) {
