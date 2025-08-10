@@ -28,6 +28,7 @@ typedef struct {
     float price[MAX_ITEMS];
     int qty[MAX_ITEMS];
     char name[MAX_ITEMS][MAX_CHAR];
+    char unit[MAX_ITEMS][MAX_CHAR];
 } Item;
 
 
@@ -104,17 +105,17 @@ int main(int argc, char **argv) {
                 break;
             case 5:
                 // TODO: Implement search items
-                printf("\"Search items\" not implemented yet.\n");
+                printf("\n\"Search items\" not implemented yet.\n");
                 Pause();
                 break;
             case 6:
                 // TODO: Implement edit item
-                printf("\"Edit item\" not implemented yet.\n");
+                printf("\n\"Edit item\" not implemented yet.\n");
                 Pause();
                 break;
             case 7:
                 // TODO: Implement remove item
-                printf("\"Remove\" item not implemented yet.\n");
+                printf("\n\"Remove\" item not implemented yet.\n");
                 Pause();
                 break;
             case 0:
@@ -177,7 +178,7 @@ void saveItem(Item *items, int totalItems) {
         float pricePQ = items->price[i] / (float)items->qty[i];
         fprintf(file, "Name: %s\n", items->name[i]);
         fprintf(file, "Price: %.2fR$\n", items->price[i]);
-        fprintf(file, "Quantity: %d\n", items->qty[i]);
+        fprintf(file, "Total amount in \"%s\": %d\n", items->unit[i], items->qty[i]);
         fprintf(file, "Price Per Quantity: %.2fR$\n\n", pricePQ);
     }
 
@@ -238,7 +239,7 @@ void readItem(Item *items, int totalItems, char *buff) {
                     printf("\nError: No recently added items.\n");
                 } else {
                     Clear();
-                    printf("Items list:\n");
+                    printf("Items list:\n\n");
                     for(int i = 0; i < totalItems; i++) {
                         float pricePQ = items->price[i] / (float)items->qty[i];
                         printf("Name: %s\n", items->name[i]);
@@ -305,19 +306,30 @@ void compareItem(Item *items, int *totalItems, char *buff) {
                     int tempQty = 0;
 
                     while (fgets(line, sizeof(line), file) != NULL && fileCount < MAX_ITEMS) {
+                        // Lê o nome
                         if (strncmp(line, "Name:", 5) == 0) {
                             sscanf(line, "Name: %49[^\n]", tempName);
-                        } else if (strncmp(line, "Price:", 6) == 0) {
-                            sscanf(line, "Price: %f", &tempPrice);
-                        } else if (strncmp(line, "Quantity:", 9) == 0) {
-                            sscanf(line, "Quantity: %d", &tempQty);
+                        }
+                        // Lê o preço (ignorando o R$)
+                        else if (strncmp(line, "Price:", 6) == 0) {
+                            sscanf(line, "Price: %fR$", &tempPrice);
+                        }
+                        // Lê a quantidade a partir do formato 'Total amount in "X": Y'
+                        else if (strncmp(line, "Total amount in", 15) == 0) {
+                            char *colonPos = strrchr(line, ':');
+                            if (colonPos) {
+                                sscanf(colonPos + 1, "%d", &tempQty);
+                            }
 
+                            // Salva no array
                             strncpy(fileItems.name[fileCount], tempName, MAX_CHAR - 1);
                             fileItems.name[fileCount][MAX_CHAR - 1] = '\0';
                             fileItems.price[fileCount] = tempPrice;
                             fileItems.qty[fileCount] = tempQty;
 
                             fileCount++;
+
+                            // Reseta para o próximo item
                             tempName[0] = '\0';
                             tempPrice = 0.0f;
                             tempQty = 0;
@@ -458,6 +470,7 @@ void compareItem(Item *items, int *totalItems, char *buff) {
                 }
                 case 0:
                     return;
+                    break;
                 default:
                     errno = EPERM;
                     perror("\nError");
@@ -506,11 +519,15 @@ void registItem(Item *items, int *totalItems, char *buff) {
         fgets(items->name[*totalItems], MAX_CHAR, stdin);
         CleanStr(items->name[*totalItems]);
 
+        printf("What is the unit of measurement? (KG, G, ML, L, Unit) ");
+        fgets(items->unit[*totalItems], MAX_CHAR, stdin);
+        CleanStr(items->unit[*totalItems]);
+
         printf("Price in R$: ");
         fgets(buff, MAX_CHAR, stdin);
         sscanf(buff, "%f", &items->price[*totalItems]);
         
-        printf("Quantity: ");
+        printf("Total amount in \"%s\": ", items->unit[*totalItems]);
         fgets(buff, MAX_CHAR, stdin);
         sscanf(buff, "%d", &items->qty[*totalItems]);
 
