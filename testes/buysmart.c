@@ -22,6 +22,7 @@
 #define MAX_CHAR 50
 #define MAX_ITEMS 100
 #define MAX_FILE_ITEMS 100
+#define MAX_PATH_LEN 260
 
 
 typedef struct {
@@ -548,7 +549,7 @@ void type(char *text, int ms) {
 }
 
 FILE* accessFile(char *fileName, char *act) {
-    char filePath[MAX_PATH];
+    char filePath[MAX_PATH_LEN];
     getFilePath(filePath, sizeof(filePath), fileName);
     FILE *file = fopen(filePath, act);
     return file;
@@ -556,8 +557,8 @@ FILE* accessFile(char *fileName, char *act) {
 
 void getFilePath(char *fullPath, size_t size, const char *fileName) { //! it wasn't me who did this
 #ifdef _WIN32
-    char pathEXE[MAX_PATH];
-    GetModuleFileName(NULL, pathEXE, MAX_PATH);
+    char pathEXE[MAX_PATH_LEN];
+    GetModuleFileName(NULL, pathEXE, MAX_PATH_LEN);
 
     char* p = strrchr(pathEXE, '\\');
     if (p) {
