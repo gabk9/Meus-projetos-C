@@ -45,7 +45,7 @@ void getFilePath(char *fullPath, size_t size, const char *fileName); //! it wasn
 
 
 int main(int argc, char **argv) {
-    int op, MLoaded = 0;
+    int op, typeSpeed = 2;
     char *buff = (char *)calloc(MAX_CHAR, sizeof(char));
     
     memset(buff, 0, MAX_CHAR);
@@ -69,12 +69,9 @@ int main(int argc, char **argv) {
 
     do {
         printf("\n========BuySmart========\n");
-        if(!MLoaded) {
-            type("[1] Register an item\n[2] Compare items\n[3] Save items\n[4] List items\n[5] Search items\n[6] Edit item\n[7] Remove item\n[0] Exit program\n", 2);
-            MLoaded = 1;
-        } else {
-            printf("[1] Register an item\n[2] Compare items\n[3] Save items\n[4] List items\n[5] Search items\n[6] Edit item\n[7] Remove item\n[0] Exit program\n");
-        }
+        type("[1] Register an item\n[2] Compare items\n[3] Save items\n[4] List items\n[5] Search items\n[6] Edit item\n[7] Remove item\n[0] Exit program\n", typeSpeed);
+        typeSpeed = 0;
+
         printf("Choose an option: ");
         fgets(buff, MAX_CHAR, stdin);
         CleanStr(buff);
@@ -269,20 +266,15 @@ void readItem(Item *items, int totalItems, char *buff) {
 
 void compareItem(Item *items, int *totalItems, char *buff) {
     Clear();
-    int op, Cloaded = 0;
+    int op, typeSpeed = 7;
 
     Item fileItems = {0};
     int fileCount = 0;
 
     do {
         printf("\n========Compare========\n");
-
-        if(!Cloaded) {
-            type("[1] Read from file\n[2] Read recently added\n[0] Return to main menu\n", 7);
-            Cloaded = 1;
-        } else {
-            printf("[1] Read from file\n[2] Read recently added\n[0] Return to main menu\n");
-        }
+        type("[1] Read from file\n[2] Read recently added\n[0] Return to main menu\n", typeSpeed);
+        typeSpeed = 0;
 
         printf("Choose an option: ");
         fgets(buff, MAX_CHAR, stdin);
@@ -293,7 +285,7 @@ void compareItem(Item *items, int *totalItems, char *buff) {
                 case 1: {
                     FILE *file = accessFile("BuySmart.txt", "r");
 
-                    if (!file) {
+                    if(!file) {
                         printf("\nError: %s\n", strerror(errno));
                         Pause();
                         Clear();
