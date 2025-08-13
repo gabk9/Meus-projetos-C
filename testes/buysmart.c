@@ -299,22 +299,18 @@ void compareItem(Item *items, int *totalItems, char *buff) {
                     int tempQty = 0;
 
                     while (fgets(line, sizeof(line), file) != NULL && fileCount < MAX_ITEMS) {
-                        // Lê o nome
                         if (strncmp(line, "Name:", 5) == 0) {
                             sscanf(line, "Name: %49[^\n]", tempName);
                         }
-                        // Lê o preço (ignorando o R$)
                         else if (strncmp(line, "Price:", 6) == 0) {
                             sscanf(line, "Price: %fR$", &tempPrice);
                         }
-                        // Lê a quantidade a partir do formato 'Total amount in "X": Y'
                         else if (strncmp(line, "Total amount in", 15) == 0) {
                             char *colonPos = strrchr(line, ':');
                             if (colonPos) {
                                 sscanf(colonPos + 1, "%d", &tempQty);
                             }
 
-                            // Salva no array
                             strncpy(fileItems.name[fileCount], tempName, MAX_CHAR - 1);
                             fileItems.name[fileCount][MAX_CHAR - 1] = '\0';
                             fileItems.price[fileCount] = tempPrice;
@@ -322,7 +318,6 @@ void compareItem(Item *items, int *totalItems, char *buff) {
 
                             fileCount++;
 
-                            // Reseta para o próximo item
                             tempName[0] = '\0';
                             tempPrice = 0.0f;
                             tempQty = 0;
