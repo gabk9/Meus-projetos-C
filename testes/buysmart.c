@@ -64,7 +64,7 @@ int main(int argc, char **argv) {
 #elif __APPLE__
     printf("Running on Mac!!\n");
 #else
-    printf("Operational system not recognized!!\n");
+    printf("Operational system not recognized, terminating program!!\n");
     goto leave;
 #endif
 
