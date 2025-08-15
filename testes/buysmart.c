@@ -9,7 +9,7 @@
     #define Clear() system("cls")
     #define Pause() system("pause")
     #define SleepMS(ms) Sleep(ms)
-#else 
+#elif defined(__linux__) || defined(__APPLE__) 
     #include <unistd.h>
     #define Clear() system("clear")
     #define Pause() do { \
@@ -17,6 +17,9 @@
         getchar(); \
     } while(0)
     #define SleepMS(ms) usleep((ms) * 1000)
+#else 
+    #error "Operational system not recognized, terminating program!!\n"
+    return 0;
 #endif
 
 
