@@ -39,8 +39,8 @@ void CleanStr(char *var);
 void delete(char *text, int ms);
 void type(char *text, int ms);
 void saveItem(Item *items, int totalItems);
-void readItem(Item *items, int totalItems, char *buff);
 FILE* accessFile(char *fileName, char *act);
+void readItem(Item *items, int totalItems, char *buff);
 void registItem(Item *items, int *totalItems, char *buff);
 void compareItem(Item *items, int *totalItems, char *buff);
 void getFilePath(char *fullPath, size_t size, const char *fileName); //! it wasn't me who did this
