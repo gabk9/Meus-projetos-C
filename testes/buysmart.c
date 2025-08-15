@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <ctype.h>
 
 #ifdef _WIN32
     #include <windows.h>
@@ -36,10 +37,13 @@ typedef struct {
 void Credits();
 void Vload(int ms);
 void CleanStr(char *var);
-void delete(char *text, int ms);
+void toLowerStr(char *str); //! also not made by me
 void type(char *text, int ms);
+void delete(char *text, int ms);
 void saveItem(Item *items, int totalItems);
 FILE* accessFile(char *fileName, char *act);
+char *strcasestr(const char *src, const char *sub); //! also not made by me
+void search(Item *items, int totalItems, char *buff);
 void readItem(Item *items, int totalItems, char *buff);
 void registItem(Item *items, int *totalItems, char *buff);
 void compareItem(Item *items, int *totalItems, char *buff);
@@ -109,8 +113,7 @@ int main(int argc, char **argv) {
                 Pause();
                 break;
             case 5:
-                // TODO: Implement search items
-                printf("\n\"Search items\" not implemented yet.\n");
+                search(&items, totalItems, buff);
                 Pause();
                 break;
             case 6:
@@ -120,7 +123,7 @@ int main(int argc, char **argv) {
                 break;
             case 7:
                 // TODO: Implement remove item
-                printf("\n\"Remove\" item not implemented yet.\n");
+                printf("\n\"Remove item \" not implemented yet.\n");
                 Pause();
                 break;
             case 8:
@@ -167,6 +170,121 @@ void Vload(int ms) {
         SleepMS(ms);
     }
     printf("\n");
+}
+
+void search(Item *items, int totalItems, char *buff) {
+    Clear();
+    int op, typeSpeed = 7;
+
+    do {
+        printf("\n========Search========\n");
+        type("[1] Read from file\n[0] Return to main menu\n", typeSpeed);
+        typeSpeed = 0;
+
+        printf("Choose an option: ");
+        fgets(buff, MAX_CHAR, stdin);
+        CleanStr(buff);
+
+        if (sscanf(buff, "%d", &op) != 1) {
+            errno = EINVAL;
+            perror("\nError");
+            Pause();
+            Clear();
+            continue;
+        }
+
+        switch (op) {
+            case 1: {
+                Clear();
+                char line[1024];
+                char **tempName = calloc(MAX_ITEMS, sizeof(char *));
+                char *itemName = calloc(MAX_CHAR, sizeof(char));
+
+                if (!tempName || !itemName) {
+                    printf("\nError: Allocation error!\n");
+                    free(itemName);
+                    free(tempName);
+                    break;
+                }
+
+                for (size_t i = 0; i < MAX_ITEMS; i++) {
+                    tempName[i] = calloc(MAX_CHAR, sizeof(char));
+                    if (!tempName[i]) {
+                        printf("\nError: Array allocation error!\n");
+                        for (size_t j = 0; j < i; j++) free(tempName[j]);
+                        free(tempName);
+                        free(itemName);
+                        break;
+                    }
+                }
+
+                FILE *file = accessFile("BuySmart.txt", "r");
+                if (!file) {
+                    printf("\nError: %s\n", strerror(errno));
+                    Pause();
+                    Clear();
+                    for (size_t i = 0; i < MAX_ITEMS; i++) free(tempName[i]);
+                    free(tempName);
+                    free(itemName);
+                    break;
+                }
+
+                int itemCount = 0;
+                while (fgets(line, sizeof(line), file) != NULL && itemCount < MAX_ITEMS) {
+                    if (strncmp(line, "Name:", 5) == 0) {
+                        sscanf(line, "Name: %49[^\n]", tempName[itemCount]);
+                        itemCount++;
+                    }
+                }
+
+                printf("Names from file:\n");
+                for (int i = 0; i < itemCount; i++) {
+                    printf("[%d] %s\n", i + 1, tempName[i]);
+                }
+
+                printf("Search item in list: ");
+                fgets(itemName, MAX_CHAR, stdin);
+                CleanStr(itemName);
+
+                rewind(file);
+                int found = 0;
+                while (fgets(line, sizeof(line), file) != NULL) {
+                    printf("\n");
+                    if (strncmp(line, "Name:", 5) == 0 && strcasestr(line, itemName)) {
+                        printf("%s", line);
+                        for (int i = 0; i < 3; i++) {
+                            if (fgets(line, sizeof(line), file))
+                                printf("%s", line);
+                        }
+                        found = 1;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    printf("Item not found.\n");
+                }
+
+                for (size_t i = 0; i < MAX_ITEMS; i++) free(tempName[i]);
+                free(tempName);
+                free(itemName);
+                fclose(file);
+
+                Pause();
+                Clear();
+                break;
+            }
+            case 0:
+                return;
+
+            default:
+                errno = EPERM;
+                perror("\nError");
+                Pause();
+                Clear();
+        }
+
+    } while (op != 0);
 }
 
 void saveItem(Item *items, int totalItems) {
@@ -302,7 +420,7 @@ void compareItem(Item *items, int *totalItems, char *buff) {
 
     do {
         printf("\n========Compare========\n");
-        type("[1] Read from file\n[2] Read recently added\n[0] Return to main menu\n", typeSpeed);
+        type("[1] Read from file\n[0] Return to main menu\n", typeSpeed);
         typeSpeed = 0;
 
         printf("Choose an option: ");
@@ -419,72 +537,6 @@ void compareItem(Item *items, int *totalItems, char *buff) {
                     Clear();
                     break;
                 }
-                case 2: {
-                    if (*totalItems == 0) {
-                        printf("\nError: No recently added items.\n");
-                        Pause();
-                        Clear();
-                        break;
-                    }
-
-                    printf("\nRecently added items:\n");
-                    for (int i = 0; i < *totalItems; i++) {
-                        printf("[%d] %s\n", i + 1, items->name[i]);
-                    }
-
-                    printf("\nSelect items to compare by number (e.g. 1 2 4): ");
-                    fgets(buff, MAX_CHAR, stdin);
-                    CleanStr(buff);
-
-                    int selected[MAX_ITEMS];
-                    int selectedCount = 0;
-                    char *token = strtok(buff, " ");
-                    while(token != NULL && selectedCount < MAX_ITEMS) {
-                        int idx = atoi(token);
-                        if (idx >= 1 && idx <= *totalItems) {
-                            selected[selectedCount++] = idx - 1;
-                        }
-                        token = strtok(NULL, " ");
-                    }
-
-                    if (selectedCount == 0) {
-                        printf("\nError: No valid items selected.\n");
-                        Pause();
-                        Clear();
-                        break;
-                    }
-
-                    printf("\nSelected recently added items with Price per Quantity:\n");
-
-                    float bestPricePQ = 1e9f;
-                    int bestIndex = -1;
-
-                    for (int i = 0; i < selectedCount; i++) {
-                        int idx = selected[i];
-                        if (items->qty[idx] == 0) {
-                            printf("- %s: Quantity is zero, cannot calculate price per quantity\n", items->name[idx]);
-                            continue;
-                        }
-                        float pricePQ = items->price[idx] / (float)items->qty[idx];
-                        printf("- %s: Price per Quantity = %.2f\n", items->name[idx], pricePQ);
-
-                        if (pricePQ < bestPricePQ) {
-                            bestPricePQ = pricePQ;
-                            bestIndex = idx;
-                        }
-                    }
-
-                    if (bestIndex != -1) {
-                        printf("\nBest item based on Price per Quantity:\n");
-                        printf("-> %s with %.2f per unit\n", items->name[bestIndex], bestPricePQ);
-                    } else {
-                        printf("\nNo valid items to compare.\n");
-                    }
-
-                    Pause();
-                    Clear();
-                    break;
-                }
                 case 0:
                     return;
                     break;
@@ -571,6 +623,30 @@ void delete(char *text, int ms) {
         fflush(stdout);
         SleepMS(ms);
     } 
+}
+
+void toLowerStr(char *str) { //! also not made by me
+    for (int i = 0; str[i]; i++) {
+        str[i] = tolower((unsigned char)str[i]);
+    }
+}
+
+char *strcasestr(const char *src, const char *sub) { //! also not made by me
+    static char lowerHay[1024];
+    static char lowerNeedle[256];
+
+    strncpy(lowerHay, src, sizeof(lowerHay) - 1);
+    lowerHay[sizeof(lowerHay) - 1] = '\0';
+    strncpy(lowerNeedle, sub, sizeof(lowerNeedle) - 1);
+    lowerNeedle[sizeof(lowerNeedle) - 1] = '\0';
+
+    for (int i = 0; lowerHay[i]; i++)
+        lowerHay[i] = tolower((unsigned char)lowerHay[i]);
+    for (int i = 0; lowerNeedle[i]; i++)
+        lowerNeedle[i] = tolower((unsigned char)lowerNeedle[i]);
+
+    char *pos = strstr(lowerHay, lowerNeedle);
+    return pos ? (char *)(src + (pos - lowerHay)) : NULL;
 }
 
 FILE* accessFile(char *fileName, char *act) {
