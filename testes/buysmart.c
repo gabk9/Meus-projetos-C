@@ -147,7 +147,7 @@ int main(int argc, char **argv) {
 
         Clear();
 
-    } while(op != 0);
+    } while(1);
 
     free(buff);
 
