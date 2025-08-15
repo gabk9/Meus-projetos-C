@@ -135,6 +135,7 @@ int main(int argc, char **argv) {
                 break;
             case 0:
                 printf("\nTerminating program, Bye!!\n");
+                Pause();
                 goto leave; //* I'm using goto because why not LOL
                 break;
             default:
