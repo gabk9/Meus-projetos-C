@@ -33,8 +33,10 @@ typedef struct {
 } Item;
 
 
+void Credits();
 void Vload(int ms);
 void CleanStr(char *var);
+void delete(char *text, int ms);
 void type(char *text, int ms);
 void saveItem(Item *items, int totalItems);
 void readItem(Item *items, int totalItems, char *buff);
@@ -57,8 +59,13 @@ int main(int argc, char **argv) {
 
 #ifdef _WIN32
     printf("Running on Windows!!\n");
-#else
+#elif __linux__
     printf("Running on Linux!!\n");
+#elif __APPLE__
+    printf("Running on Mac!!\n");
+#else
+    printf("Operational system not recognized!!\n");
+    goto leave;
 #endif
 
     Vload(20);
@@ -69,7 +76,7 @@ int main(int argc, char **argv) {
 
     do {
         printf("\n========BuySmart========\n");
-        type("[1] Register an item\n[2] Compare items\n[3] Save items\n[4] List items\n[5] Search items\n[6] Edit item\n[7] Remove item\n[0] Exit program\n", typeSpeed);
+        type("[1] Register an item\n[2] Compare items\n[3] Save items\n[4] List items\n[5] Search items\n[6] Edit item\n[7] Remove item\n[8] Credits\n[0] Exit program\n", typeSpeed);
         typeSpeed = 0;
 
         printf("Choose an option: ");
@@ -114,6 +121,10 @@ int main(int argc, char **argv) {
             case 7:
                 // TODO: Implement remove item
                 printf("\n\"Remove\" item not implemented yet.\n");
+                Pause();
+                break;
+            case 8:
+                Credits();
                 Pause();
                 break;
             case 0:
@@ -183,6 +194,24 @@ void saveItem(Item *items, int totalItems) {
     printf("\nSaved successfully!\n");
 
     fclose(file);
+}
+
+void Credits() {
+    Clear();
+    int loopCount = 0;
+    char *strings[] = {"Made by: Gabriel Oliveira Miranda",
+                       "a high school freshman",
+                       "this code is still in beta!"};
+
+    while(loopCount != 5) {
+        for(int i = 0; i < 3; i++) {
+            type(strings[i], 25);
+            SleepMS(375);
+            delete(strings[i], 35);
+        }
+        loopCount++;
+    }
+    printf("You saw all the credits, now we're heading back\n");
 }
 
 void readItem(Item *items, int totalItems, char *buff) {
@@ -533,6 +562,15 @@ void type(char *text, int ms) {
         fflush(stdout);
         SleepMS(ms);
     }
+}
+
+void delete(char *text, int ms) {
+    int len = strlen(text) - 1;
+    for(int i = len; i >= 0; i--) {
+        printf("\b \b");
+        fflush(stdout);
+        SleepMS(ms);
+    } 
 }
 
 FILE* accessFile(char *fileName, char *act) {
