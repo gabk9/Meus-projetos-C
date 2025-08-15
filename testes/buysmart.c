@@ -43,7 +43,7 @@ void CleanStr(char *var);
 void toLowerStr(char *str); //! also not made by me
 void type(char *text, int ms);
 void delete(char *text, int ms);
-void saveItem(Item *items, int totalItems);
+void saveItem(Item *items, int totalItems, char *buff);
 FILE* accessFile(char *fileName, char *act);
 char *strcasestr(const char *src, const char *sub); //! also not made by me
 void search(Item *items, int totalItems, char *buff);
@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
     int totalItems = 0;
 
     do {
-        printf("\n========BuySmart========\n");
+        printf("========BuySmart========\n");
         type("[1] Register an item\n[2] Compare items\n[3] Save items\n[4] List items\n[5] Search items\n[6] Edit item\n[7] Remove item\n[8] Credits\n[0] Exit program\n", typeSpeed);
         typeSpeed = 0;
 
@@ -108,7 +108,7 @@ int main(int argc, char **argv) {
                 Pause();
                 break;
             case 3:
-                saveItem(&items, totalItems);
+                saveItem(&items, totalItems, buff);
                 Pause();
                 break;
             case 4:
@@ -134,7 +134,7 @@ int main(int argc, char **argv) {
                 Pause();
                 break;
             case 0:
-                printf("\nClosing program, Bye!!\n");
+                printf("\nTerminating program, Bye!!\n");
                 goto leave; //* I'm using goto because why not LOL
                 break;
             default:
@@ -180,7 +180,7 @@ void search(Item *items, int totalItems, char *buff) {
     int op, typeSpeed = 7;
 
     do {
-        printf("\n========Search========\n");
+        printf("========Search Menu========\n");
         type("[1] Read from file\n[0] Return to main menu\n", typeSpeed);
         typeSpeed = 0;
 
@@ -290,31 +290,64 @@ void search(Item *items, int totalItems, char *buff) {
     } while (op != 0);
 }
 
-void saveItem(Item *items, int totalItems) {
-    FILE *file = accessFile("BuySmart.txt", "r+");
-    if (!file) {
-        file = accessFile("BuySmart.txt", "w");
-        if (!file) {
-            printf("\nError: Couldn't open the file!\n");
+void saveItem(Item *items, int totalItems, char *buff) {
+    Clear();
+    int op, typeSpeed = 7;
+    do {
+        printf("========Compare Menu========\n");
+        type("[1] Save\n[0] Return to main menu\n", typeSpeed);
+        typeSpeed = 0;
+
+        printf("Choose an option: ");
+        fgets(buff, MAX_CHAR, stdin);
+        CleanStr(buff);
+
+        if(sscanf(buff, "%d", &op) != 1) {
+            errno = EINVAL; //* Invalid Arguments ERROR
+            perror("\nError");
             Pause();
             Clear();
-            return;
+            continue;            
         }
-    } else {
-        fseek(file, 0, SEEK_END);
-    }
 
-    for(int i = 0; i < totalItems; i++) {
-        float pricePQ = items->price[i] / (float)items->qty[i];
-        fprintf(file, "Name: %s\n", items->name[i]);
-        fprintf(file, "Price: %.2fR$\n", items->price[i]);
-        fprintf(file, "Total amount in \"%s\": %d\n", items->unit[i], items->qty[i]);
-        fprintf(file, "Price Per Quantity: %.2fR$\n\n", pricePQ);
-    }
+        switch(op) {
+            case 1: {
+                FILE *file = accessFile("BuySmart.txt", "r+");
+                if (!file) {
+                    file = accessFile("BuySmart.txt", "w");
+                    if (!file) {
+                        printf("\nError: Couldn't open the file!\n");
+                        Pause();
+                        Clear();
+                        return;
+                    }
+                } else {
+                    fseek(file, 0, SEEK_END);
+                }
 
-    printf("\nSaved successfully!\n");
-
-    fclose(file);
+                for(int i = 0; i < totalItems; i++) {
+                    float pricePQ = items->price[i] / (float)items->qty[i];
+                    fprintf(file, "Name: %s\n", items->name[i]);
+                    fprintf(file, "Price: %.2fR$\n", items->price[i]);
+                    fprintf(file, "Total amount in \"%s\": %d\n", items->unit[i], items->qty[i]);
+                    fprintf(file, "Price Per Quantity: %.2fR$\n\n", pricePQ);
+                }
+            
+                printf("\nSaved successfully!\n");
+        
+                fclose(file);
+                break;
+            }
+            case 0:
+                return;
+                break;
+            default:
+                errno = EPERM; //* Operation not permited ERROR
+                perror("\nError");
+                Pause();
+                Clear();                
+        }
+    } while (op != 0);
 }
 
 void Credits() {
@@ -324,11 +357,11 @@ void Credits() {
                        "a high school freshman",
                        "this code is still in beta!"};
 
-    while(loopCount != 5) {
+    while(loopCount != 2) {
         for(int i = 0; i < 3; i++) {
-            type(strings[i], 25);
+            type(strings[i], 35);
             SleepMS(375);
-            delete(strings[i], 35);
+            delete(strings[i], 25);
         }
         loopCount++;
     }
@@ -338,16 +371,13 @@ void Credits() {
 void readItem(Item *items, int totalItems, char *buff) {
     Clear();
     FILE *file = accessFile("BuySmart.txt", "r");
-    int op, Rloaded = 0;
+    int op, typeSpeed = 7;
 
     do {
-        printf("\n========Read Menu========\n");
-        if(!Rloaded) {
-            type("[1] Read from file\n[2] Read recently added\n[0] Return to main menu\n", 7);
-            Rloaded = 1;
-        } else {
-            printf("[1] Read from file\n[2] Read recently added\n[0] Return to main menu\n");
-        }
+        printf("========Read Menu========\n");
+        type("[1] Read from file\n[0] Return to main menu\n", typeSpeed);
+        typeSpeed = 0;
+
         printf("Choose an option: ");
         fgets(buff, MAX_CHAR, stdin);
         CleanStr(buff);
@@ -381,24 +411,7 @@ void readItem(Item *items, int totalItems, char *buff) {
                 Pause();
                 Clear();
                 break;        
-            }
-            case 2:
-                if(!totalItems) {
-                    printf("\nError: No recently added items.\n");
-                } else {
-                    Clear();
-                    printf("Items list:\n\n");
-                    for(int i = 0; i < totalItems; i++) {
-                        float pricePQ = items->price[i] / (float)items->qty[i];
-                        printf("Name: %s\n", items->name[i]);
-                        printf("Price: %.2f\n", items->price[i]);
-                        printf("Quantity: %d\n", items->qty[i]);
-                        printf("Price Per Quantity: %.2f\n\n", pricePQ);
-                    }
-                }
-                Pause();
-                Clear();
-                break;   
+            } 
             case 0: 
                 return;
                 break;
@@ -422,7 +435,7 @@ void compareItem(Item *items, int *totalItems, char *buff) {
     int fileCount = 0;
 
     do {
-        printf("\n========Compare========\n");
+        printf("========Compare Menu========\n");
         type("[1] Read from file\n[0] Return to main menu\n", typeSpeed);
         typeSpeed = 0;
 
@@ -544,7 +557,7 @@ void compareItem(Item *items, int *totalItems, char *buff) {
                     return;
                     break;
                 default:
-                    errno = EPERM;
+                    errno = EPERM; //* Operation not permited ERROR
                     perror("\nError");
                     Pause();
                     Clear();
@@ -561,14 +574,17 @@ void compareItem(Item *items, int *totalItems, char *buff) {
 
 void registItem(Item *items, int *totalItems, char *buff) {
     Clear();
-    int qty;
+    int qty, op, typeSpeed = 7;
 
     do {
-        printf("How many items you wish to add? ");
-        fgets(buff, MAX_CHAR, stdin);
-        CleanStr(buff);
+        printf("========Register Menu========\n");
+        type("[1] Add\n[0] Return to main menu\n", typeSpeed);
+        typeSpeed = 0;
 
-        if (sscanf(buff, "%d", &qty) != 1 || qty <= 0) {
+        printf("Choose an option: ");
+        fgets(buff, MAX_CHAR, stdin);
+
+        if (sscanf(buff, "%d", &op) != 1) {
             errno = EINVAL; //* Invalid Arguments ERROR;
             perror("\nError");
             Pause();
@@ -576,35 +592,64 @@ void registItem(Item *items, int *totalItems, char *buff) {
             continue;
         }
 
-        if (*totalItems + qty > MAX_ITEMS) {
-            printf("\nError: You can only add up to %d items total.\n", MAX_ITEMS);
-            Pause();
-            Clear();
-            continue;
-        }
-
-        break;
-    } while (1);
-
-    for (int i = 0; i < qty; i++) {
-        printf("\nName of the Item n%d: ", *totalItems + 1);
-        fgets(items->name[*totalItems], MAX_CHAR, stdin);
-        CleanStr(items->name[*totalItems]);
-
-        printf("What is the unit of measurement? (KG, G, ML, L, Unit) ");
-        fgets(items->unit[*totalItems], MAX_CHAR, stdin);
-        CleanStr(items->unit[*totalItems]);
-
-        printf("Price in R$: ");
-        fgets(buff, MAX_CHAR, stdin);
-        sscanf(buff, "%f", &items->price[*totalItems]);
+        switch(op) {
+            case 1:
+                do {
+                    buff = realloc(buff, MAX_CHAR);
+                    printf("How many items you wish to add? ");
+                    fgets(buff, MAX_CHAR, stdin);
+                    CleanStr(buff);
         
-        printf("Total amount in \"%s\": ", items->unit[*totalItems]);
-        fgets(buff, MAX_CHAR, stdin);
-        sscanf(buff, "%d", &items->qty[*totalItems]);
+                    if (sscanf(buff, "%d", &qty) != 1 || qty <= 0) {
+                        errno = EINVAL; //* Invalid Arguments ERROR;
+                        perror("\nError");
+                        Pause();
+                        Clear();
+                        continue;
+                    }
 
-        (*totalItems)++;
-    }
+                    if (*totalItems + qty > MAX_ITEMS) {
+                        printf("\nError: You can only add up to %d items total.\n", MAX_ITEMS);
+                        Pause();
+                        Clear();
+                        continue;
+                    }
+                } while (qty <= 0);
+    
+                for (int i = 0; i < qty; i++) {
+                    printf("\nName of the Item n%d: ", *totalItems + 1);
+                    fgets(items->name[*totalItems], MAX_CHAR, stdin);
+                    CleanStr(items->name[*totalItems]);
+                    
+                    printf("What is the unit of measurement? (KG, G, ML, L, Unit) ");
+                    fgets(items->unit[*totalItems], MAX_CHAR, stdin);
+                    CleanStr(items->unit[*totalItems]);
+                    
+                    printf("Price in R$: ");
+                    fgets(buff, MAX_CHAR, stdin);
+                    sscanf(buff, "%f", &items->price[*totalItems]);
+                    
+                    printf("Total amount in \"%s\": ", items->unit[*totalItems]);
+                    fgets(buff, MAX_CHAR, stdin);
+                    sscanf(buff, "%d", &items->qty[*totalItems]);
+                    
+                    (*totalItems)++;
+
+                    printf("\nSuccessfully registered!!\n");
+                }
+                break;
+            case 0:
+                return;
+                break;
+            default:
+                errno = EPERM; //* Operation not permited ERROR
+                perror("\nError");
+                Pause();
+                Clear();
+                
+        }
+    } while (op != 0);
+    Clear();
 }
 
 void CleanStr(char *var) {
