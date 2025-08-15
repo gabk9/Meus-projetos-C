@@ -8,7 +8,7 @@ FILE* accessFile(char *fileName, char *act);
 int main() {
     char fileName[50];
 
-    printf("Type-in the file name: ");
+    printf("Type-in the file path: ");
     fgets(fileName, sizeof(fileName), stdin);
     fileName[strcspn(fileName, "\n")] = '\0';
 
