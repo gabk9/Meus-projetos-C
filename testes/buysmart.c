@@ -43,10 +43,10 @@ void CleanStr(char *var);
 void tolowerStr(char *str); //! also not made by me
 void type(char *text, int ms);
 void delete(char *text, int ms);
-void saveItem(Item *items, int totalItems, char *buff);
 FILE* accessFile(char *fileName, char *act);
 char *strcasestr(const char *src, const char *sub); //! also not made by me
 void search(Item *items, int totalItems, char *buff);
+void saveItem(Item *items, int totalItems, char *buff);
 void readItem(Item *items, int totalItems, char *buff);
 void registItem(Item *items, int *totalItems, char *buff);
 void compareItem(Item *items, int *totalItems, char *buff);
