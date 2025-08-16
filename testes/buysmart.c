@@ -39,7 +39,7 @@ typedef struct {
 void Credits();
 void Vload(int ms);
 void CleanStr(char *var);
-void tolowerStr(char *str); //! also not made by me
+void tolowerStr(char *str);
 void type(char *text, int ms);
 void delete(char *text, int ms);
 FILE* accessFile(char *fileName, char *act);
