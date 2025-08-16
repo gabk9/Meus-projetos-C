@@ -40,7 +40,7 @@ typedef struct {
 void Credits();
 void Vload(int ms);
 void CleanStr(char *var);
-void toLowerStr(char *str); //! also not made by me
+void tolowerStr(char *str); //! also not made by me
 void type(char *text, int ms);
 void delete(char *text, int ms);
 void saveItem(Item *items, int totalItems, char *buff);
@@ -257,7 +257,7 @@ void search(Item *items, int totalItems, char *buff) {
                     if (strncmp(line, "Name:", 5) == 0 && strcasestr(line, itemName)) {
                         printf("%s", line);
                         for (int i = 0; i < 3; i++) {
-                            if (fgets(line, sizeof(line), file))
+                            if (fgets(line, sizeof(line), file)) // TODO: Improve the line printing
                                 printf("%s", line);
                         }
                         found = 1;
@@ -674,28 +674,27 @@ void delete(char *text, int ms) {
     } 
 }
 
-void toLowerStr(char *str) { //! also not made by me
+void tolowerStr(char *str) {
     for (int i = 0; str[i]; i++) {
         str[i] = tolower((unsigned char)str[i]);
     }
 }
 
 char *strcasestr(const char *src, const char *sub) { //! also not made by me
-    static char lowerHay[1024];
-    static char lowerNeedle[256];
+    static char lowerSrc[1024];
+    static char lowerSub[256];
 
-    strncpy(lowerHay, src, sizeof(lowerHay) - 1);
-    lowerHay[sizeof(lowerHay) - 1] = '\0';
-    strncpy(lowerNeedle, sub, sizeof(lowerNeedle) - 1);
-    lowerNeedle[sizeof(lowerNeedle) - 1] = '\0';
+    strncpy(lowerSrc, src, sizeof(lowerSrc) - 1);
+    lowerSrc[sizeof(lowerSrc) - 1] = '\0';
+    strncpy(lowerSub, sub, sizeof(lowerSub) - 1);
+    lowerSub[sizeof(lowerSub) - 1] = '\0';
 
-    for (int i = 0; lowerHay[i]; i++)
-        lowerHay[i] = tolower((unsigned char)lowerHay[i]);
-    for (int i = 0; lowerNeedle[i]; i++)
-        lowerNeedle[i] = tolower((unsigned char)lowerNeedle[i]);
+    tolowerStr(lowerSrc);
 
-    char *pos = strstr(lowerHay, lowerNeedle);
-    return pos ? (char *)(src + (pos - lowerHay)) : NULL;
+    tolowerStr(lowerSub);
+
+    char *pos = strstr(lowerSrc, lowerSub);
+    return pos ? (char *)(src + (pos - lowerSrc)) : NULL;
 }
 
 FILE* accessFile(char *fileName, char *act) {
