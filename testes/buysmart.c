@@ -19,7 +19,6 @@
     #define SleepMS(ms) usleep((ms) * 1000)
 #else 
     #error "Operational system not recognized, terminating program!!\n"
-    return 0;
 #endif
 
 
