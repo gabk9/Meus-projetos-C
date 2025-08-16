@@ -299,7 +299,7 @@ void saveItem(Item *items, int totalItems, char *buff) {
     Clear();
     int op, typeSpeed = 7;
     do {
-        printf("========Compare Menu========\n");
+        printf("========Save Menu========\n");
         type("[1] Save\n[0] Return to main menu\n", typeSpeed);
         typeSpeed = 0;
 
