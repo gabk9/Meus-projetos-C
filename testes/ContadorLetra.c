@@ -18,16 +18,17 @@ int main() {
         return 1;
     }
 
-    int countChars = 0;
+    int chars = 0;
     int ch;
 
     while ((ch = fgetc(file)) != EOF) {
-        countChars++;
+        chars++;
     }
 
     fclose(file);
 
-    printf("The file has %d chars.\n", countChars);
+    printf("The file has %d bytes, ", chars);
+    printf("%.2f KB and %.4f MB", (float)chars / 1024, (float)chars / 1048576);
 
     return 0;
 }
