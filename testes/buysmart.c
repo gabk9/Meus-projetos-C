@@ -189,7 +189,7 @@ void search(Item *items, int totalItems, char *buff) {
         fgets(buff, MAX_CHAR, stdin);
         CleanStr(buff);
 
-        if (sscanf(buff, "%d", &op) != 1) {
+        if(sscanf(buff, "%d", &op) != 1) {
             errno = EINVAL;
             perror("\nError");
             Pause();
@@ -204,15 +204,16 @@ void search(Item *items, int totalItems, char *buff) {
                 char **tempName = calloc(MAX_ITEMS, sizeof(char *));
                 char *itemName = calloc(MAX_CHAR, sizeof(char));
 
-                if (!tempName || !itemName) {
+                if(!tempName || !itemName) {
                     printf("\nError: Allocation error!\n");
                     free(itemName);
                     free(tempName);
                     break;
                 }
 
-                for (size_t i = 0; i < MAX_ITEMS; i++) {
+                for(size_t i = 0; i < MAX_ITEMS; i++) {
                     tempName[i] = calloc(MAX_CHAR, sizeof(char));
+
                     if (!tempName[i]) {
                         printf("\nError: Array allocation error!\n");
                         for (size_t j = 0; j < i; j++) free(tempName[j]);
@@ -223,26 +224,27 @@ void search(Item *items, int totalItems, char *buff) {
                 }
 
                 FILE *file = accessFile("BuySmart.txt", "r");
-                if (!file) {
+                if(!file) {
                     printf("\nError: %s\n", strerror(errno));
                     Pause();
                     Clear();
-                    for (size_t i = 0; i < MAX_ITEMS; i++) free(tempName[i]);
+
+                    for(size_t i = 0; i < MAX_ITEMS; i++) free(tempName[i]);
                     free(tempName);
                     free(itemName);
                     break;
                 }
 
                 int itemCount = 0;
-                while (fgets(line, sizeof(line), file) != NULL && itemCount < MAX_ITEMS) {
-                    if (strncmp(line, "Name:", 5) == 0) {
+                while(fgets(line, sizeof(line), file) != NULL && itemCount < MAX_ITEMS) {
+                    if(strncmp(line, "Name:", 5) == 0) {
                         sscanf(line, "Name: %49[^\n]", tempName[itemCount]);
                         itemCount++;
                     }
                 }
 
                 printf("Names from file:\n");
-                for (int i = 0; i < itemCount; i++) {
+                for(int i = 0; i < itemCount; i++) {
                     printf("[%d] %s\n", i + 1, tempName[i]);
                 }
 
@@ -252,24 +254,26 @@ void search(Item *items, int totalItems, char *buff) {
 
                 rewind(file);
                 int found = 0;
-                while (fgets(line, sizeof(line), file) != NULL) {
-                    printf("\n");
-                    if (strncmp(line, "Name:", 5) == 0 && strcasestr(line, itemName)) {
+                printf("\n");
+                while(fgets(line, sizeof(line), file) != NULL) {
+
+                    if(strncmp(line, "Name:", 5) == 0 && strcasestr(line, itemName)) {
                         printf("%s", line);
-                        for (int i = 0; i < 3; i++) {
-                            if (fgets(line, sizeof(line), file)) // TODO: Improve the line printing
+                        for(int i = 0; i < 3; i++) {
+                            if(fgets(line, sizeof(line), file)) // TODO: Improve the line printing
                                 printf("%s", line);
                         }
                         found = 1;
                         break;
                     }
                 }
+                printf("\n");
 
-                if (!found) {
+                if(!found) {
                     printf("Item not found.\n");
                 }
 
-                for (size_t i = 0; i < MAX_ITEMS; i++) free(tempName[i]);
+                for(size_t i = 0; i < MAX_ITEMS; i++) free(tempName[i]);
                 free(tempName);
                 free(itemName);
                 fclose(file);
