@@ -27,7 +27,6 @@
 #define MAX_FILE_ITEMS 100
 #define MAX_PATH_LEN 260
 
-
 typedef struct {
     float price[MAX_ITEMS];
     int qty[MAX_ITEMS];
@@ -247,7 +246,7 @@ void search(Item *items, int totalItems, char *buff) {
                     printf("[%d] %s\n", i + 1, tempName[i]);
                 }
 
-                printf("Search item in list: ");
+                printf("Type-in the name of the item to search in the list: ");
                 fgets(itemName, MAX_CHAR, stdin);
                 CleanStr(itemName);
 
