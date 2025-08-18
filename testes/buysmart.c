@@ -366,7 +366,7 @@ void Credits() {
     while(loopCount != 2) {
         for(int i = 0; i < 3; i++) {
             type(strings[i], 35);
-            SleepMS(375);
+            SleepMS(550);
             delete(strings[i], 25);
         }
         loopCount++;
