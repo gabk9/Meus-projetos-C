@@ -176,7 +176,8 @@ void Vload(int ms) {
 
 void search(Item *items, int totalItems, char *buff) {
     Clear();
-    int op, typeSpeed = 7;
+    int op; 
+    static int typeSpeed = 7;
 
     do {
         printf("========Search Menu========\n");
@@ -295,7 +296,9 @@ void search(Item *items, int totalItems, char *buff) {
 
 void saveItem(Item *items, int totalItems, char *buff) {
     Clear();
-    int op, typeSpeed = 7;
+    int op;
+    static int typeSpeed = 7;
+
     do {
         printf("========Save Menu========\n");
         type("[1] Save\n[0] Return to main menu\n", typeSpeed);
@@ -374,7 +377,8 @@ void Credits() {
 void readItem(Item *items, int totalItems, char *buff) {
     Clear();
     FILE *file = accessFile("BuySmart.txt", "r");
-    int op, typeSpeed = 7;
+    int op;
+    static int typeSpeed = 7;
 
     do {
         printf("========Read Menu========\n");
@@ -432,7 +436,8 @@ void readItem(Item *items, int totalItems, char *buff) {
 
 void compareItem(Item *items, int *totalItems, char *buff) {
     Clear();
-    int op, typeSpeed = 7;
+    int op;
+    static int typeSpeed = 7;
 
     Item fileItems = {0};
     int fileCount = 0;
@@ -577,7 +582,8 @@ void compareItem(Item *items, int *totalItems, char *buff) {
 
 void registItem(Item *items, int *totalItems, char *buff) {
     Clear();
-    int qty, op, typeSpeed = 7;
+    int qty, op;
+    static int typeSpeed = 7;
 
     do {
         printf("========Register Menu========\n");
