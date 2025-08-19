@@ -35,8 +35,8 @@ typedef struct {
 } Item;
 
 
-void Credits();
 void Vload(int ms);
+void Credits(char *buff);
 void CleanStr(char *var);
 void tolowerStr(char *str);
 void type(char *text, int ms);
@@ -128,14 +128,13 @@ int main(int argc, char **argv) {
                 Pause();
                 break;
             case 8:
-                Credits();
+                Credits(buff);
                 Pause();
                 break;
             case 0:
                 printf("\nTerminating program, Bye!!\n");
                 Pause();
                 goto leave; //* I'm using goto because why not LOL
-                break;
             default:
                 errno = EPERM; //* Operation not permited ERROR
                 perror("\nError");
@@ -283,7 +282,6 @@ void search(Item *items, int totalItems, char *buff) {
             }
             case 0:
                 return;
-
             default:
                 errno = EPERM;
                 perror("\nError");
@@ -301,7 +299,7 @@ void saveItem(Item *items, int totalItems, char *buff) {
 
     do {
         printf("========Save Menu========\n");
-        type("[1] Save\n[0] Return to main menu\n", typeSpeed);
+        type("[1] Save items\n[0] Return to main menu\n", typeSpeed);
         typeSpeed = 0;
 
         printf("Choose an option: ");
@@ -346,7 +344,6 @@ void saveItem(Item *items, int totalItems, char *buff) {
             }
             case 0:
                 return;
-                break;
             default:
                 errno = EPERM; //* Operation not permited ERROR
                 perror("\nError");
@@ -356,22 +353,54 @@ void saveItem(Item *items, int totalItems, char *buff) {
     } while (op != 0);
 }
 
-void Credits() {
+void Credits(char *buff) {
     Clear();
-    int loopCount = 0;
+    int loopCount = 0, op;
+    static int typeSpeed = 7;
     char *strings[] = {"Made by: Gabriel Oliveira Miranda",
                        "a high school freshman",
                        "this code is still in beta!"};
-
-    while(loopCount != 2) {
-        for(int i = 0; i < 3; i++) {
-            type(strings[i], 35);
-            SleepMS(550);
-            delete(strings[i], 25);
+    
+    do {
+        printf("========BuySmart========\n");
+        type("[1] Credits screen\n[0] Return to main menu\n", typeSpeed);
+        typeSpeed = 0;
+    
+        printf("Choose an option: ");
+        fgets(buff, MAX_CHAR, stdin);
+        CleanStr(buff);
+    
+        if (sscanf(buff, "%d", &op) != 1) {
+            errno = EINVAL; //* Invalid Arguments ERROR
+            perror("\nError");
+            Pause();
+            Clear();
+            continue;
         }
-        loopCount++;
-    }
-    printf("You saw all the credits, now we're heading back\n");
+
+        switch(op) {
+            case 1:
+                Clear();
+                while(loopCount != 2) {
+                    for(int i = 0; i < 3; i++) {
+                        type(strings[i], 35);
+                        SleepMS(550);
+                        delete(strings[i], 25);
+                    }
+                    loopCount++;
+                }
+                printf("You saw all the credits, now we're heading back\n");
+                break;
+            case 0:
+                return;
+            default:
+                errno = EPERM; //* Operation not permited ERROR
+                perror("\nError");
+                Pause();
+                Clear();
+        }
+
+    } while (op != 1);
 }
 
 void readItem(Item *items, int totalItems, char *buff) {
@@ -381,8 +410,8 @@ void readItem(Item *items, int totalItems, char *buff) {
     static int typeSpeed = 7;
 
     do {
-        printf("========Read Menu========\n");
-        type("[1] Read from file\n[0] Return to main menu\n", typeSpeed);
+        printf("========List Menu========\n");
+        type("[1] List items\n[0] Return to main menu\n", typeSpeed);
         typeSpeed = 0;
 
         printf("Choose an option: ");
@@ -421,7 +450,6 @@ void readItem(Item *items, int totalItems, char *buff) {
             } 
             case 0: 
                 return;
-                break;
             default:
                 errno = EPERM; //* Operation not permited ERROR
                 perror("\nError");
@@ -444,7 +472,7 @@ void compareItem(Item *items, int *totalItems, char *buff) {
 
     do {
         printf("========Compare Menu========\n");
-        type("[1] Read from file\n[0] Return to main menu\n", typeSpeed);
+        type("[1] Compare items\n[0] Return to main menu\n", typeSpeed);
         typeSpeed = 0;
 
         printf("Choose an option: ");
@@ -563,7 +591,6 @@ void compareItem(Item *items, int *totalItems, char *buff) {
                 }
                 case 0:
                     return;
-                    break;
                 default:
                     errno = EPERM; //* Operation not permited ERROR
                     perror("\nError");
@@ -587,7 +614,7 @@ void registItem(Item *items, int *totalItems, char *buff) {
 
     do {
         printf("========Register Menu========\n");
-        type("[1] Add\n[0] Return to main menu\n", typeSpeed);
+        type("[1] Register item\n[0] Return to main menu\n", typeSpeed);
         typeSpeed = 0;
 
         printf("Choose an option: ");
@@ -649,7 +676,6 @@ void registItem(Item *items, int *totalItems, char *buff) {
                 break;
             case 0:
                 return;
-                break;
             default:
                 errno = EPERM; //* Operation not permited ERROR
                 perror("\nError");
