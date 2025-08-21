@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
     
     memset(buff, 0, MAX_CHAR);
 
-    if (!buff) {
+    if(!buff) {
         printf("\nError: Allocation error!\n");
         return 1;
     }
@@ -88,7 +88,7 @@ int main(int argc, char **argv) {
         fgets(buff, MAX_CHAR, stdin);
         CleanStr(buff);
 
-        if (sscanf(buff, "%d", &op) != 1) {
+        if(sscanf(buff, "%d", &op) != 1) {
             errno = EINVAL; //* Invalid Arguments ERROR
             perror("\nError");
             Pause();
@@ -154,15 +154,15 @@ leave:
 
 void Vload(int ms) {
     int total = 30;
-    for (int i = 0; i <= total; i++) {
+    for(int i = 0; i <= total; i++) {
         int percent = (i * 100) / total;
         printf("\r[");
 
-        for (int j = 0; j < i; j++) {
+        for(int j = 0; j < i; j++) {
             printf("#");
         }
 
-        for (int k = i; k < total; k++) {
+        for(int k = i; k < total; k++) {
             printf(" ");
         }
 
@@ -258,7 +258,7 @@ void search(Item *items, int totalItems, char *buff) {
                     if(strncmp(line, "Name:", 5) == 0 && strcasestr(line, itemName)) {
                         printf("%s", line);
                         for(int i = 0; i < 3; i++) {
-                            if(fgets(line, sizeof(line), file)) // TODO: Improve the line printing
+                            if(fgets(line, sizeof(line), file))
                                 printf("%s", line);
                         }
                         found = 1;
@@ -271,7 +271,9 @@ void search(Item *items, int totalItems, char *buff) {
                     printf("Item not found.\n");
                 }
 
-                for(size_t i = 0; i < MAX_ITEMS; i++) free(tempName[i]);
+                for(size_t i = 0; i < MAX_ITEMS; i++) 
+                    free(tempName[i]);
+
                 free(tempName);
                 free(itemName);
                 fclose(file);
@@ -317,7 +319,7 @@ void saveItem(Item *items, int totalItems, char *buff) {
         switch(op) {
             case 1: {
                 FILE *file = accessFile("BuySmart.txt", "r+");
-                if (!file) {
+                if(!file) {
                     file = accessFile("BuySmart.txt", "w");
                     if (!file) {
                         printf("\nError: Couldn't open the file!\n");
@@ -370,7 +372,7 @@ void Credits(char *buff) {
         fgets(buff, MAX_CHAR, stdin);
         CleanStr(buff);
     
-        if (sscanf(buff, "%d", &op) != 1) {
+        if(sscanf(buff, "%d", &op) != 1) {
             errno = EINVAL; //* Invalid Arguments ERROR
             perror("\nError");
             Pause();
@@ -497,14 +499,14 @@ void compareItem(Item *items, int *totalItems, char *buff) {
                     float tempPrice = 0.0f;
                     int tempQty = 0;
 
-                    while (fgets(line, sizeof(line), file) != NULL && fileCount < MAX_ITEMS) {
-                        if (strncmp(line, "Name:", 5) == 0) {
+                    while(fgets(line, sizeof(line), file) != NULL && fileCount < MAX_ITEMS) {
+                        if(strncmp(line, "Name:", 5) == 0) {
                             sscanf(line, "Name: %49[^\n]", tempName);
                         }
-                        else if (strncmp(line, "Price:", 6) == 0) {
+                        else if(strncmp(line, "Price:", 6) == 0) {
                             sscanf(line, "Price: %fR$", &tempPrice);
                         }
-                        else if (strncmp(line, "Total amount in", 15) == 0) {
+                        else if(strncmp(line, "Total amount in", 15) == 0) {
                             char *colonPos = strrchr(line, ':');
                             if (colonPos) {
                                 sscanf(colonPos + 1, "%d", &tempQty);
@@ -524,7 +526,7 @@ void compareItem(Item *items, int *totalItems, char *buff) {
                     }
                     fclose(file);
 
-                    if (fileCount == 0) {
+                    if(fileCount == 0) {
                         printf("\nError: No items found in file\n");
                         Pause();
                         Clear();
@@ -551,7 +553,7 @@ void compareItem(Item *items, int *totalItems, char *buff) {
                         token = strtok(NULL, " ");
                     }
 
-                    if (selectedCount == 0) {
+                    if(selectedCount == 0) {
                         printf("\nError: No valid items selected.\n");
                         Pause();
                         Clear();
@@ -563,22 +565,22 @@ void compareItem(Item *items, int *totalItems, char *buff) {
                     float bestPricePQ = 1e9f;
                     int bestIndex = -1;
 
-                    for (int i = 0; i < selectedCount; i++) {
+                    for(int i = 0; i < selectedCount; i++) {
                         int idx = selected[i];
-                        if (fileItems.qty[idx] == 0) {
+                        if(fileItems.qty[idx] == 0) {
                             printf("- %s: Quantity is zero, cannot calculate price per quantity\n", fileItems.name[idx]);
                             continue;
                         }
                         float pricePQ = fileItems.price[idx] / (float)fileItems.qty[idx];
                         printf("- %s: Price per Quantity = %.2f\n", fileItems.name[idx], pricePQ);
 
-                        if (pricePQ < bestPricePQ) {
+                        if(pricePQ < bestPricePQ) {
                             bestPricePQ = pricePQ;
                             bestIndex = idx;
                         }
                     }
 
-                    if (bestIndex != -1) {
+                    if(bestIndex != -1) {
                         printf("\nBest item based on Price per Quantity:\n");
                         printf("-> %s with %.2f per unit\n", fileItems.name[bestIndex], bestPricePQ);
                     } else {
@@ -620,7 +622,7 @@ void registItem(Item *items, int *totalItems, char *buff) {
         printf("Choose an option: ");
         fgets(buff, MAX_CHAR, stdin);
 
-        if (sscanf(buff, "%d", &op) != 1) {
+        if(sscanf(buff, "%d", &op) != 1) {
             errno = EINVAL; //* Invalid Arguments ERROR;
             perror("\nError");
             Pause();
@@ -636,7 +638,7 @@ void registItem(Item *items, int *totalItems, char *buff) {
                     fgets(buff, MAX_CHAR, stdin);
                     CleanStr(buff);
         
-                    if (sscanf(buff, "%d", &qty) != 1 || qty <= 0) {
+                    if(sscanf(buff, "%d", &qty) != 1 || qty <= 0) {
                         errno = EINVAL; //* Invalid Arguments ERROR;
                         perror("\nError");
                         Pause();
@@ -644,7 +646,7 @@ void registItem(Item *items, int *totalItems, char *buff) {
                         continue;
                     }
 
-                    if (*totalItems + qty > MAX_ITEMS) {
+                    if(*totalItems + qty > MAX_ITEMS) {
                         printf("\nError: You can only add up to %d items total.\n", MAX_ITEMS);
                         Pause();
                         Clear();
@@ -652,7 +654,7 @@ void registItem(Item *items, int *totalItems, char *buff) {
                     }
                 } while (qty <= 0);
     
-                for (int i = 0; i < qty; i++) {
+                for(int i = 0; i < qty; i++) {
                     printf("\nName of the Item n%d: ", *totalItems + 1);
                     fgets(items->name[*totalItems], MAX_CHAR, stdin);
                     CleanStr(items->name[*totalItems]);
@@ -709,7 +711,7 @@ void delete(char *text, int ms) {
 }
 
 void tolowerStr(char *str) {
-    for (int i = 0; str[i]; i++) {
+    for(int i = 0; str[i]; i++) {
         str[i] = tolower((unsigned char)str[i]);
     }
 }
