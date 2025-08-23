@@ -41,13 +41,14 @@ void CleanStr(char *var);
 void tolowerStr(char *str);
 void type(char *text, int ms);
 void delete(char *text, int ms);
-FILE* accessFile(char *fileName, char *act);
+FILE *accessFile(char *fileDir, char *act);
 char *strcasestr(const char *src, const char *sub); //! also not made by me
+void edit(Item *items, int totalItems, char *buff);
+void save(Item *items, int totalItems, char *buff);
+void read(Item *items, int totalItems, char *buff);
 void search(Item *items, int totalItems, char *buff);
-void saveItem(Item *items, int totalItems, char *buff);
-void readItem(Item *items, int totalItems, char *buff);
-void registItem(Item *items, int *totalItems, char *buff);
-void compareItem(Item *items, int *totalItems, char *buff);
+void regist(Item *items, int *totalItems, char *buff);
+void compare(Item *items, int *totalItems, char *buff);
 void getFilePath(char *fullPath, size_t size, const char *fileName); //! it wasn't me who did this
 
 
@@ -98,19 +99,19 @@ int main(int argc, char **argv) {
 
         switch(op) {
             case 1:
-                registItem(&items, &totalItems, buff);
+                regist(&items, &totalItems, buff);
                 Pause();
                 break;
             case 2:
-                compareItem(&items, &totalItems, buff);
+                compare(&items, &totalItems, buff);
                 Pause();
                 break;
             case 3:
-                saveItem(&items, totalItems, buff);
+                save(&items, totalItems, buff);
                 Pause();
                 break;
             case 4:
-                readItem(&items, totalItems, buff);
+                read(&items, totalItems, buff);
                 Pause();
                 break;
             case 5:
@@ -118,13 +119,12 @@ int main(int argc, char **argv) {
                 Pause();
                 break;
             case 6:
-                // TODO: Implement edit item
-                printf("\n\"Edit item\" not implemented yet.\n");
+                edit(&items, totalItems, buff);
                 Pause();
                 break;
             case 7:
                 // TODO: Implement remove item
-                printf("\n\"Remove item \" not implemented yet.\n");
+                printf("\n\"Remove item\" not implemented yet.\n");
                 Pause();
                 break;
             case 8:
@@ -171,6 +171,165 @@ void Vload(int ms) {
         SleepMS(ms);
     }
     printf("\n");
+}
+
+void edit(Item *items, int totalItems, char *buff) {
+    Clear();
+    int op; 
+    static int typeSpeed = 7;
+
+    do {
+        printf("========Edit Menu========\n");
+        type("[1] Read from file\n[0] Return to main menu\n", typeSpeed);
+        typeSpeed = 0;
+
+        printf("Choose an option: ");
+        fgets(buff, MAX_CHAR, stdin);
+        CleanStr(buff);
+
+        if(sscanf(buff, "%d", &op) != 1) {
+            errno = EINVAL;
+            perror("\nError");
+            Pause();
+            Clear();
+            continue;
+        }
+
+        switch (op) {
+            case 1: {
+                Clear();
+                char line[1024];
+                char **tempName = calloc(MAX_ITEMS, sizeof(char *));
+                char *itemName = calloc(MAX_CHAR, sizeof(char));
+
+                if(!tempName || !itemName) {
+                    printf("\nError: Allocation error!\n");
+                    free(itemName);
+                    free(tempName);
+                    break;
+                }
+
+                for(size_t i = 0; i < MAX_ITEMS; i++) {
+                    tempName[i] = calloc(MAX_CHAR, sizeof(char));
+
+                    if (!tempName[i]) {
+                        printf("\nError: Array allocation error!\n");
+                        for (size_t j = 0; j < i; j++) free(tempName[j]);
+                        free(tempName);
+                        free(itemName);
+                        break;
+                    }
+                }
+
+                FILE *file = accessFile("BuySmart.txt", "r");
+                if(!file) {
+                    printf("\nError: %s\n", strerror(errno));
+                    Pause();
+                    Clear();
+
+                    for(size_t i = 0; i < MAX_ITEMS; i++) free(tempName[i]);
+                    free(tempName);
+                    free(itemName);
+                    break;
+                }
+
+                int itemCount = 0;
+                while(fgets(line, sizeof(line), file) != NULL && itemCount < MAX_ITEMS) {
+                    if(strncmp(line, "Name:", 5) == 0) {
+                        sscanf(line, "Name: %49[^\n]", tempName[itemCount]);
+                        itemCount++;
+                    }
+                }
+
+                printf("========Editing========\n");
+                printf("Names from file:\n");
+                for(int i = 0; i < itemCount; i++) {
+                    printf("[%d] %s\n", i + 1, tempName[i]);
+                }
+
+                printf("Type-in the name of the item to edit: ");
+                fgets(itemName, MAX_CHAR, stdin);
+                CleanStr(itemName);
+
+                rewind(file);
+                int found = 0;
+
+                do {
+                    Clear();
+                    printf("========Editing========\n");
+                    while(fgets(line, sizeof(line), file) != NULL) {
+    
+                        if(strncmp(line, "Name:", 5) == 0 && strcasestr(line, itemName)) {
+                            printf("%s", line);
+                            for(int i = 0; i < 3; i++) {
+                                if(fgets(line, sizeof(line), file))
+                                    printf("%s", line);
+                            }
+                            found = 1;
+                            break;
+                        }
+                    }
+                    
+                    if(!found) {
+                        printf("Item not found.\n");
+                        break;
+                    }
+
+                    typeSpeed = 9;
+                    type("\n[1] Start editing\n[0] Cancel\n", typeSpeed);
+                    typeSpeed = 0;
+    
+                    buff = realloc(buff, MAX_CHAR);
+                    printf("Choose an option: ");
+                    fgets(buff, MAX_CHAR, stdin);
+
+                    if(sscanf(buff, "%d", &op) != 1) {
+                        errno = EINVAL; //* Invalid Arguments ERROR;
+                        perror("\nError");
+                        Pause();
+                        Clear();
+                        continue;
+                    }
+
+                    switch(op) {
+                        case 1:
+                            // TODO: Implement Start editing
+                            printf("\n\"Start editing\" not implemented yet.\n");
+                            break;
+                        case 0:
+                            return;
+                        default:
+                            errno = EPERM;
+                            perror("\nError");
+                            Pause();
+                            Clear();
+                    }
+                    break; //! added here bc of case 1
+                    
+                } while (op != 0);
+
+
+                for(size_t i = 0; i < MAX_ITEMS; i++) 
+                    free(tempName[i]);
+
+                free(tempName);
+                free(itemName);
+                fclose(file);
+
+                Pause();
+                Clear();
+                break;
+            }
+            case 0:
+                return;
+            default:
+                errno = EPERM;
+                perror("\nError");
+                Pause();
+                Clear();
+        }
+
+    } while (op != 0);
 }
 
 void search(Item *items, int totalItems, char *buff) {
@@ -240,13 +399,13 @@ void search(Item *items, int totalItems, char *buff) {
                         itemCount++;
                     }
                 }
-
+                printf("========Searching========\n");
                 printf("Names from file:\n");
                 for(int i = 0; i < itemCount; i++) {
                     printf("[%d] %s\n", i + 1, tempName[i]);
                 }
 
-                printf("Type-in the name of the item to search in the list: ");
+                printf("Type-in the name of the item to search: ");
                 fgets(itemName, MAX_CHAR, stdin);
                 CleanStr(itemName);
 
@@ -294,7 +453,7 @@ void search(Item *items, int totalItems, char *buff) {
     } while (op != 0);
 }
 
-void saveItem(Item *items, int totalItems, char *buff) {
+void save(Item *items, int totalItems, char *buff) {
     Clear();
     int op;
     static int typeSpeed = 7;
@@ -405,7 +564,7 @@ void Credits(char *buff) {
     } while (op != 1);
 }
 
-void readItem(Item *items, int totalItems, char *buff) {
+void read(Item *items, int totalItems, char *buff) {
     Clear();
     FILE *file = accessFile("BuySmart.txt", "r");
     int op;
@@ -464,7 +623,7 @@ void readItem(Item *items, int totalItems, char *buff) {
     fclose(file);
 }
 
-void compareItem(Item *items, int *totalItems, char *buff) {
+void compare(Item *items, int *totalItems, char *buff) {
     Clear();
     int op;
     static int typeSpeed = 7;
@@ -609,7 +768,7 @@ void compareItem(Item *items, int *totalItems, char *buff) {
     } while(op != 0);
 }
 
-void registItem(Item *items, int *totalItems, char *buff) {
+void regist(Item *items, int *totalItems, char *buff) {
     Clear();
     int qty, op;
     static int typeSpeed = 7;
@@ -641,9 +800,7 @@ void registItem(Item *items, int *totalItems, char *buff) {
                     if(sscanf(buff, "%d", &qty) != 1 || qty <= 0) {
                         errno = EINVAL; //* Invalid Arguments ERROR;
                         perror("\nError");
-                        Pause();
-                        Clear();
-                        continue;
+                        return;
                     }
 
                     if(*totalItems + qty > MAX_ITEMS) {
@@ -733,9 +890,9 @@ char *strcasestr(const char *src, const char *sub) { //! also not made by me
     return pos ? (char *)(src + (pos - lowerSrc)) : NULL;
 }
 
-FILE* accessFile(char *fileName, char *act) {
+FILE *accessFile(char *fileDir, char *act) {
     char filePath[MAX_PATH_LEN];
-    getFilePath(filePath, sizeof(filePath), fileName);
+    getFilePath(filePath, sizeof(filePath), fileDir);
     FILE *file = fopen(filePath, act);
     return file;
 }
