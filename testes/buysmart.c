@@ -44,11 +44,11 @@ void type(char *text, int ms);
 void delete(char *text, int ms);
 FILE *accessFile(char *fileDir, char *act);
 char *strcasestr(const char *src, const char *sub); //! also not made by me
-void edit(Item *items, int totalItems, char *buff);
-void save(Item *items, int totalItems, char *buff);
-void read(Item *items, int totalItems, char *buff);
-void erase(Item *items, int totalItems, char *buff);
-void search(Item *items, int totalItems, char *buff);
+void edit(Item *items, int *totalItems, char *buff);
+void save(Item *items, int *totalItems, char *buff);
+void read(Item *items, int *totalItems, char *buff);
+void erase(Item *items, int *totalItems, char *buff);
+void search(Item *items, int *totalItems, char *buff);
 void regist(Item *items, int *totalItems, char *buff);
 void compare(Item *items, int *totalItems, char *buff);
 void removeFromStruct(Item *items, int *totalItems, char *itemName);
@@ -77,6 +77,7 @@ int main(int argc, char **argv) {
     goto leave;
 #endif
 
+    Pause();
     Vload(20);
     Clear();
 
@@ -110,23 +111,23 @@ int main(int argc, char **argv) {
             Pause();
                 break;
             case 3:
-                save(&items, totalItems, buff);
+                save(&items, &totalItems, buff);
             Pause();
                 break;
             case 4:
-                read(&items, totalItems, buff);
+                read(&items, &totalItems, buff);
             Pause();
                 break;
             case 5:
-                search(&items, totalItems, buff);
+                search(&items, &totalItems, buff);
             Pause();
                 break;
             case 6:
-                edit(&items, totalItems, buff); //! Currently working on it
+                edit(&items, &totalItems, buff); //! Currently working on it
             Pause();
                 break;
             case 7:
-                erase(&items, totalItems, buff);
+                erase(&items, &totalItems, buff);
             Pause();
                 break;
             case 8:
@@ -175,7 +176,7 @@ void Vload(int ms) {
     printf("\n");
 }
 
-void edit(Item *items, int totalItems, char *buff) {
+void edit(Item *items, int *totalItems, char *buff) {
     Clear();
     int op; 
     static int typeSpeed = 7;
@@ -334,7 +335,7 @@ void edit(Item *items, int totalItems, char *buff) {
     } while (op != 0);
 }
 
-void erase(Item *items, int totalItems, char *buff) {
+void erase(Item *items, int *totalItems, char *buff) {
     Clear();
     int op; 
     static int typeSpeed = 7;
@@ -499,7 +500,7 @@ void erase(Item *items, int totalItems, char *buff) {
                     remove("BuySmart.txt");
                     rename("temp.txt", "BuySmart.txt");
 
-                    removeFromStruct(items, &totalItems, itemName);
+                    removeFromStruct(items, totalItems, itemName);
                 }
 
                 Pause();
@@ -535,7 +536,7 @@ void removeFromStruct(Item *items, int *totalItems, char *itemName) {
     }
 }
 
-void search(Item *items, int totalItems, char *buff) {
+void search(Item *items, int *totalItems, char *buff) {
     Clear();
     int op; 
     static int typeSpeed = 7;
@@ -656,7 +657,7 @@ void search(Item *items, int totalItems, char *buff) {
     } while (op != 0);
 }
 
-void save(Item *items, int totalItems, char *buff) {
+void save(Item *items, int *totalItems, char *buff) {
     Clear();
     int op;
     static int typeSpeed = 7;
@@ -690,7 +691,7 @@ void save(Item *items, int totalItems, char *buff) {
                     fseek(file, 0, SEEK_END);
                 }
 
-                for(int i = 0; i < totalItems; i++) {
+                for(int i = 0; i < *totalItems; i++) {
                     items->pricePQ[i] = items->price[i] / (float)items->qty[i];
                     fprintf(file, "Name: %s\n", items->name[i]);
                     fprintf(file, "Price: %.2fR$\n", items->price[i]);
@@ -766,7 +767,7 @@ void Credits(char *buff) {
     } while (op != 1);
 }
 
-void read(Item *items, int totalItems, char *buff) {
+void read(Item *items, int *totalItems, char *buff) {
     Clear();
     FILE *file = accessFile("BuySmart.txt", "r");
     int op;
