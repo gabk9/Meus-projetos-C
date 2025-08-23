@@ -523,7 +523,7 @@ void Credits(char *buff) {
                        "this code is still in beta!"};
     
     do {
-        printf("========BuySmart========\n");
+        printf("========Credits Menu========\n");
         type("[1] Credits screen\n[0] Return to main menu\n", typeSpeed);
         typeSpeed = 0;
     
