@@ -126,7 +126,7 @@ int main(int argc, char **argv) {
             Pause();
                 break;
             case 7:
-                erase(&items, totalItems, buff); //! Currently working on it
+                erase(&items, totalItems, buff);
             Pause();
                 break;
             case 8:
