@@ -42,6 +42,7 @@ void CleanStr(char *var);
 void tolowerStr(char *str);
 void type(char *text, int ms);
 void delete(char *text, int ms);
+void eraseData(Item *items, char *buff);
 FILE *accessFile(char *fileDir, char *act);
 char *strcasestr(const char *src, const char *sub); //! also not made by me
 void edit(Item *items, int *totalItems, char *buff);
@@ -56,16 +57,6 @@ void getFilePath(char *fullPath, size_t size, const char *fileName); //! it wasn
 
 
 int main(int argc, char **argv) {
-    int op, typeSpeed = 2;
-    char *buff = (char *)calloc(MAX_CHAR, sizeof(char));
-    
-    memset(buff, 0, MAX_CHAR);
-
-    if(!buff) {
-        printf("\nError: Allocation error!\n");
-        return 1;
-    }
-
 #ifdef _WIN32
     printf("Running on Windows!!\n");
 #elif __linux__
@@ -77,7 +68,17 @@ int main(int argc, char **argv) {
     goto leave;
 #endif
 
-    Pause();
+    int op, typeSpeed = 2;
+    char *buff = (char *)calloc(MAX_CHAR, sizeof(char));
+    
+    memset(buff, 0, MAX_CHAR);
+
+    if(!buff) {
+        printf("\nError: Allocation error!\n");
+        return 1;
+    }
+
+
     Vload(20);
     Clear();
 
@@ -86,7 +87,9 @@ int main(int argc, char **argv) {
 
     do {
         printf("========BuySmart========\n");
-        type("[1] Register an item\n[2] Compare items\n[3] Save items\n[4] List items\n[5] Search items\n[6] Edit item\n[7] Remove item\n[8] Credits\n[0] Exit program\n", typeSpeed);
+        type("[1] Register an item\n[2] Compare items\n[3] Save items\n", typeSpeed);
+        type("[4] List items\n[5] Search items\n[6] Edit item\n[7] Remove item\n", typeSpeed);
+        type("[8] Credits\n[9] Erase data\n[0] Exit program\n", typeSpeed);
         typeSpeed = 0;
 
         printf("Choose an option: ");
@@ -104,35 +107,39 @@ int main(int argc, char **argv) {
         switch(op) {
             case 1:
                 regist(&items, &totalItems, buff);
-            Pause();
+                Pause();
                 break;
             case 2:
                 compare(&items, &totalItems, buff);
-            Pause();
+                Pause();
                 break;
             case 3:
                 save(&items, &totalItems, buff);
-            Pause();
+                Pause();
                 break;
             case 4:
                 read(&items, &totalItems, buff);
-            Pause();
+                Pause();
                 break;
             case 5:
                 search(&items, &totalItems, buff);
-            Pause();
+                Pause();
                 break;
             case 6:
                 edit(&items, &totalItems, buff); //! Currently working on it
-            Pause();
+                Pause();
                 break;
             case 7:
                 erase(&items, &totalItems, buff);
-            Pause();
+                Pause();
                 break;
             case 8:
                 Credits(buff);
-            Pause();
+                Pause();
+                break;
+            case 9:
+                eraseData(&items, buff);
+                Pause();
                 break;
             case 0:
                 printf("\nTerminating program, Bye!!\n");
@@ -147,7 +154,7 @@ int main(int argc, char **argv) {
 
         Clear();
 
-    } while(1);
+    } while(op != 0);
 
     free(buff);
 
@@ -174,6 +181,47 @@ void Vload(int ms) {
         SleepMS(ms);
     }
     printf("\n");
+}
+
+void eraseData(Item *items, char *buff) {
+    Clear();
+    int op;
+    static int typeSpeed = 7;
+    do {
+        printf("========Erase Data Menu========\n");
+        type("[1] Erase all data\n[0] Return to main menu\n", typeSpeed);
+        typeSpeed = 0;
+
+        printf("Choose an option: ");
+        fgets(buff, MAX_CHAR, stdin);
+
+        if(sscanf(buff, "%d", &op) != 1) {
+            errno = EINVAL; //* Invalid Arguments ERROR
+            perror("\nError");
+            Pause();
+            Clear();
+            continue;
+        }
+
+        switch(op) {
+            case 1: {
+                FILE *file = accessFile("BuySmart.txt", "w");
+                memset(&items, 0, sizeof(items));
+
+                printf("\nData deleted Successfully!!\n");
+                Pause();
+                Clear();
+                break;
+            }
+            case 0:
+                return;
+            default:
+                errno = EPERM; //* Operation not permited ERROR
+                perror("\nError");
+                Pause();
+                Clear();
+        }
+    } while(op != 0);
 }
 
 void edit(Item *items, int *totalItems, char *buff) {
@@ -208,7 +256,7 @@ void edit(Item *items, int *totalItems, char *buff) {
                 if(!tempName || !itemName) {
                     printf("\nError: Allocation error!\n");
                     free(itemName);
-                free(tempName);
+                    free(tempName);
                     break;
                 }
 
@@ -219,7 +267,7 @@ void edit(Item *items, int *totalItems, char *buff) {
                         printf("\nError: Array allocation error!\n");
                         for (size_t j = 0; j < i; j++) free(tempName[j]);
                         free(tempName);
-                    free(itemName);
+                        free(itemName);
                         break;
                     }
                 }
@@ -232,7 +280,7 @@ void edit(Item *items, int *totalItems, char *buff) {
 
                     for(size_t i = 0; i < MAX_ITEMS; i++) free(tempName[i]);
                     free(tempName);
-                free(itemName);
+                    free(itemName);
                     break;
                 }
 
@@ -297,7 +345,7 @@ void edit(Item *items, int *totalItems, char *buff) {
                     switch(op) {
                         case 1:
                             // TODO: Implement Start editing
-                        printf("\n\"Start editing\" not implemented yet.\n");
+                            printf("\n\"Start editing\" not implemented yet.\n");
                             break;
                         case 0:
                             return;
@@ -320,7 +368,7 @@ void edit(Item *items, int *totalItems, char *buff) {
                 fclose(file);
 
                 Pause();
-            Clear();
+                Clear();
                 break;
             }
             case 0:
@@ -367,7 +415,7 @@ void erase(Item *items, int *totalItems, char *buff) {
                 if(!tempName || !itemName) {
                     printf("\nError: Allocation error!\n");
                     free(itemName);
-                free(tempName);
+                    free(tempName);
                     break;
                 }
 
@@ -378,7 +426,7 @@ void erase(Item *items, int *totalItems, char *buff) {
                         printf("\nError: Array allocation error!\n");
                         for (size_t j = 0; j < i; j++) free(tempName[j]);
                         free(tempName);
-                    free(itemName);
+                        free(itemName);
                         break;
                     }
                 }
@@ -393,7 +441,7 @@ void erase(Item *items, int *totalItems, char *buff) {
 
                     for(size_t i = 0; i < MAX_ITEMS; i++) free(tempName[i]);
                     free(tempName);
-                free(itemName);
+                    free(itemName);
                     break;
                 }
 
@@ -504,7 +552,7 @@ void erase(Item *items, int *totalItems, char *buff) {
                 }
 
                 Pause();
-            Clear();
+                Clear();
                 break;
             }
             case 0:
@@ -568,7 +616,7 @@ void search(Item *items, int *totalItems, char *buff) {
                 if(!tempName || !itemName) {
                     printf("\nError: Allocation error!\n");
                     free(itemName);
-                free(tempName);
+                    free(tempName);
                     break;
                 }
 
@@ -579,7 +627,7 @@ void search(Item *items, int *totalItems, char *buff) {
                         printf("\nError: Array allocation error!\n");
                         for (size_t j = 0; j < i; j++) free(tempName[j]);
                         free(tempName);
-                    free(itemName);
+                        free(itemName);
                         break;
                     }
                 }
@@ -592,7 +640,7 @@ void search(Item *items, int *totalItems, char *buff) {
 
                     for(size_t i = 0; i < MAX_ITEMS; i++) free(tempName[i]);
                     free(tempName);
-                free(itemName);
+                    free(itemName);
                     break;
                 }
 
@@ -624,7 +672,7 @@ void search(Item *items, int *totalItems, char *buff) {
                             if(fgets(line, sizeof(line), file))
                                 printf("%s", line);
                         }
-                    found = 1;
+                        found = 1;
                         break;
                     }
                 }
@@ -642,7 +690,7 @@ void search(Item *items, int *totalItems, char *buff) {
                 fclose(file);
 
                 Pause();
-            Clear();
+                Clear();
                 break;
             }
             case 0:
@@ -753,7 +801,7 @@ void Credits(char *buff) {
                     }
                     loopCount++;
                 }
-            printf("You saw all the credits, now we're heading back\n");
+                printf("You saw all the credits, now we're heading back\n");
                 break;
             case 0:
                 return;
@@ -809,7 +857,7 @@ void read(Item *items, int *totalItems, char *buff) {
                     printf("%s", line);
                 }
                 Pause();
-            Clear();
+                Clear();
                 break;        
             } 
             case 0: 
@@ -851,7 +899,7 @@ void compare(Item *items, int *totalItems, char *buff) {
                     if(!file) {
                         printf("\nError: %s\n", strerror(errno));
                         Pause();
-                    Clear();
+                        Clear();
                         break;
                     }
 
@@ -891,7 +939,7 @@ void compare(Item *items, int *totalItems, char *buff) {
                     if(fileCount == 0) {
                         printf("\nError: No items found in file\n");
                         Pause();
-                    Clear();
+                        Clear();
                         break;
                     }
 
@@ -918,7 +966,7 @@ void compare(Item *items, int *totalItems, char *buff) {
                     if(selectedCount == 0) {
                         printf("\nError: No valid items selected.\n");
                         Pause();
-                    Clear();
+                        Clear();
                         break;
                     }
 
@@ -1004,7 +1052,7 @@ void regist(Item *items, int *totalItems, char *buff) {
                         errno = EINVAL; //* Invalid Arguments ERROR;
                         perror("\nError");
                         Pause();
-                    Clear();
+                        Clear();
                         break;
                     }
 
