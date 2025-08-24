@@ -52,7 +52,6 @@ void erase(Item *items, int *totalItems, char *buff);
 void search(Item *items, int *totalItems, char *buff);
 void regist(Item *items, int *totalItems, char *buff);
 void compare(Item *items, int *totalItems, char *buff);
-void removeFromStruct(Item *items, int *totalItems, char *itemName);
 void getFilePath(char *fullPath, size_t size, const char *fileName); //! it wasn't me who did this
 
 
@@ -206,7 +205,7 @@ void eraseData(Item *items, char *buff) {
         switch(op) {
             case 1: {
                 FILE *file = accessFile("BuySmart.txt", "w");
-                memset(&items, 0, sizeof(items));
+                memset(items, 0, sizeof(items));
 
                 printf("\nData deleted Successfully!!\n");
                 Pause();
@@ -343,10 +342,15 @@ void edit(Item *items, int *totalItems, char *buff) {
                     }
 
                     switch(op) {
-                        case 1:
-                            // TODO: Implement Start editing
-                            printf("\n\"Start editing\" not implemented yet.\n");
+                        case 1: {
+                            rewind(file);
+                            while(fgets(line, sizeof(line), file) != NULL) {
+                                if(strncmp(line, "Name:", 5) == 0 && strcasestr(line, itemName)) {
+                                    // TODO: continue here
+                                }
+                            }
                             break;
+                        }
                         case 0:
                             return;
                         default:
@@ -355,7 +359,7 @@ void edit(Item *items, int *totalItems, char *buff) {
                             Pause();
                             Clear();
                 }
-                    break; //! added here bc of case 1
+                    break;
                     
                 } while (op != 0);
 
@@ -466,6 +470,7 @@ void erase(Item *items, int *totalItems, char *buff) {
                 rewind(file);
                 int found = 0;
                 int removed  = 0;
+                int fclosed = 0;
 
                 do {
                     Clear();
@@ -519,7 +524,12 @@ void erase(Item *items, int *totalItems, char *buff) {
                                     fputs(line, temp);
                                 }
                             }
+                            fclose(file);
+                            fclose(temp);
+                            fclosed = 1;
+
                             printf("\nSuccessfully removed!!\n");
+
 
                             removed = 1;
                             break;
@@ -541,14 +551,15 @@ void erase(Item *items, int *totalItems, char *buff) {
 
                 free(tempName);
                 free(itemName);
-                fclose(file);
-                fclose(temp);
+
+                if(!fclosed) {
+                    fclose(file);
+                    fclose(temp);
+                }
 
                 if(removed) {
                     remove("BuySmart.txt");
                     rename("temp.txt", "BuySmart.txt");
-
-                    removeFromStruct(items, totalItems, itemName);
                 }
 
                 Pause();
@@ -565,23 +576,6 @@ void erase(Item *items, int *totalItems, char *buff) {
         }
 
     } while (op != 0);
-}
-
-void removeFromStruct(Item *items, int *totalItems, char *itemName) {
-    int i, j;
-    for (i = 0; i < *totalItems; i++) {
-        if (strcasecmp(items->name[i], itemName) == 0) {
-            for (j = i; j < *totalItems - 1; j++) {
-                strcpy(items->name[j], items->name[j+1]);
-                strcpy(items->unit[j], items->unit[j+1]);
-                items->price[j] = items->price[j+1];
-                items->pricePQ[j] = items->pricePQ[j+1];
-                items->qty[j] = items->qty[j+1];
-            }
-            (*totalItems)--;
-            break;
-        }
-    }
 }
 
 void search(Item *items, int *totalItems, char *buff) {
@@ -747,11 +741,15 @@ void save(Item *items, int *totalItems, char *buff) {
                     fprintf(file, "Price Per Quantity: %.2fR$\n\n", items->pricePQ[i]);
                 }
             
+                fclose(file);
+
+                memset(items, 0, sizeof(*items));
+                *totalItems = 0;
+                
                 printf("\nSaved successfully!\n");
                 Pause();
                 Clear();
 
-                fclose(file);
                 break;
             }
             case 0:
