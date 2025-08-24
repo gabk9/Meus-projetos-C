@@ -47,7 +47,7 @@ FILE *accessFile(char *fileDir, char *act);
 char *strcasestr(const char *src, const char *sub); //! also not made by me
 void edit(Item *items, int *totalItems, char *buff);
 void save(Item *items, int *totalItems, char *buff);
-void read(Item *items, int *totalItems, char *buff);
+void list(Item *items, int *totalItems, char *buff);
 void erase(Item *items, int *totalItems, char *buff);
 void search(Item *items, int *totalItems, char *buff);
 void regist(Item *items, int *totalItems, char *buff);
@@ -117,7 +117,7 @@ int main(int argc, char **argv) {
                 Pause();
                 break;
             case 4:
-                read(&items, &totalItems, buff);
+                list(&items, &totalItems, buff);
                 Pause();
                 break;
             case 5:
@@ -227,7 +227,7 @@ void edit(Item *items, int *totalItems, char *buff) {
     Clear();
     int op; 
     static int typeSpeed = 7;
-
+    
     do {
         printf("========Edit Menu========\n");
         type("[1] Read from file\n[0] Return to main menu\n", typeSpeed);
@@ -247,10 +247,14 @@ void edit(Item *items, int *totalItems, char *buff) {
 
         switch (op) {
             case 1: {
-                Clear();
                 char line[1024];
                 char **tempName = calloc(MAX_ITEMS, sizeof(char *));
                 char *itemName = calloc(MAX_CHAR, sizeof(char));
+                FILE *file = accessFile("BuySmart.txt", "r");
+
+                fseek(file, 0, SEEK_END);
+                long fileSize = ftell(file);
+                rewind(file);
 
                 if(!tempName || !itemName) {
                     printf("\nError: Allocation error!\n");
@@ -271,7 +275,6 @@ void edit(Item *items, int *totalItems, char *buff) {
                     }
                 }
 
-                FILE *file = accessFile("BuySmart.txt", "r");
                 if(!file) {
                     printf("\nError: %s\n", strerror(errno));
                     Pause();
@@ -283,6 +286,13 @@ void edit(Item *items, int *totalItems, char *buff) {
                     break;
                 }
 
+                if(!fileSize) {
+                    printf("\nError: No items found in file\n");
+                    Pause();
+                    Clear();
+                    break;
+                }
+
                 int itemCount = 0;
                 while(fgets(line, sizeof(line), file) != NULL && itemCount < MAX_ITEMS) {
                     if(strncmp(line, "Name:", 5) == 0) {
@@ -291,6 +301,7 @@ void edit(Item *items, int *totalItems, char *buff) {
                     }
                 }
 
+                Clear();
                 printf("========Editing========\n");
                 printf("Names from file:\n");
                 for(int i = 0; i < itemCount; i++) {
@@ -411,11 +422,16 @@ void erase(Item *items, int *totalItems, char *buff) {
 
         switch (op) {
             case 1: {
-                Clear();
                 char line[1024];
                 char **tempName = calloc(MAX_ITEMS, sizeof(char *));
                 char *itemName = calloc(MAX_CHAR, sizeof(char));
+                FILE *file = accessFile("BuySmart.txt", "r");
+                FILE *temp = accessFile("temp.txt", "w");
 
+                fseek(file, 0, SEEK_END);
+                long fileSize = ftell(file);
+                rewind(file);
+                
                 if(!tempName || !itemName) {
                     printf("\nError: Allocation error!\n");
                     free(itemName);
@@ -435,8 +451,6 @@ void erase(Item *items, int *totalItems, char *buff) {
                     }
                 }
                 
-                FILE *file = accessFile("BuySmart.txt", "r");
-                FILE *temp = accessFile("temp.txt", "w");
 
                 if(!file) {
                     printf("\nError: %s\n", strerror(errno));
@@ -449,6 +463,14 @@ void erase(Item *items, int *totalItems, char *buff) {
                     break;
                 }
 
+                if(!fileSize) {
+                    printf("\nError: No items found in file\n");
+                    Pause();
+                    Clear();
+                    break;
+                }
+
+
                 int itemCount = 0;
                 while(fgets(line, sizeof(line), file) != NULL && itemCount < MAX_ITEMS) {
                     if(strncmp(line, "Name:", 5) == 0) {
@@ -457,6 +479,7 @@ void erase(Item *items, int *totalItems, char *buff) {
                     }
                 }
 
+                Clear();
                 printf("========Removing========\n");
                 printf("Names from file:\n");
                 for(int i = 0; i < itemCount; i++) {
@@ -602,11 +625,15 @@ void search(Item *items, int *totalItems, char *buff) {
 
         switch (op) {
             case 1: {
-                Clear();
                 char line[1024];
                 char **tempName = calloc(MAX_ITEMS, sizeof(char *));
                 char *itemName = calloc(MAX_CHAR, sizeof(char));
-
+                FILE *file = accessFile("BuySmart.txt", "r");
+                
+                fseek(file, 0, SEEK_END);
+                long fileSize = ftell(file);
+                rewind(file);
+                
                 if(!tempName || !itemName) {
                     printf("\nError: Allocation error!\n");
                     free(itemName);
@@ -626,7 +653,6 @@ void search(Item *items, int *totalItems, char *buff) {
                     }
                 }
 
-                FILE *file = accessFile("BuySmart.txt", "r");
                 if(!file) {
                     printf("\nError: %s\n", strerror(errno));
                     Pause();
@@ -638,6 +664,13 @@ void search(Item *items, int *totalItems, char *buff) {
                     break;
                 }
 
+                if(!fileSize) {
+                    printf("\nError: No items found in file\n");
+                    Pause();
+                    Clear();
+                    break; 
+                }
+
                 int itemCount = 0;
                 while(fgets(line, sizeof(line), file) != NULL && itemCount < MAX_ITEMS) {
                     if(strncmp(line, "Name:", 5) == 0) {
@@ -645,6 +678,8 @@ void search(Item *items, int *totalItems, char *buff) {
                         itemCount++;
                     }
                 }
+
+                Clear();
                 printf("========Searching========\n");
                 printf("Names from file:\n");
                 for(int i = 0; i < itemCount; i++) {
@@ -813,10 +848,15 @@ void Credits(char *buff) {
     } while (op != 1);
 }
 
-void read(Item *items, int *totalItems, char *buff) {
+void list(Item *items, int *totalItems, char *buff) {
     Clear();
     FILE *file = accessFile("BuySmart.txt", "r");
     int op;
+
+    fseek(file, 0, SEEK_END);
+    long fileSize = ftell(file);
+    rewind(file);
+
     static int typeSpeed = 7;
 
     do {
@@ -838,9 +878,15 @@ void read(Item *items, int *totalItems, char *buff) {
 
         switch(op) {
             case 1: {
-                Clear();
                 int fileCount = 0;
                 char line[1024];
+
+                if(!fileSize) {
+                    printf("\nError: No items found in file\n");
+                    Pause();
+                    Clear();
+                    break;
+                }
 
                 printf("Items list:\n\n");
 
@@ -934,7 +980,7 @@ void compare(Item *items, int *totalItems, char *buff) {
                     }
                     fclose(file);
 
-                    if(fileCount == 0) {
+                    if(!fileCount) {
                         printf("\nError: No items found in file\n");
                         Pause();
                         Clear();
