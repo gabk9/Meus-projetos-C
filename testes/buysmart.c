@@ -445,9 +445,9 @@ void erase(Item *items, int *totalItems, char *buff) {
                     if (!tempName[i]) {
                         printf("\nError: Array allocation error!\n");
                         for (size_t j = 0; j < i; j++) free(tempName[j]);
-                        free(tempName);
-                        free(itemName);
-                        break;
+                            free(tempName);
+                            free(itemName);
+                            break;
                     }
                 }
                 
@@ -506,7 +506,7 @@ void erase(Item *items, int *totalItems, char *buff) {
                                 if(fgets(line, sizeof(line), file))
                                     printf("%s", line);
                             }
-                        found = 1;
+                            found = 1;
                             break;
                         }
                     }
@@ -647,9 +647,9 @@ void search(Item *items, int *totalItems, char *buff) {
                     if (!tempName[i]) {
                         printf("\nError: Array allocation error!\n");
                         for (size_t j = 0; j < i; j++) free(tempName[j]);
-                        free(tempName);
-                        free(itemName);
-                        break;
+                            free(tempName);
+                            free(itemName);
+                            break;
                     }
                 }
 
