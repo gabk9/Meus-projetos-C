@@ -155,9 +155,9 @@ int main(int argc, char **argv) {
 
     } while(op != 0);
 
-    free(buff);
-
+    
 leave:
+    free(buff);
     return 0;
 }
 
