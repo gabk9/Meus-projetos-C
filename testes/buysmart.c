@@ -358,7 +358,7 @@ void edit(Item *items, int *totalItems, char *buff) {
                             perror("\nError");
                             Pause();
                             Clear();
-                }
+                    }
                     break;
                     
                 } while (op != 0);
