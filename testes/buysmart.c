@@ -326,7 +326,7 @@ void edit(Item *items, int *totalItems, char *buff) {
                                 if(fgets(line, sizeof(line), file))
                                     printf("%s", line);
                             }
-                        found = 1;
+                            found = 1;
                             break;
                         }
                     }
@@ -444,10 +444,12 @@ void erase(Item *items, int *totalItems, char *buff) {
 
                     if (!tempName[i]) {
                         printf("\nError: Array allocation error!\n");
-                        for (size_t j = 0; j < i; j++) free(tempName[j]);
-                            free(tempName);
-                            free(itemName);
-                            break;
+                        for (size_t j = 0; j < i; j++) 
+                            free(tempName[j]);
+
+                        free(tempName);
+                        free(itemName);
+                        break;
                     }
                 }
                 
@@ -646,10 +648,12 @@ void search(Item *items, int *totalItems, char *buff) {
 
                     if (!tempName[i]) {
                         printf("\nError: Array allocation error!\n");
-                        for (size_t j = 0; j < i; j++) free(tempName[j]);
-                            free(tempName);
-                            free(itemName);
-                            break;
+                        for (size_t j = 0; j < i; j++)
+                            free(tempName[j]);
+                            
+                        free(tempName);
+                        free(itemName);
+                        break;
                     }
                 }
 
@@ -658,7 +662,9 @@ void search(Item *items, int *totalItems, char *buff) {
                     Pause();
                     Clear();
 
-                    for(size_t i = 0; i < MAX_ITEMS; i++) free(tempName[i]);
+                    for(size_t i = 0; i < MAX_ITEMS; i++) 
+                        free(tempName[i]);
+
                     free(tempName);
                     free(itemName);
                     break;
