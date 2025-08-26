@@ -7,7 +7,7 @@
     #include <windows.h>
     #define SleepMs(ms) Sleep(ms)
     #define Pause() system("pause")
-    #define ClearScreen() system("cls")
+    #define ClearScreen() system("cls")  
 #else 
     #include <unistd.h>
     #define SleepMs(ms) usleep((ms) * 1000)

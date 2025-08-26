@@ -6,7 +6,7 @@
 #include <windows.h>
 #include <locale.h>
 #include <stdarg.h>
-
+ 
 #define MAXPASSWORD 9999 // Colocado aqui para uma alteração mais fácil
 #define MINPASSWORD 1 // Colocado aqui para uma alteração mais fácil (melhor usar 0 ou 1, o tamanho entre o máximo e o mínimo nunca muda)
 

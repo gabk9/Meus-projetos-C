@@ -1,7 +1,7 @@
 Escape            Descrição
 
 
-\a             Toca um bipe, alarme sonoro padrão do sistema
+\a             Toca um bipe, alarme sonoro padrão do sistema 
 --------------------------------------------------------------------------
 \b             backspace
 --------------------------------------------------------------------------

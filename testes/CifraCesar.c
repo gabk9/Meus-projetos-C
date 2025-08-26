@@ -5,7 +5,7 @@
 #include <locale.h>
 #include <stdarg.h>  // Necess�rio para va_list
 
-HANDLE hConsole;
+HANDLE hConsole; 
 void typewriter(const char *texto, int ms);
 void setCor(HANDLE hConsole, int cor);
 void CleanIn();

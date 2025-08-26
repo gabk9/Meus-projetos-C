@@ -5,8 +5,8 @@ int main() {
     FILE *f = fopen("non_existing_file.txt", "r");
     
     if (f == NULL) {
-        perror("Error on opening the file!");
-    }
+        perror("Error on opening the file!"); 
+    } 
     
     errno = EACCES;
     

@@ -1,7 +1,7 @@
 == Exemplo de C em Windows para mudar a cor de textos específicos ==
 
 
-// Exemplo: Mudar a cor de um texto específico no console (Windows)
+// Exemplo: Mudar a cor de um texto específico no console (Windows) 
 
 #include <stdio.h>
 #include <windows.h>

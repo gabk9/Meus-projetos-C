@@ -4,9 +4,9 @@
 union Data {
     int i;
     float f;
-    unsigned char bytes[4];
+    unsigned char bytes[4]; 
 };
-
+ 
 int main() {
     union Data d;
 

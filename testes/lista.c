@@ -6,8 +6,8 @@ int main() {
     int novo;
 
     while(lista[tam] != 0 && tam < 10) tam++;
-
-    printf("Original list:\n");
+ 
+    printf("Original list:\n"); 
     for (int i = 0; i < tam; i++) printf("%d ", lista[i]);
 
     printf("\n\nType-in a number to add on the list: ");

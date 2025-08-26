@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <windows.h>
-
+ 
 void getFilePath(char *fullPath, size_t size, const char *fileName);
 FILE* accessFile(char *fileName, char *act);
-
+ 
 int main() {
     char fileName[50];
 

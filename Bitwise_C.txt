@@ -1,4 +1,4 @@
-Operação               Operador      Equivalência Matemática                 Exemplo em C
+Operação               Operador      Equivalência Matemática                 Exemplo em C 
 
 
 ---------------------------------------------------------------------------------------

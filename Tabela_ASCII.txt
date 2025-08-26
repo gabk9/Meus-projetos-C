@@ -2,7 +2,7 @@ Tabela ASCII (0–127)
 ====================
 Dec	Hex	Char
 --------------------
-0	0x0	(controle)
+0	0x0	(controle) 
 1	0x1	(controle)
 2	0x2	(controle)
 3	0x3	(controle)

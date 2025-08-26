@@ -6,7 +6,7 @@
 int main() {
     system("chcp 65001");
     setlocale(LC_ALL, "Portuguese_Brazil");
-    int nInteiro;
+    int nInteiro; 
     char letra, nome[100];
     float preco;
 

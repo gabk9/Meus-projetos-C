@@ -7,8 +7,8 @@ void randCor(HANDLE hConsole, int min, int max);
 void setCor(HANDLE hConsole, int cor);
 
 int main() {
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE); 
+    CONSOLE_SCREEN_BUFFER_INFO csbi; 
 
     srand(time(NULL));
     int h;

@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 
-int main() {
+int main() { 
     char buffer[100], nome[100];
     int id;
-
+ 
     do{
         printf("Me diga sua Idade e seu Nome: ");
 

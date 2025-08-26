@@ -2,9 +2,9 @@
 #include <locale.h>
 
 int main() {
-    FILE *arquivo = fopen("Dados.txt", "w");
+    FILE *arquivo = fopen("Dados.txt", "w"); 
 
     if(arquivo == NULL) {
-        printf("")
+        printf("");
     }
 }

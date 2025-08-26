@@ -7,8 +7,8 @@ int main(int argc, char **argv) {
 
     printf("Type-in a number: ");
     scanf("%d", &n);
-
-    if (n == 0) {
+ 
+    if (n == 0) { 
         goto print_0;
     }
     goto call_myfunc;

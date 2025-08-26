@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 #define MAXSTR 50
-
+  
 void CleanStr(char *var);
 int AlphaOrder(char **array, int size) ;
 void printA(char **array, int size);

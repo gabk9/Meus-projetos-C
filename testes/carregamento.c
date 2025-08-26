@@ -6,7 +6,7 @@ void Vload(int ms);
 
 int main() {
     loading(25);
-    printf("\n");
+    printf("\n"); 
     Vload(25);
     return 0;
 }

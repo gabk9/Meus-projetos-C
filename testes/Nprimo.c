@@ -5,8 +5,8 @@
 
 bool ehPrimo(int n);
 void listarPrimos();
-void verificarPrimo();
-
+void verificarPrimo(); 
+ 
 int main() {
     setlocale(LC_ALL, "Portuguese_Brazil");
     int opcao;

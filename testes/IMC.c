@@ -5,9 +5,9 @@
 #include <stdlib.h>
 
 void setCor(int cor);
-void typewriter(const char *texto, int delay_ms);
+void typewriter(const char *texto, int delay_ms); 
 void linha();
-float calcularIMCENIM();
+float calcularIMCENIM(); 
 float calcularIMCENM();
 float calcularIMCPTIM();
 float calcularIMCPTM();

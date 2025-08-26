@@ -6,8 +6,8 @@ int main() {
     printf("Me diga quantos numeros ira usar: ");
     scanf("%d", &qtd);
 
-    int v[5], maior, menor;
-
+    int v[5], maior, menor; 
+ 
     for(int i = 0; i < qtd; i++) {
         printf("Me diga um numero: ");
         scanf("%d", &v[i]);

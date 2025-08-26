@@ -4,7 +4,7 @@ typedef struct {
     enum { T_INT, T_FLOAT, T_STRING } tipo;
     union {
         int i;
-        float f;
+        float f; 
         char s[20];
     } valor;
 } Variavel;

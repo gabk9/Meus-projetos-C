@@ -1,4 +1,4 @@
-Biblioteca              Usa quando precisa de...                                                                   Exemplo de função
+Biblioteca              Usa quando precisa de...                                                                   Exemplo de função 
 
 
 #include <stdio.h>       Entrada/saída (printar na tela, ler do teclado)                                           printf(), scanf()

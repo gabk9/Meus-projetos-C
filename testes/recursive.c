@@ -5,7 +5,7 @@ void myfunc(int initNum, int endNum);
 int main() {
     int n;
     printf("Type-in a number: ");
-    scanf("%d", &n);
+    scanf("%d", &n); 
 
     myfunc(0, n);
 

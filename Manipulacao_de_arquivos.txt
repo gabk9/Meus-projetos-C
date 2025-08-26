@@ -1,6 +1,6 @@
 Letra	               Significado                        	Descrição
 
-
+  
 r	                  Read	                      Abre o arquivo para leitura. O arquivo deve existir.
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 w	                  Write	                      Abre para escrita. Se o arquivo já existir, será apagado. Se não existir, será criado.

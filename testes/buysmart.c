@@ -1135,12 +1135,10 @@ void regist(Item *items, int *totalItems, char *buff) {
                         sscanf(buff, "%d", &items->qty[*totalItems]);
                         
                         (*totalItems)++;
-    
-                        printf("\nItem(s) registered in cache\n");
-                        Pause();
-                        Clear();
                     }
-    
+                    printf("\nItem(s) registered in cache\n");
+                    Pause();
+                    Clear();
             }
                 break;
             case 0:

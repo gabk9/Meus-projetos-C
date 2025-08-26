@@ -1,7 +1,7 @@
 Printf
 
 Digito            Descrição                                                             Especificador e tipo de dado
-
+ 
 
 d ou i            Números inteiros em base decimal                                      int, short int, long int
 -----------------------------------------------------------------------------------------------------------------------------------------

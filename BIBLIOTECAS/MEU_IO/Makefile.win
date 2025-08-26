@@ -1,0 +1,24 @@
+# Projeto: MEU IO
+# Makefile para Dev-C++ / MinGW (gcc) — projeto C puro
+
+CC       = gcc.exe
+CFLAGS   = -I. -Wall -Wextra -Werror -std=c11
+OBJ      = main.o MyIo.o
+BIN      = "MEU IO.exe"
+LIBS     = -static-libgcc
+
+.PHONY: all clean
+
+all: $(BIN)
+
+$(BIN): $(OBJ)
+	$(CC) $(OBJ) -o $(BIN) $(LIBS)
+
+main.o: main.c MyIo.h
+	$(CC) $(CFLAGS) -c main.c -o main.o
+
+MyIo.o: MyIo.c MyIo.h
+	$(CC) $(CFLAGS) -c MyIo.c -o MyIo.o
+
+clean:
+	del /f /q *.o *.exe 2>nul

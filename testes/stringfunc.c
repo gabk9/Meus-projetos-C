@@ -4,7 +4,7 @@
 #include <ctype.h>
 
 #define MAX_CHAR 100
-
+ 
 void trim(char *str);
 void trim2(char *str);
 void CleanStr(char *str);

@@ -6,7 +6,7 @@ int sum(int count, ...);
 int main() {
     int x = 5, y = 5, z = 5;
     
-    printf("%d", sum(3, x, y, z));
+    printf("%d", sum(3, x, y, z)); 
 }
 
 int sum(int count, ...) {

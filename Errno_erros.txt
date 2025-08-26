@@ -2,7 +2,7 @@ ERRNO erros:
 
 2 – ENOENT – No such file or directory – Arquivo ou diretório não existe.
 ----------------------------------------------------------------------------------------
-13 – EACCES – Permission denied – Permissão negada para acessar o recurso.
+13 – EACCES – Permission denied – Permissão negada para acessar o recurso. 
 ----------------------------------------------------------------------------------------
 17 – EEXIST – File exists – Arquivo já existe.
 ----------------------------------------------------------------------------------------

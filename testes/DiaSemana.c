@@ -4,7 +4,7 @@
 
 
 int main() {
-    setlocale(LC_ALL, "Portuguese_Brazil");
+    setlocale(LC_ALL, "Portuguese_Brazil"); 
     const char *dia[] = {"\rSaindo...", "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"};
     int n;
 

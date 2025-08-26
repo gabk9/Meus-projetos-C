@@ -9,7 +9,7 @@
     #define SleepMs(ms) usleep((ms) * 1000) 
     #define Clear() system("clear")
 #endif
-
+  
 int main() {
     #ifdef __WIN32
         printf("Running on Windows!!\n\n");

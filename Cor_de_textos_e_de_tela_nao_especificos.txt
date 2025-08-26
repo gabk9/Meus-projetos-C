@@ -1,6 +1,6 @@
 == Lista de Códigos de Cores para system("color XY") no C (Windows) ==
 
-Cada código é composto de dois dígitos hexadecimais:
+Cada código é composto de dois dígitos hexadecimais: 
   - O primeiro representa a cor de FUNDO (X)
   - O segundo representa a cor do TEXTO (Y)
 

@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include <locale.h>
+#include <locale.h> 
 #include <ctype.h>
 #include <windows.h>
 
@@ -8,26 +8,26 @@ void obterCaminhoArquivo(char* caminhoCompleto, size_t tamanho);
 
 int main() {
     int c, word = 0, inword = 0;
-    setlocale(LC_ALL, "Portuguese_Brazil");  // faltava ponto e vírgula
+    setlocale(LC_ALL, "Portuguese_Brazil");  // faltava ponto e vï¿½rgula
 
     char caminhoArquivo[MAX_PATH];
     obterCaminhoArquivo(caminhoArquivo, sizeof(caminhoArquivo));
 
     FILE *arquivo = fopen(caminhoArquivo, "r");
     if (arquivo == NULL) {
-        printf("Arquivo não encontrado!\n");
+        printf("Arquivo nï¿½o encontrado!\n");
         system("pause");
         return 1;  // encerra o programa
     }
 
-    // Exibe conteúdo do arquivo
+    // Exibe conteï¿½do do arquivo
     char linha[100];
     printf("\n===== Dados do Arquivo =====\n");
     while (fgets(linha, sizeof(linha), arquivo) != NULL) {
         printf("%s", linha);
     }
 
-    // Após ler o arquivo até o final, retorna para o início para contar palavras
+    // Apï¿½s ler o arquivo atï¿½ o final, retorna para o inï¿½cio para contar palavras
     rewind(arquivo);
 
     while((c = fgetc(arquivo)) != EOF) {
@@ -41,7 +41,7 @@ int main() {
 
     fclose(arquivo);
 
-    printf("\nNúmero de palavras: %d\n", word);
+    printf("\nNï¿½mero de palavras: %d\n", word);
     system("pause");
     return 0;
 }
@@ -53,7 +53,7 @@ void obterCaminhoArquivo(char* caminhoCompleto, size_t tamanho) {
     // Remove o nome do exe do caminho
     char* p = strrchr(caminhoExe, '\\');
     if (p) {
-        *(p + 1) = '\0'; // deixa só o caminho até a pasta
+        *(p + 1) = '\0'; // deixa sï¿½ o caminho atï¿½ a pasta
     }
 
     snprintf(caminhoCompleto, tamanho, "%sAtividade4.txt", caminhoExe);
