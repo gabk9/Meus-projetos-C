@@ -1,5 +1,0 @@
-Name: Orange
-Price: 26.00R$
-Total amount in "kg": 5
-Price Per Quantity: 5.20R$
-
