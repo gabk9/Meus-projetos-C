@@ -360,6 +360,8 @@ void edit(Item *items, int *totalItems, char *buff) {
                                     // TODO: continue here
                                 }
                             }
+
+                            rewind(file);
                             break;
                         }
                         case 0:
@@ -472,6 +474,7 @@ void erase(Item *items, int *totalItems, char *buff) {
                     break;
                 }
 
+                rewind(file);
 
                 int itemCount = 0;
                 while(fgets(line, sizeof(line), file) != NULL && itemCount < MAX_ITEMS) {
@@ -555,7 +558,7 @@ void erase(Item *items, int *totalItems, char *buff) {
 
                             printf("\nSuccessfully removed!!\n");
 
-
+                            rewind(file);
                             removed = 1;
                             break;
                         case 0:
@@ -586,6 +589,8 @@ void erase(Item *items, int *totalItems, char *buff) {
                     remove("BuySmart.txt");
                     rename("temp.txt", "BuySmart.txt");
                 }
+
+                rewind(file);
 
                 Pause();
                 Clear();
@@ -903,6 +908,8 @@ void list(Item *items, int *totalItems, char *buff) {
                     return;
                 }
 
+                rewind(file);
+
                 while(fgets(line, sizeof(line), file) != NULL && fileCount < MAX_ITEMS) {
                     printf("%s", line);
                 }
@@ -1047,8 +1054,10 @@ void compare(Item *items, int *totalItems, char *buff) {
                         printf("\nNo valid items to compare.\n");
                     }
 
+                    rewind(file);
+
                     Pause();
-                Clear();
+                    Clear();
                     break;
                 }
                 case 0:
@@ -1139,7 +1148,7 @@ void regist(Item *items, int *totalItems, char *buff) {
                     printf("\nItem(s) registered in cache\n");
                     Pause();
                     Clear();
-            }
+                }
                 break;
             case 0:
                 return;
