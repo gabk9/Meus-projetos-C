@@ -167,13 +167,11 @@ void Vload(int ms) {
         int percent = (i * 100) / total;
         printf("\r[");
 
-        for(int j = 0; j < i; j++) {
+        for(int j = 0; j < i; j++)
             printf("#");
-        }
 
-        for(int k = i; k < total; k++) {
+        for(int k = i; k < total; k++)
             printf(" ");
-        }
 
         printf("] %3d%%", percent);
         fflush(stdout);
