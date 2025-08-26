@@ -1,0 +1,15 @@
+Name: Orange
+Price: 26.00R$
+Total amount in "kg": 5
+Price Per Quantity: 5.20R$
+
+Name: Grapes
+Price: 15.00R$
+Total amount in "G": 550
+Price Per Quantity: 0.03R$
+
+Name: Mango
+Price: 20.00R$
+Total amount in "unit": 4
+Price Per Quantity: 5.00R$
+
