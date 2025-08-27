@@ -25,8 +25,9 @@
 
 void CleanIn();
 void Addition(int a, int b);
-void Division(float a, float b);
+void Division2(int a, int b);
 void Subtraction(int a, int b);
+void Division(float a, float b);
 void Multiplication(int a, int b);
 
 
@@ -69,6 +70,8 @@ int main() {
                 break;
             case 2:
                 Division(a, b);
+                printf("\nOr\n");
+                Division2(a, b);
                 break;
             case 3:
                 Addition(a, b);
@@ -121,8 +124,24 @@ void Division(float a, float b) {
     );
 
     printf("\n%.2f / %.2f = %.2f\n", a, b, result);
+}
+
+void Division2(int a, int b) {
+    int quotient, rest;
+    asm volatile (
+        "movl %2, %%eax;"
+        "cltd;"
+        "idivl %3;"
+        "movl %%eax, %0;"
+        "movl %%edx, %1;"
+        : "=r"(quotient), "=r"(rest)
+        : "r"(a), "r"(b)
+        : "%eax", "%edx"
+    );
+
+    printf("\n%d / %d = %d with remainder %d\n", a, b, quotient, rest);
     Pause();
-    Clear();  
+    Clear();
 }
 
 void Addition(int a, int b) {
