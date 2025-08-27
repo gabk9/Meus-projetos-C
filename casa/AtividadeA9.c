@@ -11,7 +11,7 @@ int main() {
         : "r" (a), "r" (b)
     );
 
-    printf("%d OR %d = %d\n", a, b, result);
+    printf("%d | %d = %d\n", a, b, result);
 
     __asm__ (
         "movl %1, %%eax;"
@@ -21,7 +21,7 @@ int main() {
         : "r" (a), "r" (b)
     );
 
-    printf("%d XOR %d = %d", a, b, result);
+    printf("%d ^ %d = %d", a, b, result);
 
     return 0;
 }
