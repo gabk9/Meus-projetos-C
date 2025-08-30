@@ -1,4 +1,4 @@
-# Lista de 10 Exercícios de Inline Assembly em C
+# Lista de 20 Exercícios de Inline Assembly em C
 
 1. Soma simples
    Objetivo: Somar dois números inteiros usando inline assembly.
