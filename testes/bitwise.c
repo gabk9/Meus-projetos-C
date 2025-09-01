@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 int main() {
-    unsigned char a = 5;  // 00000101 
+    unsigned char a = 5;  // 00000101
     unsigned char b = 9;  // 00001001
     int c = 5, d = 6;
 
