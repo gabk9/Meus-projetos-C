@@ -4,7 +4,7 @@
 
 char *invertStr(char *str, size_t length);
 
-#define MAX_CHAR 50
+#define MAX_CHAR 256
 
 int main() {
     char *word = calloc(MAX_CHAR, sizeof(char));
@@ -13,9 +13,8 @@ int main() {
     fgets(word, MAX_CHAR, stdin);
     word[strcspn(word, "\n")] = '\0';
     
-    int len = strlen(word);
-    char *copy = calloc(len, sizeof(char));
-    char *newWord = calloc(len, sizeof(char));
+    char *copy = malloc(strlen(word) * sizeof(char));
+    char *newWord = malloc(strlen(word) * sizeof(char));
     strcpy(copy, word);
     strcpy(newWord, invertStr(word, strlen(word)));
 
