@@ -46,10 +46,8 @@ int main(void) {
 void printArr(intArray arr) {
     printf("[");
     for (int i = 0; i < arr.size; i++) {
-        if (i == arr.size - 1)
-            printf("%d", arr.data[i]);
-        else
-            printf("%d, ", arr.data[i]);
+        char *lastChar = (i == arr.size - 1) ? "" : ", ";
+        printf("%d%s", arr.data[i], lastChar);
     }
     printf("]\n");
 }
