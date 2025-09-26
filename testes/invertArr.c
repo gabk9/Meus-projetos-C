@@ -9,7 +9,6 @@ typedef struct {
 void CleanIn(void);
 void printArr(intArray arr);
 intArray invertarr(intArray arr);
-int arrlen(intArray arr);
 void arrcpy(intArray *dest, intArray src);
 
 int main(void) {
@@ -65,10 +64,6 @@ void arrcpy(intArray *dest, intArray src) {
     for (int i = 0; i < src.size; i++) {
         dest->data[i] = src.data[i];
     }
-}
-
-int arrlen(intArray arr) {
-    return arr.size;
 }
 
 intArray invertarr(intArray arr) {
