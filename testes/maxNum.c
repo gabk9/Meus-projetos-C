@@ -5,8 +5,8 @@
 #include <time.h>
 
 #define ARCHIVE "maxNum.txt"
-#define MAXNUMS 100000000ULL
-#define MAXGEN (1ULL << 63)
+#define MAXNUMS 100000000ULL    //* 10⁸
+#define MAXGEN (1ULL << 63)     //* 2⁶³ bytes
 //! To generate 10e8 64bit numbers and find the max took 18.5s, 1.4gb file, using hdd, i5-4690, 16gb of ram and using Linux 
 
 uint64_t rand64(uint64_t max) {
