@@ -1,0 +1,17 @@
+Operação               Operador      Equivalência Matemática                 Exemplo em C
+
+
+---------------------------------------------------------------------------------------
+Multiplicação ×2       << 1          x * 2                                   x << 1
+Multiplicação ×4       << 2          x * 4                                   x << 2
+Multiplicação ×8       << 3          x * 8                                   x << 3
+---------------------------------------------------------------------------------------
+Divisão ÷2             >> 1          x / 2 (parte inteira)                   x >> 1
+Divisão ÷4             >> 2          x / 4 (parte inteira)                   x >> 2
+Divisão ÷8             >> 3          x / 8 (parte inteira)                   x >> 3
+---------------------------------------------------------------------------------------
+Verificar se é ímpar   & 1           Se (x & 1) == 1, então x é ímpar        x & 1
+Verificar se é par     & 1           Se (x & 1) == 0, então x é par          !(x & 1)
+Dobrar número          << 1          Multiplica por 2                        x << 1
+Metade do número       >> 1          Divide por 2 (ignora decimais)         x >> 1
+---------------------------------------------------------------------------------------

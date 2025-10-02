@@ -1,0 +1,40 @@
+ERRNO erros:
+
+2 – ENOENT – No such file or directory – Arquivo ou diretório não existe.
+----------------------------------------------------------------------------------------
+13 – EACCES – Permission denied – Permissão negada para acessar o recurso.
+----------------------------------------------------------------------------------------
+17 – EEXIST – File exists – Arquivo já existe.
+----------------------------------------------------------------------------------------
+22 – EINVAL – Invalid argument – Argumento inválido passado para a função.
+----------------------------------------------------------------------------------------
+12 – ENOMEM – Out of memory – Memória insuficiente.
+----------------------------------------------------------------------------------------
+5 – EIO – Input/output error – Erro de entrada/saída.
+----------------------------------------------------------------------------------------
+1 – EPERM – Operation not permitted – Operação não permitida.
+----------------------------------------------------------------------------------------
+4 – EINTR – Interrupted system call – Chamada de sistema interrompida.
+----------------------------------------------------------------------------------------
+9 – EBADF – Bad file descriptor – Descritor de arquivo inválido.
+----------------------------------------------------------------------------------------
+14 – EFAULT – Bad address – Endereço inválido.
+----------------------------------------------------------------------------------------
+28 – ENOSPC – No space left on device – Sem espaço disponível no dispositivo.
+----------------------------------------------------------------------------------------
+6 – ENXIO – No such device or address – Dispositivo ou endereço não existe.
+----------------------------------------------------------------------------------------
+19 – ENODEV – No such device – Dispositivo não existe.
+----------------------------------------------------------------------------------------
+8 – ENOEXEC – Exec format error – Formato de arquivo executável inválido.
+----------------------------------------------------------------------------------------
+20 – ENOTDIR – Not a directory – Não é um diretório.
+----------------------------------------------------------------------------------------
+21 – EISDIR – Is a directory – É um diretório (não pode ser usado como arquivo).
+----------------------------------------------------------------------------------------
+29 – ESPIPE – Illegal seek – Operação de seek inválida.
+----------------------------------------------------------------------------------------
+24 – EMFILE – Too many open files – Muitos arquivos abertos.
+----------------------------------------------------------------------------------------
+11 – EAGAIN – Resource temporarily unavailable – Recurso temporariamente indisponível.
+----------------------------------------------------------------------------------------

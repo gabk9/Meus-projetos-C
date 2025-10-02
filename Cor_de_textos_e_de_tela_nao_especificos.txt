@@ -1,0 +1,23 @@
+== Lista de Códigos de Cores para system("color XY") no C (Windows) ==
+
+Cada código é composto de dois dígitos hexadecimais:
+  - O primeiro representa a cor de FUNDO (X)
+  - O segundo representa a cor do TEXTO (Y)
+
+== Códigos de Cores Básicos ==
+0 = Preto
+1 = Azul
+2 = Verde
+3 = Aqua
+4 = Vermelho
+5 = Roxo
+6 = Amarelo
+7 = Branco
+8 = Cinza
+9 = Azul Claro
+A = Verde Claro
+B = Aqua Claro
+C = Vermelho Claro
+D = Roxo Claro
+E = Amarelo Claro
+F = Branco Brilhante

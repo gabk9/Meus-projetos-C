@@ -1,0 +1,124 @@
+# Lista de 20 Exercícios de Inline Assembly em C
+
+1. Soma simples
+   Objetivo: Somar dois números inteiros usando inline assembly.
+   Dica: Use `addl` com registradores EAX e EBX.
+   Exemplo:
+   int a = 5, b = 3, result;
+
+2. Subtração simples
+   Objetivo: Subtrair dois números inteiros usando inline assembly.
+   Dica: Use `subl` com registradores EAX e EBX.
+   Exemplo:
+   int a = 10, b = 4, result;
+
+3. Multiplicação
+   Objetivo: Multiplicar dois números inteiros usando inline assembly.
+   Dica: Use `imull` com registradores EAX e EBX.
+   Exemplo:
+   int a = 6, b = 7, result;
+
+4. Operação lógica AND
+   Objetivo: Realizar a operação lógica AND entre dois números.
+   Dica: Use `andl` e registradores EAX e EBX.
+   Exemplo:
+   int a = 5, b = 3, result;
+
+5. Uso de constantes (#define)
+   Objetivo: Somar duas constantes definidas com `#define` usando inline assembly.
+   Dica: Use placeholders (%1, %2) para passar os valores.
+   Exemplo:
+   \#define X 10
+   \#define Y 15
+   int result;
+
+6. Incremento e decremento
+   Objetivo: Incrementar e decrementar números usando `incl` e `decl`.
+   Dica: Use EAX para armazenar o valor e aplicar as instruções.
+   Exemplo:
+   int a = 7, result;
+
+7. Soma de três números
+   Objetivo: Somar três números usando EAX, EBX e ECX.
+   Dica: Faça duas somas sequenciais em EAX.
+   Exemplo:
+   int a = 2, b = 3, c = 5, result;
+
+8. Operação OR e XOR
+   Objetivo: Realizar operações bit a bit OR e XOR entre dois números.
+   Dica: Use `orl` e `xorl` com registradores.
+   Exemplo:
+   int a = 5, b = 3, result;
+
+9. Troca de valores (swap)
+   Objetivo: Trocar o valor de duas variáveis usando inline assembly.
+   Dica: Use registradores e `xchg`.
+   Exemplo:
+   int a = 10, b = 20;
+
+10. Mini calculadora
+    Objetivo: Criar uma calculadora simples que faça +, -, \* e & usando inline assembly.
+    Dica: Receba dois números e uma operação do usuário e aplique a instrução correspondente.
+    Exemplo:
+    int a, b, result;
+    char op;
+
+11. Divisão inteira simples
+    Objetivo: Dividir dois números inteiros usando EAX/EDX e idiv.
+    Dica: Lembre-se que o quociente vai para EAX e o resto para EDX.
+    Exemplo:
+    int a = 20, b = 3, quociente, resto;
+
+12. Multiplicação com três operandos
+    Objetivo: Calcular (a * b) + c usando inline assembly.
+    Dica: Use imull para a multiplicação e addl para somar o terceiro número.
+    Exemplo:
+    int a = 2, b = 3, c = 5, result;
+
+13. Negação de um número
+    Objetivo: Transformar um número positivo em negativo usando inline assembly.
+    Dica: Use negl para inverter o sinal.
+    Exemplo:
+    int a = 10, result;
+
+14. Operações de shift (deslocamento)
+    Objetivo: Realizar deslocamento de bits à esquerda e à direita.
+    Dica: Use shl para multiplicar por 2 e shr para dividir por 2.
+    Exemplo:
+    int a = 4, result_left, result_right;
+
+15. Comparação e salto condicional
+    Objetivo: Comparar dois números e armazenar 1 se a > b, ou 0 caso contrário.
+    Dica: Use cmp e setg ou setl.
+    Exemplo:
+    int a = 10, b = 7, result;
+
+16. Loop simples com assembly
+    Objetivo: Somar números de 1 a 10 usando loop inline assembly.
+    Dica: Use loop ou dec + jnz.
+    Exemplo:
+    int sum = 0, i = 1;
+
+17. Operações de ponto flutuante
+    Objetivo: Somar dois números float usando SSE (movss, addss).
+    Dica: Use registradores xmm0 e xmm1.
+    Exemplo:
+    float a = 2.5, b = 3.7, result;
+
+18. Média de três números inteiros
+    Objetivo: Calcular (a + b + c) / 3 usando inline assembly.
+    Dica: Use addl para somar e idiv para dividir.
+    Exemplo:
+    int a = 4, b = 5, c = 6, result;
+
+19. Máscara de bits
+    Objetivo: Zerar ou manter apenas determinados bits de um número.
+    Dica: Use andl ou orl com constantes em hexadecimal.
+    Exemplo:
+    int a = 0xF0F0, mask = 0x0FF0, result;
+
+20. Operações combinadas com registro XMM
+    Objetivo: Calcular (a + b) * c usando floats e SSE.
+    Dica: Use movss, addss e mulss.
+    Exemplo:
+    float a = 1.5, b = 2.5, c = 3.0, result;
