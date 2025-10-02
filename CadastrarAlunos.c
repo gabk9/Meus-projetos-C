@@ -3,7 +3,7 @@
 #include <locale.h>
 #include <windows.h>
 
-#define TAM 41
+#define TAM 41 
 
 void setCor(int cor);
 void linha();

@@ -72,7 +72,7 @@ float comparacaoEn() {
         setCor(6); // Amarelo
         puts("\nNormal weight\n");
     } else if (lista.IMC < 30) {
-        setCor(12);
+        setCor(12); 
         puts("\nOverweight\n");
     } else {
         setCor(4); // Vermelho

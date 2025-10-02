@@ -1,0 +1,10 @@
+Name: Banana
+Price: 15.00R$
+Total amount in "unit": 3
+Price Per Quantity: 5.00R$
+
+Name: Morango
+Price: 25.00R$
+Total amount in "g": 500
+Price Per Quantity: 0.05R$
+

@@ -3,7 +3,7 @@
 #include <windows.h>
 #include <ctype.h>
 #include <locale.h>
-#include <stdarg.h>  // Necessário para va_list
+#include <stdarg.h>  // Necessï¿½rio para va_list
 
 HANDLE hConsole;
 void typewriter(const char *texto, int ms);
@@ -15,15 +15,15 @@ void printCor(HANDLE hConsole, const char *texto, int cor, int corF, ...);
 void Desincriptografar(HANDLE hConsole);
 void linha(HANDLE hConsole);
 
-int main() {
+int main() { 
     setlocale(LC_ALL, "Portuguese_Brazil");
     hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     int op;
 
     do {
-        printCor(hConsole, "\n=======CIFRA DE CÉSAR=======\n", 4, 1); // vermelho para Azul
+        printCor(hConsole, "\n=======CIFRA DE Cï¿½SAR=======\n", 4, 1); // vermelho para Azul
         typewriter("[1] Incriptografar\n[2] Desincriptografar\n[3] Apagar dados\n[4] Sair\n", 25); 
-        setCor(hConsole, 7); // Branco padrão
+        setCor(hConsole, 7); // Branco padrï¿½o
         scanf("%d", &op);
         CleanIn();
 
@@ -36,17 +36,17 @@ int main() {
                 FILE *arquivo = fopen(caminhoArquivo, "w"); 
                 setCor(hConsole, 4); // Vermelho claro
                 printf("Dados apagados com sucesso!!\n"); 
-                setCor(hConsole, 7); // Branco padrão
+                setCor(hConsole, 7); // Branco padrï¿½o
                 fclose(arquivo);
                 system("pause");
                 system("cls");
                 break;
             }
             case 4: 
-                printCor(hConsole, "Saindo...", 4, 7); // Vermelho para Branco padrão
+                printCor(hConsole, "Saindo...", 4, 7); // Vermelho para Branco padrï¿½o
                 break; 
             default: 
-                printCor(hConsole, "\n\aMe diga uma resposta válida!!\n", 12, 7); // Vermelho claro para Branco padrão
+                printCor(hConsole, "\n\aMe diga uma resposta vï¿½lida!!\n", 12, 7); // Vermelho claro para Branco padrï¿½o
                 system("pause");
                 system("cls");
         }
@@ -63,13 +63,13 @@ void Incriptografar(HANDLE hConsole) {
 
     system("cls");
     printf("Me diga o ");
-    printCor(hConsole, "deslocamento", 2, 7); // Verde para Branco padrão
+    printCor(hConsole, "deslocamento", 2, 7); // Verde para Branco padrï¿½o
     printf(": ");
     scanf("%d", &dslc);
     CleanIn();
 
     printf("Me Diga a ");
-    printCor(hConsole, "palavra", 5, 7); // Roxo para Branco padrão
+    printCor(hConsole, "palavra", 5, 7); // Roxo para Branco padrï¿½o
     printf(": ");
     fgets(palavra, sizeof(palavra), stdin);
     palavra[strcspn(palavra, "\n")] = '\0';
@@ -90,7 +90,7 @@ void Incriptografar(HANDLE hConsole) {
     linha(hConsole);
 
     printf("Palavra criptografada: ");
-    printCor(hConsole, "%s\n\n", 6, 7, resultado); // Amarelo para Branco padrão
+    printCor(hConsole, "%s\n\n", 6, 7, resultado); // Amarelo para Branco padrï¿½o
 
     char op;
     do {
@@ -104,11 +104,11 @@ void Incriptografar(HANDLE hConsole) {
 
         if(tolower(op) == 's') {
             fprintf(arquivo, "%s\n", resultado);
-            printCor(hConsole, "\nDados registrados com sucesso!!\n", 2, 7); // Verde para Branco padrão
+            printCor(hConsole, "\nDados registrados com sucesso!!\n", 2, 7); // Verde para Branco padrï¿½o
         } else if(tolower(op) == 'n') {
-            printCor(hConsole, "\nDados não registrados!!\n", 12, 7); // Vermelho claro para Branco padrão
+            printCor(hConsole, "\nDados nï¿½o registrados!!\n", 12, 7); // Vermelho claro para Branco padrï¿½o
         } else {
-            printCor(hConsole, "\aResposta inválida!!\n", 12, 7); // Vermelho claro para Branco padrão
+            printCor(hConsole, "\aResposta invï¿½lida!!\n", 12, 7); // Vermelho claro para Branco padrï¿½o
             system("pause");
         }
     } while(tolower(op) != 's' && tolower(op) != 'n');
@@ -145,7 +145,7 @@ void Desincriptografar(HANDLE hConsole) {
             obterCaminhoArquivo(caminhoArquivo, sizeof(caminhoArquivo), "CifraCesar.txt");
             arquivo = fopen(caminhoArquivo, "a");
             if (arquivo == NULL) {
-                printCor(hConsole, "\aErro ao abrir o arquivo para escrita!\n", 12, 7); // Vermelho claro para Branco padrão
+                printCor(hConsole, "\aErro ao abrir o arquivo para escrita!\n", 12, 7); // Vermelho claro para Branco padrï¿½o
                 system("pause");
                 system("cls");
                 return;
@@ -156,7 +156,7 @@ void Desincriptografar(HANDLE hConsole) {
         } else if (result2 == 0) {
             obterCaminhoArquivo(caminhoArquivo, sizeof(caminhoArquivo), "CifraCesar.txt");
         } else {
-            printCor(hConsole, "\aOpção inválida! Tente novamente.\n", 12, 7);
+            printCor(hConsole, "\aOpï¿½ï¿½o invï¿½lida! Tente novamente.\n", 12, 7);
         }
 
     } while (strcasecmp(resposta, "type") != 0 && strcasecmp(resposta, "read") != 0);
@@ -164,19 +164,19 @@ void Desincriptografar(HANDLE hConsole) {
     // Agora vamos abrir o arquivo para leitura e descriptografar tudo
     arquivo = fopen(caminhoArquivo, "r");
     if (arquivo == NULL) {
-        printCor(hConsole, "\aErro ao abrir o arquivo para leitura!\n", 12, 7); // Vermelho claro para Branco padrão
+        printCor(hConsole, "\aErro ao abrir o arquivo para leitura!\n", 12, 7); // Vermelho claro para Branco padrï¿½o
         system("pause");
         system("cls");
         return;
     }
 
-    // Verificar se o arquivo está vazio
+    // Verificar se o arquivo estï¿½ vazio
     fseek(arquivo, 0, SEEK_END);
     long tamanho = ftell(arquivo);
     rewind(arquivo);
 
     if (tamanho == 0) {
-        printCor(hConsole, "\aO arquivo está vazio!\n", 12, 7); // Vermelho claro para Branco padrão
+        printCor(hConsole, "\aO arquivo estï¿½ vazio!\n", 12, 7); // Vermelho claro para Branco padrï¿½o
         fclose(arquivo);
         system("pause");
         system("cls");
@@ -189,7 +189,7 @@ void Desincriptografar(HANDLE hConsole) {
     while (fgets(linhaOriginal, sizeof(linhaOriginal), arquivo) != NULL) {
         linhaOriginal[strcspn(linhaOriginal, "\n")] = '\0';
 
-        printCor(hConsole, "Tentando descriptografar: %s\n\n", 3, 7, linhaOriginal); // Aqua para Branco padrão
+        printCor(hConsole, "Tentando descriptografar: %s\n\n", 3, 7, linhaOriginal); // Aqua para Branco padrï¿½o
 
         for (int dslc = 1; dslc < 26; dslc++) {
             char tentativa[100];
@@ -206,7 +206,7 @@ void Desincriptografar(HANDLE hConsole) {
             }
             tentativa[strlen(linhaOriginal)] = '\0';
 
-            printCor(hConsole, "Deslocamento %2d: ", 6, 7, dslc); // Amarelo para Branco padrão
+            printCor(hConsole, "Deslocamento %2d: ", 6, 7, dslc); // Amarelo para Branco padrï¿½o
             printf("%s\n", tentativa);
         }
         puts("");
@@ -224,12 +224,12 @@ void setCor(HANDLE hConsole, int cor) {
 void printCor(HANDLE hConsole, const char *texto, int cor, int corF, ...) {
     SetConsoleTextAttribute(hConsole, cor);
             
-    // Esse negócio aqui em baixo eu admito que peguei no GPT
+    // Esse negï¿½cio aqui em baixo eu admito que peguei no GPT
     va_list args;
     va_start(args, corF);
     vprintf(texto, args);
     va_end(args);
-    // Esse negócio em cima 
+    // Esse negï¿½cio em cima 
     
     SetConsoleTextAttribute(hConsole, corF);   
 }
@@ -247,7 +247,7 @@ void CleanIn() {
 }
 
 void linha(HANDLE hConsole) {
-    printCor(hConsole, "\n=================================\n", 11, 7); // Aqua claro para Branco padrão
+    printCor(hConsole, "\n=================================\n", 11, 7); // Aqua claro para Branco padrï¿½o
 }
 
 // Gambiarra para fazer funcionar no VScode, (feita com GPT)
@@ -257,7 +257,7 @@ void obterCaminhoArquivo(char* caminhoCompleto, size_t tamanho, const char* nome
 
     char* p = strrchr(caminhoExe, '\\');
     if (p) {
-        *(p + 1) = '\0';  // Corta após a última barra
+        *(p + 1) = '\0';  // Corta apï¿½s a ï¿½ltima barra
     }
 
     snprintf(caminhoCompleto, tamanho, "%s%s", caminhoExe, nomeArquivo);
