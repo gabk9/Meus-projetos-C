@@ -20,8 +20,8 @@ first_input:
     printf("Enter matrix size (N x N): ");
     n = readInt();
 
-    if (n < 2) {
-        printf("\nError: too small\n");
+    if (n < 2 || n > 7) {
+        printf("\nError: invalid size\n");
         goto first_input;
     }
 
@@ -111,7 +111,7 @@ void printArr(const intArr arr) {
 }
 
 int readInt(void) {
-    char *buffer = calloc(64, sizeof(char));
+    char *buffer = calloc(128, sizeof(char));
     int value;
 
     if (!buffer)  {
