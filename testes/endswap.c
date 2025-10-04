@@ -73,6 +73,16 @@ first_input:
         printArr(copy[i]);
     }
 
+    for (size_t i = 0; i < mat->size; i++) {
+        free(mat[i].data);
+    }
+    free(mat);
+    
+    for (size_t i = 0; i < copy->size; i++) {
+        free(copy[i].data);
+    }
+    free(copy);
+
     return 0;
 }
 

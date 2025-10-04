@@ -30,6 +30,10 @@ int main(void) {
 
     printf("\n%s", new);
 
+    free(string1);
+    free(string2);
+    free(new);
+
     return 0;
 }
 
