@@ -13,6 +13,11 @@ int main(void) {
     char *string1 = calloc(MAXCHAR, sizeof(char));
     char *string2 = calloc(MAXCHAR, sizeof(char));
 
+    if (!string1 || !string2) {
+        printf("Error: allocation error!!");
+        exit(1);
+    }
+
     printf("Enter the 1-st string: ");
     fgets(string1, MAXCHAR, stdin);
     CleanStr(string1, '\n', '\0');
@@ -58,6 +63,11 @@ char *strrem(char *str, const char *substr) {
 char *strcopy(char *src) {
     int len = strsiz(src);
     char *dest = malloc((len + 1) * sizeof(char));
+
+    if (!dest) {
+        printf("Error: allocation error!!");
+        exit(1);
+    }
 
     for (int i = 0; i <= len; i++) {
         dest[i] = src[i];
