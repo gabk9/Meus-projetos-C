@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <time.h>
 
 #define BUFFER 0x80
+#define MAXSIZE 0x14
 typedef struct {
     int *data;
     int size;
@@ -16,15 +18,16 @@ void arrcpy(intArr *dest, const intArr src);
 int main(void) {
     intArr *mat;
     size_t n;
+    srand(time(NULL));
 
     do {
         printf("Enter matrix size (N x N): ");
         n = readInt();
     
-        if (n < 2 || n > 7) {
+        if (n < 2 || n > MAXSIZE) {
             fprintf(stderr, "Error: invalid size\n");
         }
-    } while (n < 2 || n > 7);
+    } while (n < 2 || n > MAXSIZE);
 
     mat = calloc(n, sizeof(intArr));
 
@@ -45,8 +48,7 @@ int main(void) {
     printf("\n");
     for(size_t i = 0; i < n; i++) {
         for (size_t j = 0; j < n; j++) {
-            printf("Enter the number [%zu][%zu]: ", i, j);
-            mat[i].data[j] = readInt();
+            mat[i].data[j] = rand() % 200;
         }
     }
 
@@ -113,7 +115,7 @@ void printArr(const intArr arr) {
     printf("[");
     for (size_t i = 0; i < arr.size; i++) {
         char *lastChar = (i == arr.size - 1) ? "" : ", ";
-        printf("%d%s", arr.data[i], lastChar);
+        printf("%3d%s", arr.data[i], lastChar);
     }
     printf("]\n");
 }
