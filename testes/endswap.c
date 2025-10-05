@@ -4,7 +4,9 @@
 #include <time.h>
 
 #define BUFFER 0x80
+#define MAXGEN 0xC8
 #define MAXSIZE 0x14
+#define DB (float)0x0400
 typedef struct {
     int *data;
     int size;
@@ -18,6 +20,7 @@ void arrcpy(intArr *dest, const intArr src);
 int main(void) {
     intArr *mat;
     size_t n;
+    double memStructs, memData, memTotal;
     srand(time(NULL));
 
     do {
@@ -45,10 +48,19 @@ int main(void) {
         }
     }
 
+    memStructs = n * sizeof(intArr);
+    memData = n * n * sizeof(int);
+    memTotal = memStructs + memData;
+
+    printf("\nMemory allocated successfully!!\n");
+    printf("Structs: %.2lfB, %.2lfKB\n", memStructs, memStructs / DB);
+    printf("Data: %.2lfB, %.2lfKB\n", memData, memData / DB);
+    printf("Total: %.2lfB, %.2lfKB\n\n", memTotal, memTotal / DB);
+
     printf("\n");
     for(size_t i = 0; i < n; i++) {
         for (size_t j = 0; j < n; j++) {
-            mat[i].data[j] = rand() % 200;
+            mat[i].data[j] = rand() % MAXGEN;
         }
     }
 
