@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <errno.h>
 
+#define BUFFER 0x80
 typedef struct {
     int *data;
     int size;
@@ -14,22 +15,21 @@ void arrcpy(intArr *dest, const intArr src);
 
 int main(void) {
     intArr *mat;
-    int n;
+    size_t n;
 
-first_input:
-    printf("Enter matrix size (N x N): ");
-    n = readInt();
-
-    if (n < 2 || n > 7) {
-        printf("\nError: invalid size\n");
-        goto first_input;
-    }
+    do {
+        printf("Enter matrix size (N x N): ");
+        n = readInt();
+    
+        if (n < 2 || n > 7) {
+            fprintf(stderr, "Error: invalid size\n");
+        }
+    } while (n < 2 || n > 7);
 
     mat = calloc(n, sizeof(intArr));
 
     if (!mat) {
-        errno = EACCES;
-        perror("\nError");
+        perror("\nError: Memory allocation error\n");
         return 1;
     }
 
@@ -37,8 +37,7 @@ first_input:
         mat[i].size = n;
         mat[i].data = calloc(n, sizeof(int));
         if (!mat[i].data) {
-            errno = EACCES;
-            perror("\nError");
+            perror("\nError: Memory allocation error\n");
             return 1;
         }
     }
@@ -54,31 +53,30 @@ first_input:
     intArr *copy = calloc(n, sizeof(intArr));
 
     if (!copy) {
-        errno = EACCES; 
-        perror("\nError"); 
+        perror("\nError: Memory allocation error\n"); 
         return 1; 
     }
 
-    for (size_t i = 0; i < mat->size; i++) {
+    for (size_t i = 0; i < n; i++) {
         copy[i] = swap(mat[i]);
     }
 
     printf("\nBefore:\n");
-    for (size_t i = 0; i < mat->size; i++) {
+    for (size_t i = 0; i < n; i++) {
         printArr(mat[i]);
     }
 
     printf("\nAfter:\n");
-    for (size_t i = 0; i < copy->size; i++) {
+    for (size_t i = 0; i < n ; i++) {
         printArr(copy[i]);
     }
 
-    for (size_t i = 0; i < mat->size; i++) {
+    for (size_t i = 0; i < n; i++) {
         free(mat[i].data);
     }
     free(mat);
     
-    for (size_t i = 0; i < copy->size; i++) {
+    for (size_t i = 0; i < n; i++) {
         free(copy[i].data);
     }
     free(copy);
@@ -103,7 +101,7 @@ void arrcpy(intArr *dest, const intArr src) {
     dest->data = malloc(src.size * sizeof(int));
 
     if (!dest->data) { 
-        perror("Error"); 
+        perror("\nError: Memory allocation error\n"); 
         exit(1); 
     }
 
@@ -121,28 +119,17 @@ void printArr(const intArr arr) {
 }
 
 int readInt(void) {
-    char *buffer = calloc(128, sizeof(char));
+    char buffer[BUFFER];
     int value;
 
-    if (!buffer)  {
-        errno = EACCES;
-        perror("\nError");
-        exit(1);
+    while (1) {
+        if (!fgets(buffer, sizeof(buffer), stdin)) {
+            perror("Error reading input");
+            exit(1);
+        }
+        if (sscanf(buffer, "%d", &value) == 1) {
+            return value;
+        }
+        fprintf(stderr, "Invalid input. Please enter an integer: ");
     }
-
-    if (!fgets(buffer, sizeof(buffer), stdin)) {
-        perror("Error: reading input error");
-        free(buffer);
-        exit(1);
-    }
-
-    if (sscanf(buffer, "%d", &value) != 1) {
-        errno = EINVAL;
-        perror("Error");
-        free(buffer);
-        exit(1);
-    }
-
-    free(buffer);
-    return value;
 }
