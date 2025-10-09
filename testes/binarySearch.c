@@ -33,7 +33,7 @@ int main(void) {
         printf("Enter the search value: ");
         input(buffer, MAXCHAR, "%d", &target);
     
-        intArr array = range(1, n+1);
+        intArr array = range(1, n);
     
         float logValue = log2f((float)n);
         int maxSteps = ceil(logValue);
@@ -78,7 +78,6 @@ int binarySearch(intArr list, int targ) {
 
 intArr range(int start, int end) {
     intArr arr;
-    end--;
     arr.size = (end >= start) ? end - start + 1 : start - end + 1;
     arr.data = malloc(arr.size * sizeof(int));
 
