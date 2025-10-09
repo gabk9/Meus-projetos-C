@@ -7,25 +7,32 @@
 #define MAXGEN 0xC8
 #define MAXSIZE 0x14
 #define DB (float)0x0400
+
 typedef struct {
     int *data;
     int size;
 } intArr;
 
-int readInt(void);
 intArr swap(intArr arr);
+char *strcopy(char *src);
+size_t strsiz(const char *str);
 void printArr(const intArr arr);
 void arrcpy(intArr *dest, const intArr src);
+int strcomp(const char *str1, const char *str2);
+void CleanStr(char *str, char target, char repl);
+int input(char *buffer, int size, char *fmt, void *out);
 
 int main(void) {
     intArr *mat;
     size_t n;
+    char *buffer = calloc(BUFFER, sizeof(char));
+    char *str = NULL; 
     double memStructs, memData, memTotal;
     srand(time(NULL));
 
     do {
         printf("Enter matrix size (N x N): ");
-        n = readInt();
+        input(buffer, BUFFER, "%zu", &n);
     
         if (n < 2 || n > MAXSIZE) {
             fprintf(stderr, "Error: invalid size\n");
@@ -132,18 +139,59 @@ void printArr(const intArr arr) {
     printf("]\n");
 }
 
-int readInt(void) {
-    char buffer[BUFFER];
-    int value;
+char *strcopy(char *src) {
+    int len = strsiz(src);
+    char *dest = malloc((len + 1) * sizeof(char));
 
-    while (1) {
-        if (!fgets(buffer, sizeof(buffer), stdin)) {
-            perror("Error reading input");
-            exit(1);
+    if (!dest) {
+        printf("Error: allocation error!!");
+        exit(1);
+    }
+
+    for (int i = 0; i <= len; i++) {
+        dest[i] = src[i];
+    }
+    return dest;
+}
+
+size_t strsiz(const char *str) {
+    int i = 0;
+    while (str[i]) i++;
+    return i;
+}
+
+void CleanStr(char *str, char target, char repl) {
+    for (size_t i = 0; i < str[i]; i++) 
+        if (str[i] == target) 
+            str[i] = repl;
+}
+
+int strcomp(const char *str1, const char *str2) {
+    size_t i = 0;
+    while (str1[i] && str2[i]) {
+        if (str1[i] != str2[i]) 
+            return 1;
+        i++;
+    }
+    return (str1[i] == str2[i]) ? 0 : 1;
+}
+
+int input(char *buffer, int size, char *fmt, void *out) {
+        while (1) {
+        if (!fgets(buffer, size, stdin))
+            return 0;
+    
+        CleanStr(buffer, '\n', '\0');
+
+        if (strcomp(fmt, "%s") == 0) {
+            *(char **)out = strcopy(buffer);
+            return 1;
         }
-        if (sscanf(buffer, "%d", &value) == 1) {
-            return value;
-        }
-        fprintf(stderr, "Invalid input. Please enter an integer: ");
+        else if (sscanf(buffer, fmt, out) == 1)
+            return 1;
+        
+        else
+            printf("Invalid input, try again: ");
+    
     }
 }
