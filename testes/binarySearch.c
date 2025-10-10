@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdbool.h>
 #include <string.h>
+#include <time.h>
 
 #define MAXCHAR (1ULL << 6)
 
@@ -13,6 +14,7 @@ typedef struct {
 } intArr;
 
 
+int randint(int init, int end);
 intArr range(int start, int end);
 int binarySearch(intArr list, int targ);
 int input(char *buffer, size_t size, const char *fmt, void *out);
@@ -34,7 +36,7 @@ int main(void) {
         input(buffer, MAXCHAR, "%d", &target);
     
         intArr array = range(1, n);
-    
+
         float logValue = log2f((float)n);
         int maxSteps = ceil(logValue);
         printf("\nlog2(%d) = %.4f\n", n, logValue);
@@ -46,6 +48,16 @@ int main(void) {
     }
 
     return 0;
+}
+
+
+int randint(int init, int end) {
+    static int seeded = 0;
+    if (!seeded) {
+        srand(time(NULL));
+        seeded = 1;
+    }
+    return (rand() % (end - init + 1)) + init;
 }
 
 int binarySearch(intArr list, int targ) {
@@ -71,14 +83,14 @@ int binarySearch(intArr list, int targ) {
         
     }
 
-    printf("\nTarget %d not found after %d comparisons.", targ, cmps);
+    printf("\n\nTarget %d not found after %d comparisons.", targ, cmps);
     return -1;
 
 }
 
 intArr range(int start, int end) {
     intArr arr;
-    arr.size = (end >= start) ? end - start + 1 : start - end + 1;
+    arr.size = end;
     arr.data = malloc(arr.size * sizeof(int));
 
     if (!arr.data) {
@@ -86,10 +98,16 @@ intArr range(int start, int end) {
         return arr;
     }
 
-    int step = (start <= end) ? 1 : -1;
-    for (int i = 0, val = start; i < arr.size; i++, val += step) {
-        arr.data[i] = val;
+    arr.data[0] = start;
+
+    int sum = 0;
+    for (int i = 1; i < arr.size; i++) {
+        int n = randint(1, 6);
+        arr.data[i] = arr.data[i - 1] + n;
+        sum += n;
     }
+
+    printf("\nThe difference average between each numbers in the array: %.2f\n", (float)sum / arr.size);
 
     return arr;
 }
