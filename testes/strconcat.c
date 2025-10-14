@@ -13,7 +13,11 @@ void CleanStr(char *str, char target, char repl);
 int main(void) {
     char *str1 = calloc(MAXCHAR, sizeof(char));
     char *str2 = calloc(MAXCHAR, sizeof(char));
-    char *buffer = calloc(MAXCHAR, sizeof(char));
+
+    if (!str1 || !str2) {
+        printf("Memory allocation error!\n!");
+        return 1;
+    }
 
     printf("Enter string n1: ");
     fgets(str1, MAXCHAR, stdin);
@@ -26,6 +30,9 @@ int main(void) {
     printf("\n\"%s\" + \"%s\" = ", str1, str2);
     strconcat(&str1, str2);
     printf("%s\n", str1);
+
+    free(str1);
+    free(str2);
 
     return 0;
 }
