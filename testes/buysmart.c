@@ -18,7 +18,12 @@
     } while(0)
     #define SleepMS(ms) usleep((ms) * 1000)
 #else 
-    #error "Operational system not recognized, terminating program!!\n"
+    #define TERMINATE_PROGRAM() \
+        _Pragma("GCC error \"Operational system not recognized,\"") \
+        _Pragma("GCC error \"terminating program!!\"")
+
+    TERMINATE_PROGRAM()
+    #error "Stopping compilation."
 #endif
 
 
