@@ -6,7 +6,8 @@
 #endif
 
 size_t strsiz(const char *str);
-ssize_t myPrintf(const void *in, size_t bytes);
+ssize_t myPrintf(const char *in);
+void CleanStr(char *str, char targ, char repl);
 size_t strcomp(const char *str1, const char *str2);
 ssize_t myScanf(size_t bytes, const char *fmt, void *out);
 
@@ -14,18 +15,21 @@ int main(void) {
     char str[64];
     char letter;
 
-    myPrintf("Enter a string: ", 16);
+    myPrintf("Enter a string: ");
     myScanf(sizeof(str), "%s", str);
+    CleanStr(str, '\n', '\0');
 
-    myPrintf("The string you just entered: ", 29);
-    myPrintf(str, strsiz(str));
+    myPrintf("The string you just entered: ");
+    myPrintf(str);
 
 
-    myPrintf("\nEnter an char: ", 16);
+    myPrintf("\n\nEnter a char: ");
     myScanf(1, "%c", &letter);
-
-    myPrintf("The char you just entered: ", 27);
-    myPrintf(&letter, 1);
+    CleanStr(&letter, '\n', '\0');
+    
+    char buff[2] = {letter, '\0'};
+    myPrintf("The char you just entered: ");
+    myPrintf(buff);
 
     return 0;
 }
@@ -34,18 +38,25 @@ ssize_t myScanf(size_t bytes, const char *fmt, void *out) {
     ssize_t len = -1;
     if (strcomp(fmt, "%s") == 0) {
         len = read(0, out, bytes - 1);
-        if (len > 0)
+        if (len > 0) {
             ((char*)out)[len] = '\0';
-        else
+            CleanStr((char *)out, '\n', '\0');
+        } else
             len = -1;
-
     } else if (strcomp(fmt, "%c") == 0) {
         len = read(0, out, bytes);
         
         if (len != 1)
             len = -1;
+
     }
+
     return len;
+}
+
+void CleanStr(char *str, char targ, char repl) {
+    for (size_t i = 0; str[i]; i++)
+        if (str[i] == targ) str[i] = repl;
 }
 
 size_t strcomp(const char *str1, const char *str2) {
@@ -54,8 +65,8 @@ size_t strcomp(const char *str1, const char *str2) {
     return 0;
 }
 
-ssize_t myPrintf(const void *in, size_t bytes) {
-    ssize_t len = write(1, in, bytes);
+ssize_t myPrintf(const char *in) {
+    ssize_t len = write(1, in, strsiz(in));
     return len;
 }
 
