@@ -120,12 +120,12 @@ int main(void) {
                         updatehistory();
                     else if (strcmp(cmds[i], CMDS) == 0) //* cmds instruction
                         cmdsCommand(cmds, cmdCount);
-                    else if (strcmp(cmds[i], CD) == 0) {
+                    else if (strcmp(cmds[i], CD) == 0) { //* cd instruction
                         char *new_address = cdCmd(instruction, address);
                         free(address); 
                         address = new_address;
                     }
-                    else if (strcmp(cmds[i], LS) == 0)
+                    else if (strcmp(cmds[i], LS) == 0) //* ls instruction
                         lsCmd(address);
                     break;
                 }
@@ -589,7 +589,7 @@ void neofetchCmd(void) {
     printc("TERMINAL\n", title_color, 7);
 
     printc("VERSION: ", label_color, 7);
-    printf("a0.1.55\n");
+    printf("b0.1.55\n");
 
     printc("───────────────────────────────\n", 6, 7);
 
