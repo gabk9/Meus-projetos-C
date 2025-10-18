@@ -10,8 +10,8 @@
 #define ECHO "echo"
 #define EXIT "exit"
 #define NEOFETCH "neofetch"
-#define SYSCMD "system"
 #define UPDATEHISTORY "updatehistory"
+#define CMDS "cmds"
 
 #ifdef _WIN32
     #include <windows.h>
@@ -35,11 +35,16 @@
 #endif
 
 
-void updatehistory(void);
 void neofetchCmd(void);
+void updatehistory(void);
 void setColor(int color);
+char *get_cpu_model(void);
+long get_total_ram_mb(void);
 void echoCmd(char *command);
 char* get_default_address(void);
+int sort(char **array, size_t count);
+void cmdsCommand(const char **cmds, size_t count);
+char **copyMat(char **dest, const char **src, size_t size);
 void printc(const char *str, int color, int resetColor, ...);
 
 
@@ -48,7 +53,7 @@ int main(void) {
         hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     #endif
     
-    const char *cmds[] = {CLEAR, EXIT, ECHO, SYSCMD, NEOFETCH, UPDATEHISTORY};
+    const char *cmds[] = {CLEAR, EXIT, ECHO, NEOFETCH, UPDATEHISTORY, CMDS};
     size_t cmdCount = sizeof(cmds) / sizeof(cmds[0]);
     
     char *command = calloc(MAXCHAR, sizeof(char));
@@ -77,20 +82,20 @@ int main(void) {
                 if (strlen(command) == strlen(cmds[i]) || command[strlen(cmds[i])] == ' ') {
                     found = 1;
                     
-                    if (strcmp(cmds[i], CLEAR) == 0) //* cls or clear cmd
+                    if (strcmp(cmds[i], CLEAR) == 0) //* cls or clear command
                         cls();
-                    else if (strcmp(cmds[i], EXIT) == 0) { //* exit cmd
+                    else if (strcmp(cmds[i], EXIT) == 0) { //* exit command
                         free(command);
                         return 0;
                     }
-                    else if (strcmp(cmds[i], ECHO) == 0) //* echo cmd
+                    else if (strcmp(cmds[i], ECHO) == 0) //* echo command
                         echoCmd(command);
-                    else if (strcmp(cmds[i], SYSCMD) == 0) //* system cmd
-                        printf("Running on %s\n", SYSTEM);
-                    else if (strcmp(cmds[i], NEOFETCH) == 0) //* neofetch cmd'
+                    else if (strcmp(cmds[i], NEOFETCH) == 0) //* neofetch command
                         neofetchCmd();
-                    else if (strcmp(cmds[i], UPDATEHISTORY) == 0) //* updateinfo cmd
+                    else if (strcmp(cmds[i], UPDATEHISTORY) == 0) //* updateinfo command
                         updatehistory();
+                    else if (strcmp(cmds[i], CMDS) == 0) //* cmds command
+                        cmdsCommand(cmds, cmdCount);
                     break;
                 }
             }
@@ -101,11 +106,65 @@ int main(void) {
 
     free(command);
     return 0;
-}   
+}
+
+void cmdsCommand(const char **cmds, size_t count) {
+    static char **copy = NULL;
+    static int initialized = 0;
+
+    if (!initialized) {
+        copy = malloc(count * sizeof(char *));
+        for (size_t i = 0; i < count; i++)
+            copy[i] = strdup(cmds[i]);
+
+        sort(copy, count);
+        initialized = 1;
+    }
+
+    for (size_t i = 0; i < count; i++)
+        printf("%s\n", copy[i]);
+}
+
+
+char **copyMat(char **dest, const char **src, size_t size) {
+    dest = malloc(size * sizeof(char *));
+    if (!dest) return NULL;
+
+    for (size_t i = 0; i < size; i++) {
+        dest[i] = strdup(src[i]);
+    }
+
+    return dest;
+}
+
+int sort(char **array, size_t count) {
+    char *aux;
+    int switches = 0;
+
+    for(size_t i = 0; i < count - 1; i++) {
+        for(size_t j = 0; j < count - i - 1; j++) {
+            if(strcasecmp(array[j], array[j + 1]) > 0) {
+                aux = array[j];
+                array[j] = array[j + 1];
+                array[j + 1] = aux;
+
+                switches = 1;
+            }
+        }
+        if(!switches)
+            break;
+    }
+    return 1;
+}
 
 void updatehistory(void) {
-    const char *logs[] = {"a0.0.4 - created terminal\n\tAdded: clear, echo, exit\n", "a0.0.55 - current\n\tAdded: neofetch cmd\n"};
-    int logCount = sizeof(logs) / sizeof(logs[0]);
+    const char *logs[] = {"a0.0.4 - created terminal\n\tAdded: clear, echo, exit\n\n",
+                          "a0.0.55 - minor changes\n\tAdded: neofetch cmd\n\n",
+                          "a0.0.75 - minor changes\n\tAdded: commands history\n\n",
+                          "a0.0.8 - minor changes\n\tEdited: optimized the the algorithm\n\n",
+                          "a0.0.95 - minor changes\n\tEdited: now the neofetch menu shows the cpu and mem\n\n",
+                          "a0.0.975 - minor changes(current)\n\tRemoved: system command removed\n"};
+    size_t logCount = sizeof(logs) / sizeof(logs[0]);
 
     for (size_t i = 0; i < logCount; i++)
         printf("%s", logs[i]);
@@ -201,6 +260,64 @@ char* get_time(void) {
     return buffer;
 }
 
+char *get_cpu_model(void) {
+    static char cpu[128];
+#ifdef _WIN32
+    DWORD size = sizeof(cpu);
+    LSTATUS status = RegGetValueA(
+        HKEY_LOCAL_MACHINE,
+        "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0",
+        "ProcessorNameString",
+        RRF_RT_REG_SZ,
+        NULL,
+        (PVOID)&cpu,
+        &size
+    );
+    if (status != ERROR_SUCCESS)
+        return "Unknown";
+    return cpu;
+#elif __linux__
+    FILE *fp = fopen("/proc/cpuinfo", "r");
+    if (!fp) return "Unknown";
+    while (fgets(cpu, sizeof(cpu), fp)) {
+        if (strncmp(cpu, "model name", 10) == 0) {
+            fclose(fp);
+            char *colon = strchr(cpu, ':');
+            return colon ? colon + 2 : "Unknown";
+        }
+    }
+    fclose(fp);
+    return "Unknown";
+#elif __APPLE__
+    size_t size = sizeof(cpu);
+    if (sysctlbyname("machdep.cpu.brand_string", cpu, &size, NULL, 0) == 0)
+        return cpu;
+    return "Unknown";
+#endif
+}
+
+long get_total_ram_mb(void) {
+#ifdef _WIN32
+    MEMORYSTATUSEX status;
+    status.dwLength = sizeof(status);
+    GlobalMemoryStatusEx(&status);
+    return status.ullTotalPhys / (1024 * 1024);
+#elif __linux__
+    long mem_kb = 0;
+    FILE *fp = fopen("/proc/meminfo", "r");
+    if (!fp) return -1;
+    fscanf(fp, "MemTotal: %ld kB", &mem_kb);
+    fclose(fp);
+    return mem_kb / 1024; // MB
+#elif __APPLE__
+    int64_t mem;
+    size_t len = sizeof(mem);
+    if (sysctlbyname("hw.memsize", &mem, &len, NULL, 0) == 0)
+        return (long)(mem / (1024 * 1024)); // MB
+    return -1;
+#endif
+}
+
 void neofetchCmd(void) {
     const char* ascii_art[] = {
         " ██████╗  █████╗ ██████╗           ██████╗ ███████╗",
@@ -258,7 +375,17 @@ void neofetchCmd(void) {
     printc("TERMINAL\n", title_color, 7);
 
     printc("VERSION: ", label_color, 7);
-    printf("a0.0.55\n");
-    
+    printf("a0.0.95\n");
+
+    printc("───────────────────────────────\n", 6, 7);
+
+    printc("SPECS\n", title_color, 7);
+
+    printc("CPU: ", label_color, 7);
+    printf("%s", get_cpu_model());
+
+    printc("Memory: ", label_color, 7);
+    printf("%ldMib\n", get_total_ram_mb());
+
     printc("═══════════════════════════════\n", 6, 7);
 }
