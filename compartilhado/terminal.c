@@ -335,7 +335,7 @@ void updatehistory(void) {
                           "a0.0.95 - minor changes\n\tEdited: now the neofetch menu displays the cpu and mem\n\n",
                           "a0.0.975 - minor changes\n\tRemoved: system instruction \n\n",
                           "a0.1.35 - big changes\n\tAdded: cd instruction\n\n",
-                          "a0.1.55 - big changes(current)\n\tAdded: ls instruction\n"};
+                          "b0.1.55 - big changes(current)\n\tAdded: ls instruction\n"};
     size_t logCount = sizeof(logs) / sizeof(logs[0]);
 
     for (size_t i = 0; i < logCount; i++)
