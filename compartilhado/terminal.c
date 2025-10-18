@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdarg.h>
 #include <time.h>
+#include <errno.h>
 
 #define MAXCHAR (1ULL << 8)
 #define CLEAR "clear"
@@ -12,12 +13,17 @@
 #define NEOFETCH "neofetch"
 #define UPDATEHISTORY "updatehistory"
 #define CMDS "cmds"
+#define CD "cd"
+#define LS "ls"
 
 #ifdef _WIN32
     #include <windows.h>
+    #include <direct.h>
     #include <shlobj.h>
     #define SYSTEM "Windows"
     #define cls() system("cls")
+    #define chdir _chdir
+    #define getcwd _getcwd
     HANDLE hConsole;
 #elif defined(__linux__) || defined(__APPLE__) 
     #ifdef __linux__
@@ -26,6 +32,8 @@
         #define SYSTEM "Mac OS"
     #endif
 
+    #include <sys/stat.h>
+    #include <dirent.h>
     #include <unistd.h>
     #include <pwd.h>
     #include <limits.h>
@@ -35,17 +43,26 @@
 #endif
 
 
+void trim(char *str);
 void neofetchCmd(void);
 void updatehistory(void);
 void setColor(int color);
 char *get_cpu_model(void);
 long get_total_ram_mb(void);
-void echoCmd(char *command);
+void lsCmd(const char *address);
+void echoCmd(char *instruction);
 char* get_default_address(void);
+char *handle_cd_dash(char *address);
 int sort(char **array, size_t count);
+void update_last_directory(char *address);
+void charRm(char *str, char targ, char repl);
 void cmdsCommand(const char **cmds, size_t count);
+char *cdCmd(const char *instruction, char *address);
+char *handle_normal_cd(const char *path, char *address);
 char **copyMat(char **dest, const char **src, size_t size);
 void printc(const char *str, int color, int resetColor, ...);
+
+static char *last_directory = NULL;
 
 
 int main(void) {
@@ -53,59 +70,212 @@ int main(void) {
         hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     #endif
     
-    const char *cmds[] = {CLEAR, EXIT, ECHO, NEOFETCH, UPDATEHISTORY, CMDS};
+    const char *cmds[] = {CLEAR, EXIT, ECHO, NEOFETCH, UPDATEHISTORY, CMDS, CD, LS};
     size_t cmdCount = sizeof(cmds) / sizeof(cmds[0]);
     
-    char *command = calloc(MAXCHAR, sizeof(char));
+    char *instruction = calloc(MAXCHAR, sizeof(char));
     
-    if (!command) {
+    if (!instruction) {
         perror("ERROR: Memory allocation error!!");
         return 1;
     }
+    char *address = get_default_address();
     
     while (true) {
         int found = 0;
 
-        printc("%s: ", 10, 7, get_default_address());
+        printc("terminal", 10, 7); // Light Green to White
+        putchar(':');
+        printc("%s", 11, 7, address); // Light Blue to White
+        printf("$ ");
 
-        if (!fgets(command, MAXCHAR, stdin)) 
+        if (!fgets(instruction, MAXCHAR, stdin)) 
             break;
 
-        command[strcspn(command, "\n")] = '\0';
+        trim(instruction);
 
-        if (strlen(command) == 0)
+        instruction[strcspn(instruction, "\n")] = '\0';
+
+        if (strlen(instruction) == 0)
             continue;
     
 
         for (size_t i = 0; i < cmdCount; i++) {
-            if (strncmp(command, cmds[i], strlen(cmds[i])) == 0) {
-                if (strlen(command) == strlen(cmds[i]) || command[strlen(cmds[i])] == ' ') {
+            if (strncmp(instruction, cmds[i], strlen(cmds[i])) == 0) {
+                if (strlen(instruction) == strlen(cmds[i]) || instruction[strlen(cmds[i])] == ' ') {
                     found = 1;
                     
-                    if (strcmp(cmds[i], CLEAR) == 0) //* cls or clear command
+                    if (strcmp(cmds[i], CLEAR) == 0) //* cls or clear instruction
                         cls();
-                    else if (strcmp(cmds[i], EXIT) == 0) { //* exit command
-                        free(command);
+                    else if (strcmp(cmds[i], EXIT) == 0) { //* exit instruction
+                        free(instruction);
+                        free(address);
                         return 0;
                     }
-                    else if (strcmp(cmds[i], ECHO) == 0) //* echo command
-                        echoCmd(command);
-                    else if (strcmp(cmds[i], NEOFETCH) == 0) //* neofetch command
+                    else if (strcmp(cmds[i], ECHO) == 0) //* echo instruction
+                        echoCmd(instruction);
+                    else if (strcmp(cmds[i], NEOFETCH) == 0) //* neofetch instruction
                         neofetchCmd();
-                    else if (strcmp(cmds[i], UPDATEHISTORY) == 0) //* updateinfo command
+                    else if (strcmp(cmds[i], UPDATEHISTORY) == 0) //* updateinfo instruction
                         updatehistory();
-                    else if (strcmp(cmds[i], CMDS) == 0) //* cmds command
+                    else if (strcmp(cmds[i], CMDS) == 0) //* cmds instruction
                         cmdsCommand(cmds, cmdCount);
+                    else if (strcmp(cmds[i], CD) == 0) {
+                        char *new_address = cdCmd(instruction, address);
+                        free(address); 
+                        address = new_address;
+                    }
+                    else if (strcmp(cmds[i], LS) == 0)
+                        lsCmd(address);
                     break;
                 }
             }
         }
         if (!found)
-            printf("The command '%s' was not found!!\n", command);
+            printf("The instruction '%s' was not found!!\n", instruction);
     }
 
-    free(command);
+    free(instruction);
+    free(address);
     return 0;
+}
+
+void trim(char *str) {
+    if (str == NULL) return;
+    
+    size_t spaces = 0;
+    while (str[spaces] == ' ') {
+        spaces++;
+    }
+    
+    if (spaces == 0) return;
+    
+    size_t i = 0;
+    while (str[spaces + i] != '\0') {
+        str[i] = str[spaces + i];
+        i++;
+    }
+    str[i] = '\0';
+}
+
+char *cdCmd(const char *instruction, char *address) {
+    const char *path = instruction + strlen(CD);
+    while (*path == ' ') path++;
+    
+    if (strcmp(path, "-") == 0) {
+        return handle_cd_dash(address);
+    }
+    
+    update_last_directory(address);
+    
+    return handle_normal_cd(path, address);
+}
+
+char *handle_cd_dash(char *address) {
+    if (last_directory == NULL) {
+        printf("cd: no previous directory\n");
+        return strdup(address);
+    }
+    
+    printf("%s\n", last_directory);
+    
+    if (chdir(last_directory) == 0) {
+        char new_cwd[1024];
+        if (getcwd(new_cwd, sizeof(new_cwd)) != NULL) {
+            char *temp = last_directory;
+            last_directory = strdup(address);
+            free(temp);
+            return strdup(new_cwd);
+        }
+    } else {
+        perror("cd");
+    }
+    return strdup(address);
+}
+
+void update_last_directory(char *address) {
+    if (last_directory != NULL) {
+        free(last_directory);
+    }
+    last_directory = strdup(address);
+}
+
+char *handle_normal_cd(const char *path, char *address) {
+    char old_cwd[1024];
+    if (getcwd(old_cwd, sizeof(old_cwd)) == NULL) {
+        strcpy(old_cwd, ".");
+    }
+    
+    if (strlen(path) == 0) {
+    #ifdef _WIN32
+        const char *home_path = getenv("USERPROFILE");
+    #else
+        const char *home_path = getenv("HOME");
+    #endif
+        if (!home_path) return strdup(address);
+        
+        if (chdir(home_path) == 0) {
+            char new_cwd[1024];
+            if (getcwd(new_cwd, sizeof(new_cwd)) != NULL && strcmp(old_cwd, new_cwd) != 0) {
+                return strdup(new_cwd);
+            }
+        }
+    }
+    else if (strcmp(path, "..") == 0) {
+        char new_path[1024];
+        strncpy(new_path, address, sizeof(new_path) - 1);
+        new_path[sizeof(new_path) - 1] = '\0';
+        
+        char *last_slash = strrchr(new_path, '/');
+        if (last_slash != NULL && last_slash != new_path) {
+            *last_slash = '\0';
+        } else if (last_slash == new_path) {
+            new_path[1] = '\0';
+        }
+        
+        if (chdir(new_path) == 0) {
+            char new_cwd[1024];
+            if (getcwd(new_cwd, sizeof(new_cwd)) != NULL && strcmp(old_cwd, new_cwd) != 0) {
+                return strdup(new_cwd);
+            }
+        }
+    }
+    else if (strcmp(path, ".") == 0) {
+        return strdup(address);
+    }
+    else if (path[0] == '/') {
+        if (chdir(path) == 0) {
+            char new_cwd[1024];
+            if (getcwd(new_cwd, sizeof(new_cwd)) != NULL && strcmp(old_cwd, new_cwd) != 0) {
+                return strdup(new_cwd);
+            }
+        }
+    }
+    else {
+        char full_path[2048];
+        snprintf(full_path, sizeof(full_path), "%s/%s", address, path);
+        
+        for (char *p = full_path; *p; p++) {
+            if (p[0] == '/' && p[1] == '/') {
+                memmove(p, p + 1, strlen(p));
+            }
+        }
+        
+        if (chdir(full_path) == 0) {
+            char new_cwd[1024];
+            if (getcwd(new_cwd, sizeof(new_cwd)) != NULL && strcmp(old_cwd, new_cwd) != 0) {
+                return strdup(new_cwd);
+            }
+        }
+    }
+    
+    perror("cd");
+    return strdup(address);
+}
+
+void charRm(char *str, char targ, char repl) {
+    for (size_t i = 0; str[i]; i++) 
+        if (str[i] == targ) str[i] = repl;
 }
 
 void cmdsCommand(const char **cmds, size_t count) {
@@ -161,9 +331,11 @@ void updatehistory(void) {
     const char *logs[] = {"a0.0.4 - created terminal\n\tAdded: clear, echo, exit\n\n",
                           "a0.0.55 - minor changes\n\tAdded: neofetch cmd\n\n",
                           "a0.0.75 - minor changes\n\tAdded: commands history\n\n",
-                          "a0.0.8 - minor changes\n\tEdited: optimized the the algorithm\n\n",
-                          "a0.0.95 - minor changes\n\tEdited: now the neofetch menu shows the cpu and mem\n\n",
-                          "a0.0.975 - minor changes(current)\n\tRemoved: system command removed\n"};
+                          "a0.0.8 - minor changes\n\tEdited: optimized the sort algorithm\n\n",
+                          "a0.0.95 - minor changes\n\tEdited: now the neofetch menu displays the cpu and mem\n\n",
+                          "a0.0.975 - minor changes\n\tRemoved: system instruction \n\n",
+                          "a0.1.35 - big changes\n\tAdded: cd instruction\n\n",
+                          "a0.1.55 - big changes(current)\n\tAdded: ls instruction\n"};
     size_t logCount = sizeof(logs) / sizeof(logs[0]);
 
     for (size_t i = 0; i < logCount; i++)
@@ -171,9 +343,9 @@ void updatehistory(void) {
     
 }
 
-void echoCmd(char *command) {
-    if (strlen(command) > 4) {
-        char *texto = command + 4;
+void echoCmd(char *instruction) {
+    if (strlen(instruction) > 4) {
+        char *texto = instruction + 4;
 
         while (*texto == ' ') texto++;
 
@@ -192,32 +364,30 @@ void echoCmd(char *command) {
         printf("\n");
 }
 
+
 char* get_default_address(void) {
-    static char address[1024];
-    
     #ifdef _WIN32
         PWSTR path = NULL;
         if (SHGetKnownFolderPath(&FOLDERID_Profile, 0, NULL, &path) == S_OK) {
-            wcstombs(address, path, sizeof(address));
+            char *address = malloc(1024);
+            wcstombs(address, path, 1024);
+            charRm(address, '\\', '/');
             CoTaskMemFree(path);
             return address;
         }
     #else
         char *home = getenv("HOME");
         if (home != NULL) {
-            strncpy(address, home, sizeof(address) - 1);
-            return address;
+            return strdup(home);
         }
         
         struct passwd *pw = getpwuid(getuid());
         if (pw != NULL) {
-            strncpy(address, pw->pw_dir, sizeof(address) - 1);
-            return address;
+            return strdup(pw->pw_dir);
         }
     #endif
     
-    strcpy(address, ".");
-    return address;
+    return strdup(".");
 }
 
 void setColor(int cor) {
@@ -230,8 +400,9 @@ void setColor(int cor) {
         case 6: printf("\033[33m"); break; // Yellow
         case 7: printf("\033[37m"); break; // White
         case 10: printf("\033[92m"); break; // Light Green
-        case 11: printf("\033[96m"); break; // Light Cyan
-        case 12: printf("\033[91m"); break; // Light Red
+        case 11: printf("\033[94m"); break; // Light Blue
+        case 12: printf("\033[96m"); break; // Light Cyan
+        case 13: printf("\033[91m"); break; // Light Red
         default: printf("\033[0m"); break; // Reset
     }
 #endif
@@ -258,6 +429,49 @@ char* get_time(void) {
     
     strftime(buffer, sizeof(buffer), "%m/%d/%Y %H:%M:%S", time_info);
     return buffer;
+}
+
+void lsCmd(const char *address) {
+#ifdef _WIN32
+    WIN32_FIND_DATA findFileData;
+    HANDLE hFind;
+    char searchPath[MAX_PATH];
+    
+    snprintf(searchPath, sizeof(searchPath), "%s\\*", address);
+    hFind = FindFirstFile(searchPath, &findFileData);
+    
+    if (hFind == INVALID_HANDLE_VALUE) {
+        printf("Error opening directory\n");
+        return;
+    }
+    
+    do {
+        if (strcmp(findFileData.cFileName, ".") == 0 || 
+            strcmp(findFileData.cFileName, "..") == 0)
+            continue;
+        printf("%s\n", findFileData.cFileName);
+    } while (FindNextFile(hFind, &findFileData) != 0);
+    
+    FindClose(hFind);
+    
+#else
+    DIR *dir;
+    struct dirent *entry;
+    
+    dir = opendir(address);
+    if (dir == NULL) {
+        perror("Error opening directory");
+        return;
+    }
+    
+    while ((entry = readdir(dir)) != NULL) {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+            continue;
+        printf("%s\n", entry->d_name);
+    }
+    
+    closedir(dir);
+#endif
 }
 
 char *get_cpu_model(void) {
@@ -330,7 +544,7 @@ void neofetchCmd(void) {
     };
     
     int title_color = 6;    // Yellow
-    int label_color = 11;   // Light cyan  
+    int label_color = 12;   // Light Cyan  
     int value_color = 7;    // White
     int art_color = 2;      // Green
     
@@ -375,7 +589,7 @@ void neofetchCmd(void) {
     printc("TERMINAL\n", title_color, 7);
 
     printc("VERSION: ", label_color, 7);
-    printf("a0.0.95\n");
+    printf("a0.1.55\n");
 
     printc("───────────────────────────────\n", 6, 7);
 
