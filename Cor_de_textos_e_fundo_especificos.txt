@@ -1,0 +1,76 @@
+== Exemplo de C em Windows para mudar a cor de textos específicos ==
+
+
+// Exemplo: Mudar a cor de um texto específico no console (Windows)
+
+#include <stdio.h>
+#include <windows.h>
+
+int main() {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    // Texto em vermelho claro (código 12)
+    SetConsoleTextAttribute(hConsole, 12);
+    printf("Este texto está em vermelho claro\n");
+
+    // Texto em verde claro (código 10)
+    SetConsoleTextAttribute(hConsole, 10);
+    printf("Este texto está em verde claro\n");
+
+    // Texto em amarelo claro (código 14)
+    SetConsoleTextAttribute(hConsole, 14);
+    printf("Este texto está em amarelo claro\n");
+
+    // Texto em branco padrão (código 7)
+    SetConsoleTextAttribute(hConsole, 7);
+    printf("Este texto voltou ao normal (branco padrão)\n");
+
+    return 0;
+}
+
+
+== Tabela de Códigos para SetConsoleTextAttribute ==
+
+0  = Preto
+1  = Azul
+2  = Verde
+3  = Aqua
+4  = Vermelho
+5  = Roxo
+6  = Amarelo
+7  = Branco (padrão)
+8  = Cinza
+9  = Azul claro
+10 = Verde claro
+11 = Aqua claro
+12 = Vermelho claro
+13 = Roxo claro
+14 = Amarelo claro
+15 = Branco brilhante
+
+
+== Como mudar a cor do FUNDO do texto no console ==
+
+No Windows, a função SetConsoleTextAttribute também permite mudar o fundo do texto.
+Para isso, você deve usar a fórmula:
+
+    código = (cor_do_fundo * 16) + cor_do_texto
+
+Exemplo: fundo azul (1), texto branco (7)
+    código = (1 * 16) + 7 = 23
+
+Exemplo de código:
+
+    // Fundo azul, texto branco
+    SetConsoleTextAttribute(hConsole, 23);
+    printf("Texto com fundo azul e texto branco\n");
+
+    // Fundo vermelho, texto amarelo claro
+    SetConsoleTextAttribute(hConsole, 78); // 4*16 + 14
+    printf("Texto com fundo vermelho e texto amarelo claro\n");
+
+    // Voltar ao padrão (fundo preto, texto branco)
+    SetConsoleTextAttribute(hConsole, 7);
+    printf("Texto normal\n");
+
+Você pode usar qualquer combinação de cores do fundo (0 a 15) com as cores de texto (0 a 15), exceto quando forem iguais (fundo == texto), pois o texto pode ficar invisível.

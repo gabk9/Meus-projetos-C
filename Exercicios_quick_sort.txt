@@ -1,0 +1,54 @@
+Lista de 10 Exercícios de Quick Sort em C
+
+
+
+1. Ordenar vetor crescente (inteiros)
+Objetivo: Ler 10 números inteiros e ordená-los em ordem crescente.
+Dica: Implemente o Quick Sort básico com partição simples (Lomuto).
+Exemplo:
+int v[10] = {5, 3, 8, 1, 2, 7, 4, 10, 6, 9};
+
+
+2. Ordenar vetor decrescente
+Objetivo: Ler 10 números inteiros e ordená-los do maior para o menor.
+Dica: Inverta o critério de comparação na partição.
+
+
+3. Mostrar quantidade de chamadas recursivas
+Objetivo: Contar e exibir quantas vezes a função Quick Sort foi chamada.
+Dica: Use uma variável global ou passada por referência.
+
+
+4. Ordenar números reais (float)
+Objetivo: Adaptar o Quick Sort para ordenar float.
+Dica: Apenas troque o tipo do vetor para float.
+
+
+5. Ordenar vetor de strings (nomes)
+Objetivo: Ler 5 nomes e ordenar em ordem alfabética.
+Dica: Use strcmp na partição e strcpy para trocar elementos.
+
+
+6. Ordenar parcialmente (apenas pares)
+Objetivo: Ordenar apenas os números pares em ordem crescente, mantendo os ímpares nas posições originais.
+Dica: Copie os pares para vetor auxiliar, aplique Quick Sort e depois recoloque no vetor original.
+
+
+7. Ordenar matriz linha por linha
+Objetivo: Ordenar cada linha de uma matriz 3x3 usando Quick Sort.
+Dica: Aplique Quick Sort para cada linha da matriz.
+
+
+8. Medir desempenho (tempo de execução)
+Objetivo: Medir o tempo de execução do Quick Sort para 10000 números aleatórios.
+Dica: Use clock() da <time.h>.
+
+
+9. Comparar número de trocas e comparações
+Objetivo: Contar quantas trocas e comparações o Quick Sort fez.
+Dica: Adicione dois contadores (um para comparações, outro para trocas).
+
+
+10. Quick Sort + Busca Binária
+Objetivo: Ordenar vetor e depois permitir buscar um número com busca binária.
+Dica: Primeiro Quick Sort, depois implemente a busca binária.

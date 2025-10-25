@@ -1,0 +1,19 @@
+Letra	               Significado                        	Descrição
+
+
+r	                  Read	                      Abre o arquivo para leitura. O arquivo deve existir.
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+w	                  Write	                      Abre para escrita. Se o arquivo já existir, será apagado. Se não existir, será criado.
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+a	                  Append	                  Abre para acréscimo no final. Se não existir, será criado.
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+r+	                  Read + Write                Abre para leitura e escrita. O arquivo deve existir.
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+w+	                  Write + Read	              Abre para leitura e escrita, mas apaga o conteúdo existente. Cria o arquivo se não existir.
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+a+	                  Append + Read	              Abre para leitura e escrita no fim. O ponteiro inicia no final. Cria o arquivo se não existir.
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+rb	                  Read Binary                 Abre o arquivo binário para leitura. Semelhante a r, mas usado para dados binários.
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+wb	                  Write Binary	              Abre o arquivo binário para escrita. Cria o arquivo ou apaga o conteúdo existente.
+--------------------------------------------------------------------------------------------------------------------------------------------------------

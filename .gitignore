@@ -1,0 +1,9 @@
+*.o
+*.obj
+*.exe
+*.class
+testes/*.txt
+compartilhado/*.txt
+casa/*.txt
+atividades/*.txt
+aprender/*.txt
