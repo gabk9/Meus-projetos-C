@@ -1195,7 +1195,7 @@ void cmdsCommand(const char **cmds, uint16_t count, uint8_t isInsideBash) {
 
 void updatehistory(void) {
     const char *logs[] = {
-        "a0.0.4 - created terminal\n\tAdded: clear, echo and exit command\n",
+        "a0.0.4 - terminal creation\n\tAdded: clear, echo and exit command\n",
         "a0.0.55 - minor changes\n\tAdded: neofetch cmd\n",
         "a0.0.75 - minor changes\n\tAdded: history command\n",
         "a0.0.8 - minor changes\n\tEdited: optimized the sort algorithm\n",
