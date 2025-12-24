@@ -13,7 +13,7 @@
 #include "terminal.h"
 #include <inttypes.h>
 
-#define VERSION "b0.9.35"
+#define VERSION "b0.9.39"
 
 #define BC_QUIET 0x1
 #define BC_MATHLIB 0x2
@@ -1300,7 +1300,8 @@ void updatehistory(void) {
         "b0.9.12 - minor changes\n\tEdited: optimized the code\n",
         "b0.9.17 - small changes\n\tAdded: '-o' option to uname\n",
         "b0.9.28 - big changes\n\tEdited: now instead of unknown, the size and lines show a approximated number\n",
-        "b0.9.35 - small changes\n\tEdited: improved man\n"
+        "b0.9.35 - small changes\n\tEdited: improved man\n",
+        "b0.9.39 - minor changes\n\tEdited: now neofetch displays the creation date\n"
     };
 
     uint16_t logCount = sizeof(logs) / sizeof(logs[0]);
@@ -1958,7 +1959,11 @@ void neofetchCmd(void) {
     printc("VERSION: ", label_color, 7);
     printf("lsw - Gab-OS  %s\n", VERSION);
 
+
+    printc("CREATION DATE: ", label_color, 7);
+    puts("10/18/2025");
     
+
     printc("AUTHOR: ", label_color, 7);
     printf("Gabriel Oliveira Miranda\n");
 
