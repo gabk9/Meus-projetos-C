@@ -388,7 +388,7 @@ void renameCmd(char *instruction) {
     trimEnd(instruction);
 
     char *newName = extractPath(&instruction);
-    if (newName == NULL || *newName == '\0') {
+    if (!newName || *newName == '\0') {
         puts("rename: missing operand\nUse \"man rename\" to check the manual");
         return;
     }
@@ -443,7 +443,7 @@ void clearHistoryCmd(const char *path) {
     char answer[0x20];
     
     printf("Are you sure you want to delete 'history.txt'? (y/n): ");
-    if (fgets(answer, sizeof(answer), stdin) == NULL) {
+    if (!fgets(answer, sizeof(answer), stdin)) {
         puts("Error reading input");
         return;
     }

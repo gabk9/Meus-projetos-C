@@ -589,7 +589,7 @@ void trimEnd(char *str) {
 }
 
 void trim(char *str) {
-    if (str == NULL) return;
+    if (!str) return;
     
     uint16_t spaces = 0;
     while (str[spaces] == ' ') {
@@ -600,7 +600,7 @@ void trim(char *str) {
     
     uint16_t i = 0;
     while (str[spaces + i] != '\0') {
-        str[i] = str[spaces + i];
+        str[i] = str[spaces+i];
         i++;
     }
     str[i] = '\0';
@@ -1180,7 +1180,7 @@ double eval(char *operation, bool mathlib) {
 }
 
 char *handle_cd_dash(char *address) {
-    if (last_directory == NULL) {
+    if (!last_directory) {
         printf("cd: no previous directory\n");
         return strdup(address);
     }
@@ -1212,7 +1212,7 @@ void update_last_directory(char *address) {
 
 char *handle_normal_cd(const char *path, char *address) {
     char old_cwd[0x400];
-    if (getcwd(old_cwd, sizeof(old_cwd)) == NULL) {
+    if (!getcwd(old_cwd, sizeof(old_cwd))) {
         strcpy(old_cwd, ".");
     }
 

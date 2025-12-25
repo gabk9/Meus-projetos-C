@@ -120,7 +120,7 @@ int main(int argc, char **argv) {
         if (!fgets(input, MAX_CHAR, stdin))
             break;
 
-        if (strchr(input, '\n') == NULL) {  
+        if (!strchr(input, '\n')) {  
             int16_t c;
             while ((c = getchar()) != '\n' && c != EOF);
         }
@@ -131,7 +131,7 @@ int main(int argc, char **argv) {
         trim(input);
         trimEnd(input);
 
-        if (strlen(input) == 0)
+        if (!strlen(input))
             continue;
 
         FILE *f = fopen(history_path, "a");
