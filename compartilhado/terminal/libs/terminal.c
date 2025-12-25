@@ -754,7 +754,7 @@ void rmCmd(char *instruction) {
         if (strcmp(option, "-f") == 0 || strcmp(option, "--force") == 0) {
             force = true;
         } 
-        else if (strcmp(option, "-i") == 0) {
+        else if (strcmp(option, "-i") == 0 || strcmp(option, "--interactive") == 0) {
             force = false;
         } 
         else {
