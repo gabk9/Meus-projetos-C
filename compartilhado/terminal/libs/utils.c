@@ -13,8 +13,8 @@
 #include "terminal.h"
 #include <inttypes.h>
 
-#define PROJ_SIZE_APPROX 157500
-#define PROJ_LINES_APPROX 5700
+#define PROJ_SIZE_APPROX 157000
+#define PROJ_LINES_APPROX 5650
 
 #define PATH_MAIN_C "./main.c"
 #define ALIAS_FILE "shortcut.txt"
@@ -945,25 +945,6 @@ char *tolowerstr(const char *str) {
     return cpy;
 }
 
-char *myStrcasestr_ptr(const char *haystack, const char *needle) {
-    if (!*needle) return (char *)haystack;
-
-    uint16_t nlen = strlen(needle);
-
-    for (const char *h = haystack; *h; h++) {
-        uint16_t i;
-        for (i = 0; i < nlen; i++) {
-            if (h[i] == '\0') break;
-            if (tolower((unsigned char)h[i]) != tolower((unsigned char)needle[i]))
-                break;
-        }
-        if (i == nlen)
-            return (char *)h;
-        if (h[0] == '\0') break;
-    }
-    return NULL;
-}
-
 uint8_t myStrcasestr(const char *str, const char *sub) {
     if (!*sub) return 1;
     uint8_t lenSub = strlen(sub);
@@ -983,7 +964,7 @@ void printTarg(const char *str, const char *targ, int8_t markColor, int8_t ignor
         const char *found = NULL;
 
         if (ignoreCase) {
-            found = myStrcasestr_ptr(p, targ);
+            found = strcasestr(p, targ);
         } else {
             found = strstr(p, targ);
         }

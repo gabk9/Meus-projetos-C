@@ -305,7 +305,10 @@ char *s_oct(char *operation) {
         return NULL;
     }
 
-    int64_t value = strtol(test, NULL, 0);
+    char temp[0x80];
+    snprintf(temp, sizeof(temp), "%.0lf", num);
+
+    int64_t value = strtol(temp, NULL, 0);
 
     char *buffer = malloc(64);
     if (!buffer) {
@@ -337,7 +340,7 @@ char *s_hex(char *operation) {
         return NULL;
     }
 
-    char temp[0x40];
+    char temp[0x80];
     snprintf(temp, sizeof(temp), "%.0lf", val);
     
     int64_t value = strtoll(temp, NULL, 10);

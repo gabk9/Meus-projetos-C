@@ -13,7 +13,7 @@
 #include "terminal.h"
 #include <inttypes.h>
 
-#define VERSION "b0.9.51"
+#define VERSION "b0.9.63"
 
 #define BC_QUIET 0x1
 #define BC_MATHLIB 0x2
@@ -1140,7 +1140,7 @@ void listDrives(void) {
 
 #else
     char *user = get_user();
-    char path[256];
+    char path[0x100];
     snprintf(path, sizeof(path), "/media/%s", user);
 
     DIR *dir = opendir(path);
@@ -1302,7 +1302,9 @@ void updatehistory(void) {
         "b0.9.28 - big changes\n\tEdited: now instead of unknown, the size and lines show a approximated number\n",
         "b0.9.35 - small changes\n\tEdited: improved man\n",
         "b0.9.39 - minor changes\n\tEdited: now neofetch displays the creation date\n",
-        "b0.9.51 - big changes\n\tEdited: the calculator now works properly when dealing with the wrong data type\n"
+        "b0.9.51 - big changes\n\tEdited: the calculator now works properly when dealing with the wrong data type\n",
+        "b0.9.57 - small changes\n\tEdited: oct() function now works properly\n",
+        "b0.9.63 - minor changes\n\tRemoved: some useless functions from the source code\n"
     };
 
     uint16_t logCount = sizeof(logs) / sizeof(logs[0]);
