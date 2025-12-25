@@ -205,7 +205,7 @@ void manCmd(char *instruction, const char **cmds, uint8_t isInsideBash) {
         
     else if (strcmp(instruction, cmds[20]) == 0) { //! bc
         printf("'bc' a simple calculator on the terminal, so far it only works with 2 numbers.\n\nbc [OPTION]...\n\nOptions:\n");
-        printf("\t'-q', '--quiet'   will not print the initial text\n");
+        printf("\t'-q', '--quiet'     will not print the initial text\n");
         printf("\t'-l', '--mathlib'   includes the mathlib header\n");
         printf("\nOperations:\n"
                "\t'+'    : Addition\n"
@@ -305,7 +305,7 @@ void manCmd(char *instruction, const char **cmds, uint8_t isInsideBash) {
         printf("'lc' print the line count of a file\n\nlc [FILE NAME]...\n");              
         
     else if (strcmp(instruction, cmds[30]) == 0) //! yes
-        printf("'yes' output a string repeatedly until killed\n");
+        printf("'yes' output a string repeatedly until killed\n\nyes <-- print 'y' until killed\n\nyes [STRING] <-- print string until killed\n");
 
     else if (strcmp(instruction, cmds[31]) == 0) { //! sleep
         printf("'sleep' delay for a specified amount of time\n\nsleep [int: TIME]\n\nSuffixes:\n");
