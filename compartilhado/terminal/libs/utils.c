@@ -13,8 +13,8 @@
 #include "terminal.h"
 #include <inttypes.h>
 
-#define PROJ_SIZE_APPROX 153000
-#define PROJ_LINES_APPROX 5400
+#define PROJ_SIZE_APPROX 157500
+#define PROJ_LINES_APPROX 5700
 
 #define PATH_MAIN_C "./main.c"
 #define ALIAS_FILE "shortcut.txt"

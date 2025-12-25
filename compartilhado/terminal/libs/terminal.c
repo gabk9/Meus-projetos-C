@@ -13,7 +13,7 @@
 #include "terminal.h"
 #include <inttypes.h>
 
-#define VERSION "b0.9.39"
+#define VERSION "b0.9.51"
 
 #define BC_QUIET 0x1
 #define BC_MATHLIB 0x2
@@ -1301,7 +1301,8 @@ void updatehistory(void) {
         "b0.9.17 - small changes\n\tAdded: '-o' option to uname\n",
         "b0.9.28 - big changes\n\tEdited: now instead of unknown, the size and lines show a approximated number\n",
         "b0.9.35 - small changes\n\tEdited: improved man\n",
-        "b0.9.39 - minor changes\n\tEdited: now neofetch displays the creation date\n"
+        "b0.9.39 - minor changes\n\tEdited: now neofetch displays the creation date\n",
+        "b0.9.51 - big changes\n\tEdited: the calculator now works properly when dealing with the wrong data type\n"
     };
 
     uint16_t logCount = sizeof(logs) / sizeof(logs[0]);

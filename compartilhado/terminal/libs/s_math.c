@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
+#define BC_ERROR "__LSW__CALC__ERROR__"
+
 #if !defined(_WIN32) && !defined(__linux__) && !defined(__APPLE__)
     #error "Operational system not recognized, terminating program!!"
 #endif
@@ -76,12 +78,12 @@ char *functionHandler(char *operation, const char *function) {
     
     if (operation[0] != '(' || operation[strlen(operation)-1] != ')') {
         printf("Error: invalid syntax\n\n");
-        return "__error";
+        return BC_ERROR;
     }
 
     char *copy = strdup(operation);
     if (!copy) {
-        return "__error";
+        return BC_ERROR;
     }
 
     copy[0] = ' ';
@@ -185,63 +187,119 @@ double h_atof(const char *str) {
 
 double s_miles(char *operation) {
     char *test = functionHandler(operation, "mi");
-    if (strcmp(test, "__error") == 0) return NAN;
+    if (strcmp(test, BC_ERROR) == 0) return NAN;
 
-    double result = KM_TO_MI(eval(test, true));
+    double km = eval(test, true);
+
+    if (km == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }    
+
+    double result = KM_TO_MI(km);
     free(test);
     return result;
 }
 
 double s_km(char *operation) {
     char *test = functionHandler(operation, "km");
-    if (strcmp(test, "__error") == 0) return NAN;
+    if (strcmp(test, BC_ERROR) == 0) return NAN;
 
-    double result = MI_TO_KM(eval(test, true));
+    double miles = eval(test, true);
+
+    if (miles == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }
+
+    double result = MI_TO_KM(miles);
     free(test);
     return result;
 }
 
 double s_pounds(char *operation) {
     char *test = functionHandler(operation, "lb");
-    if (strcmp(test, "__error") == 0) return NAN;
+    if (strcmp(test, BC_ERROR) == 0) return NAN;
 
-    double result = KG_TO_LB(eval(test, true));
+    double kg = eval(test, true);
+    
+    if (kg == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }
+
+    double result = KG_TO_LB(kg);
     free(test);
     return result;
 }
 
 double s_kg(char *operation) {
     char *test = functionHandler(operation, "kg");
-    if (strcmp(test, "__error") == 0) return NAN;
+    if (strcmp(test, BC_ERROR) == 0) return NAN;
 
-    double result = LB_TO_KG(eval(test, true));
+    double lbs = eval(test, true);
+    
+    if (lbs == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }
+
+    double result = LB_TO_KG(lbs);
     free(test);
     return result;
 }
 
 double s_fah(char *operation) {
     char *test = functionHandler(operation, "fah");
-    if (strcmp(test, "__error") == 0) return NAN;
+    if (strcmp(test, BC_ERROR) == 0) return NAN;
 
-    double result = C_TO_F(eval(test, true));
+    double cel = eval(test, true);
+    
+    if (cel == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }
+
+    double result = C_TO_F(cel);
     free(test);
     return result;
 }
 
 double s_cel(char *operation) {
     char *test = functionHandler(operation, "cel");
-    if (strcmp(test, "__error") == 0) return NAN;
+    if (strcmp(test, BC_ERROR) == 0) return NAN;
 
-    double result = F_TO_C(eval(test, true));
+    double fah = eval(test, true);
+    
+    if (fah == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }
+
+    double result = F_TO_C(fah);
     free(test);
     return result;
 }
 
 char *s_oct(char *operation) {
     char *test = functionHandler(operation, "oct");
-    if (strcmp(test, "__error") == 0) return NULL;
+    if (strcmp(test, BC_ERROR) == 0) return NULL;
 
-    if (ceil(eval(test, true)) != eval(test, true)) {
+    double num = eval(test, true);
+    
+    if (num == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NULL;
+    }
+
+    if (ceil(num) != num) {
         printf("Error: must be integer\n\n");
         free(test);
         return NULL;
@@ -263,9 +321,15 @@ char *s_oct(char *operation) {
 
 char *s_hex(char *operation) {
     char *test = functionHandler(operation, "hex");
-    if (strcmp(test, "__error") == 0) return NULL;
+    if (strcmp(test, BC_ERROR) == 0) return NULL;
 
     double val = eval(test, true);
+
+    if (val == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NULL;
+    }
 
     if (ceil(val) != val) {
         printf("Error: must be integer!\n\n");
@@ -273,7 +337,10 @@ char *s_hex(char *operation) {
         return NULL;
     }
 
-    int64_t value = strtol(test, NULL, 0);
+    char temp[0x40];
+    snprintf(temp, sizeof(temp), "%.0lf", val);
+    
+    int64_t value = strtoll(temp, NULL, 10);
 
     char *buffer = malloc(64);
     if (!buffer) {
@@ -284,7 +351,7 @@ char *s_hex(char *operation) {
     snprintf(buffer, 64, "0x%" PRIx64, value);
 
     for (uint16_t i = 2; buffer[i]; i++)
-        buffer[i] = toupper(buffer[i]);
+        buffer[i] = toupper((unsigned char)buffer[i]);
 
     free(test);
     return buffer;
@@ -292,11 +359,18 @@ char *s_hex(char *operation) {
 
 char *s_bin(char *operation) {
     char *test = functionHandler(operation, "bin");
-    if (strcmp(test, "__error") == 0)
+    if (strcmp(test, BC_ERROR) == 0)
         return NULL; 
 
     double val = eval(test, true);
+
     free(test);
+    
+    if (val == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NULL;
+    }
 
     if (ceil(val) != val) {
         printf("Error: must be integer!\n\n");
@@ -341,39 +415,70 @@ char *s_bin(char *operation) {
 
 double s_trunc(char *operation) {
     char *test = functionHandler(operation, "trunc");
-    if (strcmp(test, "__error") == 0) return NAN;
+    if (strcmp(test, BC_ERROR) == 0) return NAN;
 
-    double result = trunc(eval(test, true));
+    double num = eval(test, true);
+
+    if (num == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }    
+
+    double result = trunc(num);
     free(test);
     return result;
 }
 
 double s_rad(char *operation) {
     char *test = functionHandler(operation, "rad");
-    if (strcmp(test, "__error") == 0) return NAN;
+    if (strcmp(test, BC_ERROR) == 0) return NAN;
 
-    double result = DEG_TO_RAD(eval(test, true));
+    double deg = eval(test, true);
+
+    if (deg == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }    
+
+    double result = DEG_TO_RAD(deg);
     free(test);
     return result;
 }
 
 double s_deg(char *operation) {
     char *test = functionHandler(operation, "deg");
-    if (strcmp(test, "__error") == 0) return NAN;
+    if (strcmp(test, BC_ERROR) == 0) return NAN;
 
-    double result = RAD_TO_DEG(eval(test, true));
+    double rad = eval(test, true);
+
+    if (rad == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }
+
+    double result = RAD_TO_DEG(rad);
     free(test);
     return result;
 }
 
 double s_sqrt(char *operation) {
     char *test = functionHandler(operation, "sqrt");
-    if (strcmp(test, "__error") == 0) return NAN;
+    if (strcmp(test, BC_ERROR) == 0) return NAN;
 
     double num = eval(test, true);
 
+    if (num == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }
+
     if (num < 0) {
         puts("Error: can't be negative!\n");
+        free(test);
         return NAN;
     }
 
@@ -384,10 +489,16 @@ double s_sqrt(char *operation) {
 
 double s_scale(char *operation) {
     char *test = functionHandler(operation, "scale");
-    if (strcmp(test, "__error") == 0)
+    if (strcmp(test, BC_ERROR) == 0)
         return NAN;
 
     double value = eval(test, true);
+
+    if (value == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }    
 
     if (isnan(value) || isinf(value)) {
         free(test);
@@ -418,12 +529,20 @@ double s_scale(char *operation) {
 
 double s_sin(char *operation) {
     char *test = functionHandler(operation, "sin");
-    if (strcmp(test, "__error") == 0) return NAN;
+    if (strcmp(test, BC_ERROR) == 0) return NAN;
 
     trim(test);
     trimEnd(test);
 
-    double result = sin(eval(test, true));
+    double num = eval(test, true);
+
+    if (num == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }    
+
+    double result = sin(num);
 
     if (fabs(result) < 1e-6)
         result = 0.0;
@@ -434,12 +553,20 @@ double s_sin(char *operation) {
 
 double s_cos(char *operation) {
     char *test = functionHandler(operation, "cos");
-    if (strcmp(test, "__error") == 0) return NAN;
+    if (strcmp(test, BC_ERROR) == 0) return NAN;
 
     trim(test);
     trimEnd(test);
 
-    double result = cos(eval(test, true));
+    double num = eval(test, true);
+
+    if (num == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }    
+
+    double result = cos(num);
 
     if (fabs(result) < 1e-6)
         result = 0.0;
@@ -450,13 +577,19 @@ double s_cos(char *operation) {
 
 double s_tan(char *operation) {
     char *test = functionHandler(operation, "tan");
-    if (strcmp(test, "__error") == 0)
+    if (strcmp(test, BC_ERROR) == 0)
         return NAN;
 
     trim(test);
     trimEnd(test);
 
     double angle = eval(test, true);
+
+    if (angle == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }    
 
     double modPi = fmod(fabs(angle), PI);
     if (fabs(modPi - PI / 2.0) < 1e-8) {
@@ -476,34 +609,58 @@ double s_tan(char *operation) {
 
 double s_ln(char *operation) {
     char *test = functionHandler(operation, "ln");
-    if (strcmp(test, "__error") == 0) return NAN;
+    if (strcmp(test, BC_ERROR) == 0) return NAN;
 
-    double result = log(eval(test, true));
+    double num = eval(test, true);
+
+    if (num == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }    
+
+    double result = log(num);
     free(test);
     return result;
 }
 
 double s_log10(char *operation) {
     char *test = functionHandler(operation, "log10");
-    if (strcmp(test, "__error") == 0) return NAN;
+    if (strcmp(test, BC_ERROR) == 0) return NAN;
 
-    double result = log10(eval(test, true));
+    double num = eval(test, true);
+
+    if (num == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }    
+
+    double result = log10(num);
     free(test);
     return result;
 }
 
 double s_log2(char *operation) {
     char *test = functionHandler(operation, "log2");
-    if (strcmp(test, "__error") == 0) return NAN;
+    if (strcmp(test, BC_ERROR) == 0) return NAN;
 
-    double result = log2(eval(test, true));
+    double num = eval(test, true);
+
+    if (num == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }    
+
+    double result = log2(num);
     free(test);
     return result;
 }
 
 double s_root(char *operation) {
     char *test = functionHandler(operation, "root");
-    if (strcmp(test, "__error") == 0) return NAN;
+    if (strcmp(test, BC_ERROR) == 0) return NAN;
 
     char *comma = find_top_level_comma(test);
 
@@ -528,8 +685,21 @@ double s_root(char *operation) {
     trim(rootingStr);
 
     double index = eval(indexStr, true);
+
+    if (index == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }  
+    
     double rooting = eval(rootingStr, true);
 
+    if (rooting == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }  
+    
     bool invert = false;
 
     if (index == 0) {
@@ -572,7 +742,7 @@ double s_root(char *operation) {
 
 double s_log(char *operation) {
     char *test = functionHandler(operation, "log");
-    if (strcmp(test, "__error") == 0) return NAN;
+    if (strcmp(test, BC_ERROR) == 0) return NAN;
 
     char *comma = find_top_level_comma(test);
 
@@ -597,7 +767,20 @@ double s_log(char *operation) {
     trim(numStr);
 
     double base = eval(baseStr, true);
+
+    if (base == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }  
+
     double num = eval(numStr, true);
+    
+    if (num == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }  
 
     if (base <= 1 || num <= 0) {
         printf("Error: invalid values for log()\n\n");
@@ -612,7 +795,7 @@ double s_log(char *operation) {
 
 double s_randFloat(char *operation) {
     char *test = functionHandler(operation, "randf");
-    if (strcmp(test, "__error") == 0) return NAN;
+    if (strcmp(test, BC_ERROR) == 0) return NAN;
 
     char *comma = find_top_level_comma(test);
 
@@ -646,10 +829,22 @@ double s_randFloat(char *operation) {
     else 
         maxLf = eval(str_max, true);
 
+    if (maxLf == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }  
+    
     if (strcasecmp(str_min, "rand_max") == 0)
         minLf = (double)RAND_MAX;
     else 
         minLf = eval(str_min, true);
+    
+    if (minLf == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }  
 
     free(test);
     return random_range_float(minLf, maxLf);
@@ -657,7 +852,7 @@ double s_randFloat(char *operation) {
 
 double s_randInt(char *operation) {
     char *test = functionHandler(operation, "rand");
-    if (strcmp(test, "__error") == 0) return NAN;
+    if (strcmp(test, BC_ERROR) == 0) return NAN;
 
     char *comma = find_top_level_comma(test);
 
@@ -691,11 +886,23 @@ double s_randInt(char *operation) {
     else 
         maxInt = eval(str_max, true);
 
+    if (maxInt == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }  
+    
     if (strcasecmp(str_min, "rand_max") == 0)
         minInt = (double)RAND_MAX;
     else 
         minInt = eval(str_min, true);
-
+    
+    if (minInt == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }  
+    
     if (ceil(minInt) != minInt || ceil(maxInt) != maxInt) {
         printf("Error: it must be integer!\n\n");
         return NAN;
@@ -707,27 +914,51 @@ double s_randInt(char *operation) {
 
 double s_floor(char *operation) {
     char *test = functionHandler(operation, "floor");
-    if (strcmp(test, "__error") == 0) return NAN;
+    if (strcmp(test, BC_ERROR) == 0) return NAN;
 
-    double result = floor(eval(test, true));
+    double num = eval(test, true);
+
+    if (num == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }   
+
+    double result = floor(num);
     free(test);
     return result;
 }
 
 double s_ceil(char *operation) {
     char *test = functionHandler(operation, "ceil");
-    if (strcmp(test, "__error") == 0) return NAN;
+    if (strcmp(test, BC_ERROR) == 0) return NAN;
 
-    double result = ceil(eval(test, true));
+    double num = eval(test, true);
+
+    if (num == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }   
+
+    double result = ceil(num);
     free(test);
     return result;
 }
 
 double s_round(char *operation) {
     char *test = functionHandler(operation, "round");
-    if (strcmp(test, "__error") == 0) return NAN;
+    if (strcmp(test, BC_ERROR) == 0) return NAN;
 
-    double result = round(eval(test, true));
+    double num = eval(test, true);
+
+    if (num == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }   
+
+    double result = round(num);
     free(test);
     return result;
 }
@@ -747,10 +978,15 @@ uint64_t fact(int32_t num) {
 
 uint64_t s_fact(char *operation) {
     char *test = functionHandler(operation, "fact");
-    if (strcmp(test, "__error") == 0) return U_NAN;
+    if (strcmp(test, BC_ERROR) == 0) return U_NAN;
 
     double num = eval(test, true);
     free(test);
+
+    if (num == U_NAN) {
+        putchar('\n');
+        return U_NAN;
+    }   
 
     if (ceil(num) != num) {
         printf("Error: must be integer\n\n");
@@ -762,10 +998,15 @@ uint64_t s_fact(char *operation) {
 
 double s_sign(char *operation) {
     char *test = functionHandler(operation, "sign");
-    if (strcmp(test, "__error") == 0) return NAN;
+    if (strcmp(test, BC_ERROR) == 0) return NAN;
 
     double num = eval(test, true);
     free(test);
+
+    if (num == U_NAN) {
+        putchar('\n');
+        return NAN;
+    }   
 
     if (num > 0) return 1.0;
     if (num == 0) return 0.0;
@@ -774,7 +1015,7 @@ double s_sign(char *operation) {
 
 double s_sum(char *operation) {
     char *raw = functionHandler(operation, "sum");
-    if (strcmp(raw, "__error") == 0)
+    if (strcmp(raw, BC_ERROR) == 0)
         return NAN;
 
     char *test = strdup(raw);
@@ -835,11 +1076,29 @@ double s_sum(char *operation) {
         trim(diffStr);
 
     double init = eval(initStr, true);
+
+    if (init == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }   
+
     double end  = eval(endStr, true);
+
+    if (end == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }   
 
     char defaultDiff[] = "1";
     double diff = eval(diffStr ? diffStr : defaultDiff, true);
 
+    if (diff == U_NAN) {
+        putchar('\n');
+        free(test);
+        return NAN;
+    }   
 
     double result = gauss_range_double(init, end, diff);
 
