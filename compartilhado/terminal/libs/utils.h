@@ -7,11 +7,9 @@
 #ifdef _WIN32
     #include <direct.h>
     #define cls(void) system("cls")
-    #define sleepS(ms) Sleep((ms) * 1000)
 #else
     #include <unistd.h>
     #define cls(void) system("clear")
-    #define sleepS(ms) usleep((ms) * 1000000)
 #endif
 
 #define MAX_ARGS 0x20
@@ -32,6 +30,7 @@ char *get_hostname(void);
 char *get_time(char *fmt);
 double parse_len(char *s);
 char *get_cpu_model(void);
+void sleepF(double seconds);
 bool isBin(const char *str);
 bool isHex(const char *str);
 bool isOct(const char *str);
@@ -74,6 +73,7 @@ char *handle_normal_cd(const char *path, char *address);
 double parse_hex_pi_e_bin(const char *str, int16_t *ok);
 char **copyMat(char **dest, const char **src, uint16_t size);
 void printc(const char *str, int8_t color, int8_t resetColor, ...);
+const char *strcasestr_ptr(const char *haystack, const char *needle);
 void split_instruction_args(char *line, char **out_cmd, char **out_args);
 void printTarg(const char *str, const char *targ, int8_t markColor, int8_t ignoreCase);
 int16_t find_main_operator_full(const char *s, const char **multiOps, const char *uniOps, char *foundOp);

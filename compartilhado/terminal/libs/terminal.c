@@ -13,7 +13,7 @@
 #include "terminal.h"
 #include <inttypes.h>
 
-#define VERSION "b0.9.63"
+#define VERSION "b0.9.7"
 
 #define BC_QUIET 0x1
 #define BC_MATHLIB 0x2
@@ -309,13 +309,13 @@ void sleepCmd(char *instruction) {
         return;
 
     time *= unit;
-
-    if (ceil(time) != time) {
-        puts("Error: must be integer!");
+        
+    if (time < 0) {
+        puts("Error: must be greater than 0");
         return;
     }
 
-    sleepS(time);
+    sleepF(time);
 }
 
 int32_t lcCmd(char *instruction) {
@@ -1304,7 +1304,8 @@ void updatehistory(void) {
         "b0.9.39 - minor changes\n\tEdited: now neofetch displays the creation date\n",
         "b0.9.51 - big changes\n\tEdited: the calculator now works properly when dealing with the wrong data type\n",
         "b0.9.57 - small changes\n\tEdited: oct() function now works properly\n",
-        "b0.9.63 - minor changes\n\tRemoved: some useless functions from the source code\n"
+        "b0.9.63 - minor changes\n\tRemoved: some useless functions from the source code\n",
+        "b0.9.7 - big changes\n\tEdited: improved the sleep() function, now it has more precision and works with sigle point precision numbers\n"
     };
 
     uint16_t logCount = sizeof(logs) / sizeof(logs[0]);

@@ -13,8 +13,8 @@
 #include "terminal.h"
 #include <inttypes.h>
 
-#define PROJ_SIZE_APPROX 157000
-#define PROJ_LINES_APPROX 5650
+#define PROJ_SIZE_APPROX 159000
+#define PROJ_LINES_APPROX 5700
 
 #define PATH_MAIN_C "./main.c"
 #define ALIAS_FILE "shortcut.txt"
@@ -52,6 +52,45 @@ static char *last_directory = NULL;
 #else
     #error "Operational system not recognized, terminating program!!"
 #endif
+
+void sleepF(double seconds) {
+#ifdef _WIN32
+    LARGE_INTEGER freq, start, now;
+    QueryPerformanceFrequency(&freq);
+    QueryPerformanceCounter(&start);
+
+    double target = seconds;
+
+    if (seconds > 0.002) {
+        DWORD coarse = (DWORD)((seconds - 0.001) * 1000.0);
+        Sleep(coarse);
+    }
+
+    do {
+        QueryPerformanceCounter(&now);
+    } while ((double)(now.QuadPart - start.QuadPart) / freq.QuadPart < target);
+#else 
+    struct timespec start, now;
+    clock_gettime(CLOCK_MONOTONIC, &start);
+
+    double target = seconds;
+
+    if (seconds > 0.002) {
+        struct timespec ts;
+        ts.tv_sec  = (time_t)(seconds - 0.001);
+        ts.tv_nsec = (long)(((seconds - 0.001) - ts.tv_sec) * 1e9);
+        nanosleep(&ts, NULL);
+    }
+
+    do {
+        clock_gettime(CLOCK_MONOTONIC, &now);
+        double elapsed =
+            (now.tv_sec - start.tv_sec) +
+            (now.tv_nsec - start.tv_nsec) / 1e9;
+        if (elapsed >= target) break;
+    } while (1);
+#endif
+}
 
 bool isValidFile(char *file) {
     char *invalidChars = "<>:\"/\\|?*";
@@ -956,6 +995,23 @@ uint8_t myStrcasestr(const char *str, const char *sub) {
     return 0;
 }
 
+const char *strcasestr_ptr(const char *haystack, const char *needle) {
+    if (!haystack || !needle) return NULL;
+    
+    size_t needle_len = strlen(needle);
+    if (needle_len == 0) return haystack;
+    
+    size_t haystack_len = strlen(haystack);
+    
+    for (size_t i = 0; i <= haystack_len - needle_len; i++) {
+        if (strncasecmp(haystack + i, needle, needle_len) == 0) {
+            return haystack + i;
+        }
+    }
+    
+    return NULL;
+}
+
 void printTarg(const char *str, const char *targ, int8_t markColor, int8_t ignoreCase) {
     const char *p = str;
     uint16_t targLen = strlen(targ);
@@ -964,7 +1020,7 @@ void printTarg(const char *str, const char *targ, int8_t markColor, int8_t ignor
         const char *found = NULL;
 
         if (ignoreCase) {
-            found = strcasestr(p, targ);
+            found = strcasestr_ptr(p, targ);
         } else {
             found = strstr(p, targ);
         }
