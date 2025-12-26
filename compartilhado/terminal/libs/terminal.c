@@ -50,10 +50,6 @@
     #error "Operational system not recognized, terminating program!!"
 #endif
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-
 void revCmd(char *instruction) {
     
     if (*instruction == '\0') {
@@ -67,10 +63,8 @@ void revCmd(char *instruction) {
         uint8_t appear = 1;
 
         while (true) {
-            if (appear) {
-                printf("Now that the arguments are null, it's going to be read from the input, type");
-                printf("'stop' or 'quit' to exit\n\n");
-            }
+            if (appear)
+                puts("Reading from the input, type 'stop' or 'quit' to exit\n");
 
             appear = 0;
 
@@ -88,8 +82,11 @@ void revCmd(char *instruction) {
             trimEnd(string);
 
             char *copy = revStr(string);
-            uint8_t stop  = (strcmp(string, "exit") == 0 || strcmp(string, "quit") == 0);
-            uint8_t clean = (strcmp(string, "clear") == 0 || strcmp(string, "cls") == 0);
+            uint8_t stop  = (isValidBcCommand(string, "exit") ||
+                             isValidBcCommand(string, "quit"));
+
+            uint8_t clean = (isValidBcCommand(string, "clear") ||
+                             isValidBcCommand(string, "cls"));
 
             if (stop) {
                 printf("%s\n", copy);
@@ -246,9 +243,11 @@ char *randstrCmd(char *instruction) {
         }
     }
 
-    if (len == U_NAN)
+    if (len == U_NAN) {
+        errno = EINVAL;
+        perror("Error");
         return NULL;
-
+    }
 
     if (len <= 0 || len >= 65536) {
         printf("Error: length must be > 0 and < 65536\n");
@@ -1922,8 +1921,7 @@ void neofetchCmd(void) {
 #ifdef _WIN32
     puts(unameCmdWin(0b1000));
 #else
-    char *kVersion = unameCmdLinux(0b1000);
-    puts(strtok(kVersion, " "));
+    puts(unameCmdLinux(0b1000));
 #endif
     
 
