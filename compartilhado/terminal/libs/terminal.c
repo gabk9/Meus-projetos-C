@@ -1921,7 +1921,7 @@ void neofetchCmd(void) {
 #ifdef _WIN32
     puts(unameCmdWin(0b1000));
 #else
-    puts(unameCmdLinux(0b1000));
+    puts(strtok(unameCmdLinux(0b1000), " "));
 #endif
     
 
