@@ -50,7 +50,7 @@ int main(void) {
                 continue;
             }
 
-            sscanf(buffer, "%d", &digits);
+            digits = atoi(buffer);
 
             if (digits < 1 || digits > MAX_CHAR) {
                 printf("Error: must be > 1 and < %d\n\n", MAX_CHAR);
@@ -79,8 +79,10 @@ int main(void) {
             
             int num = atoi(str);
 
-            if (!firstTime)
-                printf("Difference compared to the last number: %d\n\n", num - lastnum);
+            if (!firstTime) {
+                int diff = (num > lastnum) ? num - lastnum : lastnum - num; 
+                printf("Difference compared to the last number: %d\n\n", diff);
+            }
 
             printf("Number: '%d'\n\n", num);
 
