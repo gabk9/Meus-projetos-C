@@ -13,7 +13,7 @@
 #include "terminal.h"
 #include <inttypes.h>
 
-#define VERSION "b0.9.7"
+#define VERSION "b0.9.76"
 
 #define BC_QUIET 0x1
 #define BC_MATHLIB 0x2
@@ -246,6 +246,10 @@ char *randstrCmd(char *instruction) {
         }
     }
 
+    if (len == U_NAN)
+        return NULL;
+
+
     if (len <= 0 || len >= 65536) {
         printf("Error: length must be > 0 and < 65536\n");
         return NULL;
@@ -282,7 +286,7 @@ void sleepCmd(char *instruction) {
     char last = tolower((unsigned char)instruction[len-1]);
 
     if (isalpha(last)) {
-        switch (instruction[len-1]) {
+        switch (last) {
             case 's':
                 instruction[len-1] = '\0';
                 break;
@@ -305,7 +309,7 @@ void sleepCmd(char *instruction) {
 
     double time = eval(instruction, true);
 
-    if (isnan(time))
+    if (isnan(time) || time == U_NAN)
         return;
 
     time *= unit;
@@ -1305,7 +1309,8 @@ void updatehistory(void) {
         "b0.9.51 - big changes\n\tEdited: the calculator now works properly when dealing with the wrong data type\n",
         "b0.9.57 - small changes\n\tEdited: oct() function now works properly\n",
         "b0.9.63 - minor changes\n\tRemoved: some useless functions from the source code\n",
-        "b0.9.7 - big changes\n\tEdited: improved the sleep() function, now it has more precision and works with sigle point precision numbers\n"
+        "b0.9.7 - big changes\n\tEdited: improved the sleep() function, now it has more precision and works with sigle point precision numbers\n",
+        "b0.9.76 - small changes\n\tEdited: in neofetch KERNEL -> KERNEL-RELEASE + KERNEL-VERSION\n"
     };
 
     uint16_t logCount = sizeof(logs) / sizeof(logs[0]);
@@ -1904,11 +1909,21 @@ void neofetchCmd(void) {
     puts(unameCmdLinux(0b100));
 #endif
 
-    printc("KERNEL: ", label_color, 7);
+
+    printc("KERNEL-RELEASE: ", label_color, 7);
 #ifdef _WIN32
     puts(unameCmdWin(0b10));
 #else
     puts(unameCmdLinux(0b10));
+#endif
+
+
+    printc("KERNEL-VERSION: ", label_color, 7);
+#ifdef _WIN32
+    puts(unameCmdWin(0b1000));
+#else
+    char *kVersion = unameCmdLinux(0b1000);
+    puts(strtok(kVersion, " "));
 #endif
     
 

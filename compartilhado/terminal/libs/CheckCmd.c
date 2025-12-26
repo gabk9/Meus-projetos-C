@@ -308,7 +308,7 @@ void manCmd(char *instruction, const char **cmds, uint8_t isInsideBash) {
         printf("'yes' output a string repeatedly until killed\n\nyes <-- print 'y' until killed\n\nyes [STRING] <-- print string until killed\n");
 
     else if (strcmp(instruction, cmds[31]) == 0) { //! sleep
-        printf("'sleep' delay for a specified amount of time\n\nsleep [int: TIME]\n\nSuffixes:\n");
+        printf("'sleep' delay for a specified amount of time\n\nsleep [double: TIME]\n\nSuffixes:\n");
         printf("\t's'   seconds (default)\n");
         printf("\t'm'   minutes\n");
         printf("\t'h'   hours\n");
