@@ -13,7 +13,7 @@
 #include "terminal.h"
 #include <inttypes.h>
 
-#define VERSION "b0.9.76"
+#define VERSION "b0.9.85"
 
 #define BC_QUIET 0x1
 #define BC_MATHLIB 0x2
@@ -516,7 +516,7 @@ void bcCmd(uint16_t argc, char **argv, const char **cmds) {
 
     bool quiet = flags & BC_QUIET;
     bool mathlib = flags & BC_MATHLIB;
-    srand((unsigned)time(NULL));
+    initRandom();
 
     while (true) {
         if (!appear && !quiet) {
@@ -1309,7 +1309,8 @@ void updatehistory(void) {
         "b0.9.57 - small changes\n\tEdited: oct() function now works properly\n",
         "b0.9.63 - minor changes\n\tRemoved: some useless functions from the source code\n",
         "b0.9.7 - big changes\n\tEdited: improved the sleep() function, now it has more precision and works with sigle point precision numbers\n",
-        "b0.9.76 - small changes\n\tEdited: in neofetch KERNEL -> KERNEL-RELEASE + KERNEL-VERSION\n"
+        "b0.9.76 - small changes\n\tEdited: in neofetch KERNEL -> KERNEL-RELEASE + KERNEL-VERSION\n",
+        "b0.9.85 - big changes\n\tFixed: now commands that randomizes values works properly outside the terminal\n"
     };
 
     uint16_t logCount = sizeof(logs) / sizeof(logs[0]);

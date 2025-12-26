@@ -1,3 +1,4 @@
+#define _POSIX_C_SOURCE 199309L
 #include <time.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -16,17 +17,33 @@
 
 void charRm(char *str, int targ);
 
-int main(void) {
-    srand(time(NULL));
+int main(int argc, char **argv) {
+#ifdef _WIN32
+    LARGE_INTEGER counter;
+    QueryPerformanceCounter(&counter);
+    srand((unsigned)counter.QuadPart);
+#else
+    struct timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    srand((unsigned)(ts.tv_nsec ^ ts.tv_sec));
+#endif
+    
     char buffer[MAX_CHAR];
-    int digits, lastnum;
-    
+    long long num, lastnum;
+    long long digits;
+
     int firstTime = 1;
-    
+
     while (1) {
         while (1) {
-            printf("Enter the digit count: ");
-            fgets(buffer, sizeof(buffer), stdin);
+            if (argc <= 1) {
+                printf("Enter the digit count: ");
+                fgets(buffer, sizeof(buffer), stdin);
+            }
+
+            if (argc > 1)
+                strcpy(buffer, argv[1]);
+            
             buffer[strcspn(buffer, "\n")] = '\0';
             charRm(buffer, ' ');
 
@@ -46,14 +63,27 @@ int main(void) {
             }
 
             if (!isalldigit) {
-                puts("Error: invalid data type!\n");
+                if (argc <= 1) {
+                    puts("Error: invalid data type\n");
+                } else {
+                    puts("Error: invalid data type");
+                    return 0;
+                }
+
                 continue;
             }
 
-            digits = atoi(buffer);
+            digits = atoll(buffer);
 
-            if (digits < 1 || digits > MAX_CHAR) {
-                printf("Error: must be > 1 and < %d\n\n", MAX_CHAR);
+            if (digits < 1 || digits > 18) {
+                if (argc <= 1) {
+                    puts("Error: must be > 1 and < 19\n");
+                } else {
+                    puts("Error: must be > 1 and < 19");
+                    return 0;
+                }
+
+
                 continue;
             }
 
@@ -77,17 +107,25 @@ int main(void) {
                 str[i] = '0' + (r % 10);
             }
             
-            int num = atoi(str);
+            long long num = atoll(str);
 
             if (!firstTime) {
-                int diff = (num > lastnum) ? num - lastnum : lastnum - num; 
-                printf("Difference compared to the last number: %d\n\n", diff);
+                long long diff = (num > lastnum) ? num - lastnum : lastnum - num; 
+                printf("Difference compared to the last number: %lld\n\n", diff);
             }
 
-            printf("Number: '%d'\n\n", num);
+            if (argc <= 1) 
+                printf("Number: '%lld'\n\n", num);
+            else 
+                printf("Number: '%lld'\n", num);
+
 
             lastnum = num;
             firstTime = 0;
+            free(str);
+
+            if (argc > 1)
+                break;
     }    
 
     return 0;

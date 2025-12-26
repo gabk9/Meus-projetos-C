@@ -1,4 +1,3 @@
-#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,6 +26,7 @@ int main(int argc, char **argv) {
     hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     setup_console();
 #endif
+    initRandom();
 
     const char *cmds[] = {
         "clear", "exit", "echo", "neofetch", "updatehistory",

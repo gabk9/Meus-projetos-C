@@ -13,7 +13,7 @@
 #include "terminal.h"
 #include <inttypes.h>
 
-#define PROJ_SIZE_APPROX 159000
+#define PROJ_SIZE_APPROX 159500
 #define PROJ_LINES_APPROX 5700
 
 #define PATH_MAIN_C "./main.c"
@@ -52,6 +52,18 @@ static char *last_directory = NULL;
 #else
     #error "Operational system not recognized, terminating program!!"
 #endif
+
+void initRandom(void) {
+#ifdef _WIN32
+    LARGE_INTEGER counter;
+    QueryPerformanceCounter(&counter);
+    srand((unsigned)counter.QuadPart);
+#else
+    struct timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    srand((unsigned)(ts.tv_nsec ^ ts.tv_sec));
+#endif
+}
 
 void sleepF(double seconds) {
 #ifdef _WIN32

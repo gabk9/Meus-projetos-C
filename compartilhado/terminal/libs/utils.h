@@ -20,6 +20,7 @@
 char randChr(void);
 char *get_user(void);
 void trim(char *str);
+void initRandom(void);
 char *charNumber(void);
 char *linesNumber(void);
 char *linesNumber(void);
