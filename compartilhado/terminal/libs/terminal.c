@@ -13,7 +13,7 @@
 #include "terminal.h"
 #include <inttypes.h>
 
-#define VERSION "b0.9.89"
+#define VERSION "b0.9.95"
 
 #define BC_QUIET 0x1
 #define BC_MATHLIB 0x2
@@ -859,7 +859,9 @@ void touchCmd(char *instruction) {
         trim(test);
 
         char *str = strtok_r(inFile, "*", &save);
-        char *num = strtok_r(NULL, "*", &save);
+        char *num = strchr(instruction, '*');
+        num[0] = ' ';
+
         char *cpy = strdup(filename);
 
         filename = strdup(cpy);
@@ -1311,7 +1313,8 @@ void updatehistory(void) {
         "b0.9.7 - big changes\n\tEdited: improved the sleep() function, now it has more precision and works with sigle point precision numbers\n",
         "b0.9.76 - small changes\n\tEdited: in neofetch KERNEL -> KERNEL-RELEASE + KERNEL-VERSION\n",
         "b0.9.85 - big changes\n\tFixed: now commands that randomizes values works properly outside the terminal\n",
-        "b0.9.89 - minor changes\n\tEdited: now the source code is a little more safe\n"
+        "b0.9.89 - minor changes\n\tEdited: now the source code is a little more safe\n",
+        "b0.9.95 - small changes\n\tFixed: now echo and touch works a lot better when multiplying strings\n"
     };
 
     uint16_t logCount = sizeof(logs) / sizeof(logs[0]);
@@ -1603,9 +1606,14 @@ void echoCmd(char *instruction) {
     if (reps != -1 && file == -1) {
 
         char *str = strtok_r(copy, "*", &save);
-        char *num = strtok_r(NULL, "*", &save);
-
-        if (!str || !num) { puts("Error: invalid syntax"); SAFE_FREE(copy); return; }
+        char *num = strchr(instruction, '*');
+        num[0] = ' ';
+        
+        if (!str || !num) {
+            puts("Error: invalid syntax");
+            SAFE_FREE(copy);
+            return;
+        }
 
         trim(str);
         trimEnd(str);
@@ -1682,7 +1690,6 @@ void echoCmd(char *instruction) {
         
         char *inFile = strtok_r(copy, ">", &save);
         char *filename = strtok_r(NULL, ">", &save);
-
         
         if (!inFile || !filename) {
             puts("Error: invalid syntax");
@@ -1694,7 +1701,8 @@ void echoCmd(char *instruction) {
         trimEnd(test);
 
         char *str = strtok_r(inFile, "*", &save);
-        char *num = strtok_r(NULL, "*", &save);
+        char *num = strchr(instruction, '*');
+        num[0] = ' ';
 
         if (!str || !num) { puts("Error: invalid syntax"); SAFE_FREE(copy); return; }
 

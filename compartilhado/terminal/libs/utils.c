@@ -13,7 +13,7 @@
 #include "terminal.h"
 #include <inttypes.h>
 
-#define PROJ_SIZE_APPROX 160500
+#define PROJ_SIZE_APPROX 161000
 #define PROJ_LINES_APPROX 5800
 
 #define PATH_MAIN_C "./main.c"
