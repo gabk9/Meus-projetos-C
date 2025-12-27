@@ -1,23 +1,13 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
-#include <inttypes.h>
 #include "libs/utils.h"
 #include "libs/CheckCmd.h"
 #include "libs/terminal.h" 
 
 #ifdef _WIN32
-    #include <direct.h> 
-    #include <windows.h>
     #define rmdir _rmdir
     #define chdir _chdir
     #define getcwd _getcwd
     HANDLE hConsole;
-#elif defined(__linux__) || defined(__APPLE__)
-    #include <unistd.h>
-    #include <sys/stat.h>
-#else
+#elif !defined(_WIN32) && !defined(__linux__) && !defined(__APPLE__)
     #error "Operational system not recognized, terminating program!!"
 #endif
 

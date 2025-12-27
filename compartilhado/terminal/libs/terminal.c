@@ -1,46 +1,17 @@
 #define _GNU_SOURCE
-#include <time.h>
-#include <math.h>
 #include "utils.h"
-#include <errno.h>
-#include <stdio.h>
-#include <ctype.h>
 #include "s_math.h"
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
 #include "CheckCmd.h"
 #include "terminal.h"
-#include <inttypes.h>
 
-#define VERSION "b0.9.95"
+#define VERSION "b1.0.5"
 
 #define BC_QUIET 0x1
 #define BC_MATHLIB 0x2
 
-#define U_MACHINE 0x4
-#define U_KERN_NAME 0x1
-#define U_HOST_NAME 0x10
-#define U_KERN_RELEASE 0x2
-#define U_KERN_VERSION 0x8
-#define U_OPERATING_SYSTEM 0x20
-#define U_ALL (U_KERN_NAME | U_KERN_RELEASE | U_MACHINE | U_KERN_VERSION | U_HOST_NAME | U_OPERATING_SYSTEM)
-
 #ifdef _WIN32
-    #include <wchar.h>
-    #include <shlobj.h>
-    #include <direct.h>
-    #include <windows.h>
-
     #define SYSTEM "Windows"
-#elif defined(__linux__) || defined(__APPLE__) 
-    #include <pwd.h>
-    #include <wchar.h>
-    #include <dirent.h>
-    #include <unistd.h>
-    #include <sys/stat.h>
-    #include <sys/utsname.h>
-    
+#elif defined(__linux__) || defined(__APPLE__)
     #ifdef __linux__
         #define SYSTEM "Linux"
     #else
@@ -63,8 +34,10 @@ void revCmd(char *instruction) {
         uint8_t appear = 1;
 
         while (true) {
-            if (appear)
-                puts("Reading from the input, type 'stop' or 'quit' to exit\n");
+            if (appear) {
+                printf("Reading from the input, type 'stop' or 'quit' to exit ");
+                puts("and use 'clear' or 'cls' to clear the screen and the scrollback buffer\n");
+            }
 
             appear = 0;
 
@@ -520,10 +493,17 @@ void bcCmd(uint16_t argc, char **argv, const char **cmds) {
 
     while (true) {
         if (!appear && !quiet) {
-            puts("A simple calculator command, so far it only works with 2 numbers, type 'quit' or 'exit' to exit");
-            puts("and 'man' to check the manual inside the calculator, otherwise use 'man bc', it no longer supports comma instead of dots");
-            puts("works with hexadecimal, integers and octal\nPS: mathlib is off by default, type 'mathlib' to turn it on "
-                 "if you're inside the terminal, otherwise use 'bc -l' or 'bc --mathlib'\n");
+            printf("A simple calculator command, so far it only works with 2 numbers, type 'quit' or 'exit' to exit\n");
+            printf("type 'man' to check the manual inside the calculator, otherwise use 'man bc'\n");
+            printf("it no longer supports comma instead of dots and type 'clear' or 'cls' to clear the screen and scrollback buffer");
+            printf("\nPS: mathlib is off by default, type 'mathlib' to turn it on/off "
+                   "if you're inside the terminal, otherwise use 'bc -l' or 'bc --mathlib', it enables functions and "
+                   "binary, hexadecimal and octal numbers\n");
+            printf("Mathlib status: ");
+            if (mathlib)
+                printc("on\n\n", 2, 7);
+            else 
+                printc("off\n\n", 4, 7);
         }
 
 
@@ -552,8 +532,9 @@ void bcCmd(uint16_t argc, char **argv, const char **cmds) {
             appear = 0;
             continue;
         } else if (isValidBcCommand(operation, "mathlib")) {
-            mathlib = true;
-            putchar('\n');
+            cls();
+            mathlib ^= 1;
+            appear = 0;
             continue;
         } else if (isValidBcCommand(operation, "cls")) {
             cls();
@@ -1314,7 +1295,9 @@ void updatehistory(void) {
         "b0.9.76 - small changes\n\tEdited: in neofetch KERNEL -> KERNEL-RELEASE + KERNEL-VERSION\n",
         "b0.9.85 - big changes\n\tFixed: now commands that randomizes values works properly outside the terminal\n",
         "b0.9.89 - minor changes\n\tEdited: now the source code is a little more safe\n",
-        "b0.9.95 - small changes\n\tFixed: now echo and touch works a lot better when multiplying strings\n"
+        "b0.9.95 - small changes\n\tFixed: now echo and touch works a lot better when multiplying strings\n",
+        "b1.0.4 - big changes\n\tEdited: edited the calculator initial message\n",
+        "b1.0.5 - big changes\n\tEdited: file headers organization\n"
     };
 
     uint16_t logCount = sizeof(logs) / sizeof(logs[0]);
@@ -1327,195 +1310,6 @@ void updatehistory(void) {
     }
 
     printf("\n\nTotal updates: %"PRIu16"\n", logCount);
-}
-
-char *unameCmdWin(uint8_t flags) {
-#ifdef _WIN32
-    static char result[0x400];
-    char buffer[0x100];
-    result[0] = '\0';
-    
-    OSVERSIONINFOEX ver;
-    SYSTEM_INFO sysInfo;
-
-    ZeroMemory(&ver, sizeof(ver));
-    ver.dwOSVersionInfoSize = sizeof(ver);
-
-    if (!GetVersionEx((OSVERSIONINFO*)&ver)) {
-        strcpy(result, "Windows");
-        return result;
-    }
-    
-    GetSystemInfo(&sysInfo);
-
-    if (flags & U_KERN_NAME)
-        strcat(result, "Windows ");
-
-    if (flags & U_HOST_NAME) {
-        char* hostname = get_hostname();
-        if (hostname) {
-            sprintf(buffer, "%s ", hostname);
-            strcat(result, buffer);
-        }
-    }
-
-    if (flags & U_KERN_RELEASE) {
-        sprintf(buffer, "%lu.%lu ", ver.dwMajorVersion, ver.dwMinorVersion);
-        strcat(result, buffer);
-    }
-
-    if (flags & U_KERN_VERSION) {
-        sprintf(buffer, "build %lu ", ver.dwBuildNumber);
-        strcat(result, buffer);
-    }
-
-    if (flags & U_MACHINE) {
-        switch (sysInfo.wProcessorArchitecture) {
-            case PROCESSOR_ARCHITECTURE_AMD64:  strcat(result, "x86_64 "); break;
-            case PROCESSOR_ARCHITECTURE_INTEL:  strcat(result, "x86 ");    break;
-            case PROCESSOR_ARCHITECTURE_ARM64:  strcat(result, "ARM64 ");  break;
-            case PROCESSOR_ARCHITECTURE_ARM:    strcat(result, "ARM ");    break;
-            default: strcat(result, "unknown "); break;
-        }
-    }
-
-    if (flags & U_OPERATING_SYSTEM) {
-        const char* os_name = "Windows";
-        
-        if (ver.dwMajorVersion == 10) {
-            if (ver.dwBuildNumber >= 22000)
-                os_name = "Windows 11";
-            else if (ver.dwBuildNumber >= 20348)
-                os_name = "Windows Server 2022";
-            else if (ver.dwBuildNumber >= 19045)
-                os_name = "Windows 10 (22H2)";
-            else if (ver.dwBuildNumber >= 19044)
-                os_name = "Windows 10 (21H2)";
-            else if (ver.dwBuildNumber >= 19043)
-                os_name = "Windows 10 (21H1)";
-            else if (ver.dwBuildNumber >= 19042)
-                os_name = "Windows 10 (20H2)";
-            else if (ver.dwBuildNumber >= 19041)
-                os_name = "Windows 10 (2004)";
-            else
-                os_name = "Windows 10";
-        }
-        else if (ver.dwMajorVersion == 6) {
-            switch (ver.dwMinorVersion) {
-                case 3: os_name = "Windows 8.1"; break;
-                case 2: os_name = "Windows 8"; break;
-                case 1: os_name = "Windows 7"; break;
-                case 0: os_name = "Windows Vista"; break;
-            }
-        }
-        else if (ver.dwMajorVersion == 5) {
-            switch (ver.dwMinorVersion) {
-                case 2: 
-                    if (GetSystemMetrics(SM_SERVERR2))
-                        os_name = "Windows Server 2003 R2";
-                    else if (ver.wSuiteMask & VER_SUITE_WH_SERVER)
-                        os_name = "Windows Home Server";
-                    else if (ver.wProductType == VER_NT_WORKSTATION)
-                        os_name = "Windows XP x64";
-                    else
-                        os_name = "Windows Server 2003";
-                    break;
-                case 1: os_name = "Windows XP"; break;
-                case 0: os_name = "Windows 2000"; break;
-            }
-        }
-        
-        sprintf(buffer, "%s ", os_name);
-        strcat(result, buffer);
-    }
-
-    if (result[0] == '\0') {
-        strcpy(result, "Windows");
-    } else {
-        trimEnd(result);
-    }
-    
-    return result;
-#else
-    return NULL;
-#endif
-}
-
-char *unameCmdLinux(uint8_t flags) {
-#ifndef _WIN32
-    static char result[0x400];
-    char buffer[0x100];
-    result[0] = '\0';
-    
-    struct utsname pc;
-
-    if (uname(&pc) == -1) {
-        strcpy(result, "Linux");
-        return result;
-    }
-
-    if (flags & U_KERN_NAME) {
-        sprintf(buffer, "%s ", pc.sysname);
-        strcat(result, buffer);
-    }
-    
-    if (flags & U_HOST_NAME) {
-        sprintf(buffer, "%s ", pc.nodename);
-        strcat(result, buffer);
-    }
-    
-    if (flags & U_KERN_RELEASE) {
-        sprintf(buffer, "%s ", pc.release);
-        strcat(result, buffer);
-    }
-    
-    if (flags & U_KERN_VERSION) {
-        sprintf(buffer, "%s ", pc.version);
-        strcat(result, buffer);
-    }
-    
-    if (flags & U_MACHINE) {
-        sprintf(buffer, "%s ", pc.machine);
-        strcat(result, buffer);
-    }
-    
-    if (flags & U_OPERATING_SYSTEM) {
-        #ifdef __linux__
-            FILE *fp = fopen("/proc/version", "r");
-            if (fp) {
-                char version[0x100];
-                if (fgets(version, sizeof(version), fp)) {
-                    if (strstr(version, "GNU")) {
-                        strcat(result, "GNU/Linux ");
-                    } else {
-                        sprintf(buffer, "%s ", pc.sysname);
-                        strcat(result, buffer);
-                    }
-                } else {
-                    sprintf(buffer, "%s ", pc.sysname);
-                    strcat(result, buffer);
-                }
-                fclose(fp);
-            } else {
-                sprintf(buffer, "%s ", pc.sysname);
-                strcat(result, buffer);
-            }
-        #else
-            sprintf(buffer, "%s ", pc.sysname);
-            strcat(result, buffer);
-        #endif
-    }
-
-    if (result[0] == '\0') {
-        strcpy(result, pc.sysname);
-    } else {
-        trimEnd(result);
-    }
-    
-    return result;
-#else
-    return NULL;
-#endif
 }
 
 char *unameCmd(uint16_t argc, char **argv) {
@@ -1767,88 +1561,6 @@ void echoCmd(char *instruction) {
         SAFE_FREE(copy);
         SAFE_FREE(test);
     }
-}
-
-void lsCmdWin(const char *dirPath, uint8_t showAll) {
-#ifdef _WIN32
-    char searchPath[0x1000];
-
-    size_t len = strlen(dirPath);
-    if (len + 3 >= sizeof(searchPath)) {
-        fprintf(stderr, "path too long\n");
-        return;
-    }
-
-    strcpy(searchPath, dirPath);
-    if (len > 0 && (searchPath[len-1] == '/' || searchPath[len-1] == '\\'))
-        searchPath[len-1] = '\0';
-
-    strcat(searchPath, "\\*");
-
-    WIN32_FIND_DATAA fd;
-    HANDLE hFind = FindFirstFileA(searchPath, &fd);
-    if (hFind == INVALID_HANDLE_VALUE) {
-        fprintf(stderr, "erro: FindFirstFile failed (%lu)\n", GetLastError());
-        return;
-    }
-
-    do {
-        const char *name = fd.cFileName;
-
-        if (!showAll) {
-            if (!strcmp(name, ".") || !strcmp(name, ".."))
-                continue;
-            if (name[0] == '.')
-                continue;
-        }
-
-        char fullPath[0x1000];
-        snprintf(fullPath, sizeof(fullPath), "%s\\%s", dirPath, name);
-
-        int8_t t = isDir(fullPath);
-
-        if (t == 1)
-            printf("\033[94m%s\033[0m\n", name);
-        else
-            printf("\033[37m%s\033[0m\n", name);
-
-    } while (FindNextFileA(hFind, &fd));
-
-    FindClose(hFind);
-#endif
-}
-
-void lsCmdLinux(const char *dirPath, uint8_t showAll) {
-#ifndef _WIN32
-    DIR *dir = opendir(dirPath);
-    if (!dir) {
-        perror("erro");
-        return;
-    }
-
-    struct dirent *entry;
-    while ((entry = readdir(dir)) != NULL) {
-
-        if (!showAll) {
-            if (!strcmp(entry->d_name, ".") || !strcmp(entry->d_name, ".."))
-                continue;
-            if (entry->d_name[0] == '.')
-                continue;
-        }
-
-        char fullPath[0x1000];
-        snprintf(fullPath, sizeof(fullPath), "%s/%s", dirPath, entry->d_name);
-
-        int8_t t = isDir(fullPath);
-
-        if (t == 1)
-            printf("\033[94m%s\033[0m\n", entry->d_name);
-        else
-            printf("\033[37m%s\033[0m\n", entry->d_name);
-    }
-
-    closedir(dir);
-#endif
 }
 
 void lsCmd(const char *option, const char *address) {

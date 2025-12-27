@@ -1,12 +1,5 @@
-#include <time.h>
-#include <math.h>
-#include "s_math.h"
 #include "utils.h"
-#include <ctype.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdarg.h>
+#include "s_math.h"
 
 #define BC_ERROR "__LSW__CALC__ERROR__"
 

@@ -1,7 +1,6 @@
 #ifndef CHECKCMD_H
 #define CHECKCMD_H
 
-
 double calc(double num1, char *operation, double num2);
 void manCmd(char *instruction, const char **cmds, uint8_t isInsideBash);
 double CheckFunc(char *operation, char **functions, const char *uniOps, const char **multiOps, bool mathlib);

@@ -1,14 +1,35 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <math.h>
+#include <time.h>
+#include <ctype.h>
+#include <wchar.h>
+#include <errno.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdarg.h>
 #include <stdbool.h>
 #include <inttypes.h>
 
 #ifdef _WIN32
     #include <direct.h>
+    #include <shlobj.h>
+    #include <windows.h>
+    
     #define cls(void) system("cls")
 #else
+    #include <pwd.h>
     #include <unistd.h>
+    #include <libgen.h>
+    #include <dirent.h>
+    #include <sys/stat.h>
+    #include <sys/types.h>
+    #include <sys/ioctl.h>
+    #include <sys/utsname.h>
+
+    #define MAX_PATH 0x104
     #define cls(void) system("clear")
 #endif
 
@@ -16,6 +37,14 @@
 #define I_NAN (uint32_t)-1
 #define U_NAN (uint64_t)-1
 #define MAX_CHAR (1ULL << 10)
+
+#define U_MACHINE 0x4
+#define U_KERN_NAME 0x1
+#define U_HOST_NAME 0x10
+#define U_KERN_RELEASE 0x2
+#define U_KERN_VERSION 0x8
+#define U_OPERATING_SYSTEM 0x20
+#define U_ALL (U_KERN_NAME | U_KERN_RELEASE | U_MACHINE | U_KERN_VERSION | U_HOST_NAME | U_OPERATING_SYSTEM)
 
 #define SAFE_FREE(ptr) do { \
     if (ptr) \
@@ -54,8 +83,10 @@ int8_t isDir(const char *path);
 uint64_t get_total_ram_mb(void);
 char *get_default_address(void);
 void safe_lower_inplace(char *s);
+char *unameCmdWin(uint8_t flags);
 char *buildAliasPath(char *path);
 char *tolowerstr(const char *str);
+char *unameCmdLinux(uint8_t flags);
 void charRm(char *str, int8_t targ);
 char *handle_cd_dash(char *address);
 char *find_andand_outside_quotes(char *s);
@@ -72,6 +103,8 @@ char *defaultAddressReplace(const char *address);
 uint16_t countIndex(const char *str, int8_t chr);
 void createShortcut(char *instruction, char *path);
 char **parseData(const char *str, uint16_t *count);
+void lsCmdWin(const char *dirPath, uint8_t showAll);
+void lsCmdLinux(const char *dirPath, uint8_t showAll);
 void charReplace(char *str, int8_t targ, int8_t repl);
 uint8_t myStrcasestr(const char *str, const char *sub);
 uint16_t CountSubStr(const char *str, const char *sub);

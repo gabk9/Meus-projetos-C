@@ -1,17 +1,9 @@
-#include <math.h>
 #include "utils.h"
-#include <stdio.h>
-#include <ctype.h>
 #include "s_math.h"
-#include <string.h>
-#include <stdlib.h>
-#include <stdbool.h>
 #include "terminal.h"
 #include "CheckCmd.h"
 
-#ifdef _WIN32
-    #include <windows.h>
-#elif !defined(_WIN32) && !defined(__linux__) && !defined(__APPLE__)
+#if !defined(_WIN32) && !defined(__linux__) && !defined(__APPLE__)
     #error "Operational system not recognized, terminating program!!"
 #endif
 

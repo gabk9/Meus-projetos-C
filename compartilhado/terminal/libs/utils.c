@@ -1,23 +1,15 @@
 #define _GNU_SOURCE
-#include <math.h>
-#include <time.h>
 #include "utils.h"
-#include <stdio.h>
-#include <ctype.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdarg.h>
 #include "s_math.h"
-#include <stdbool.h>
 #include "CheckCmd.h"
 #include "terminal.h"
-#include <inttypes.h>
 
-#define PROJ_SIZE_APPROX 161000
-#define PROJ_LINES_APPROX 5800
+#define PROJ_SIZE_APPROX 160500
+#define PROJ_LINES_APPROX 5700
+
+#define ALIAS_FILE "shortcut.txt"
 
 #define PATH_MAIN_C "./main.c"
-#define ALIAS_FILE "shortcut.txt"
 #define PATH_UTILS_C "./libs/utils.c"
 #define PATH_UTILS_H "./libs/utils.h"
 #define PATH_S_MATH_C "./libs/s_math.c"
@@ -27,31 +19,14 @@
 #define PATH_TERMINAL_C "./libs/terminal.c"
 #define PATH_TERMINAL_H "./libs/terminal.h"
 
-#if !defined(_WIN32) && !defined(__linux__) && !defined(__APPLE__)
+
+#ifdef _WIN32
+    extern HANDLE hConsole;
+#elif !defined(_WIN32) && !defined(__linux__) && !defined(__APPLE__)
     #error "Operational system not recognized, terminating program!!"
 #endif
 
 static char *last_directory = NULL;
-
-#ifdef _WIN32
-    #include <wchar.h>
-    #include <shlobj.h>
-    #include <direct.h>
-    #include <windows.h>
-    
-    extern HANDLE hConsole;
-#elif defined(__linux__) || defined(__APPLE__) 
-    #include <pwd.h>
-    #include <libgen.h>
-    #include <unistd.h>
-    #include <sys/stat.h>
-    #include <sys/types.h>
-    #include <sys/ioctl.h>
-
-    #define PATH_MAX 0x104
-#else
-    #error "Operational system not recognized, terminating program!!"
-#endif
 
 void initRandom(void) {
 #ifdef _WIN32
@@ -381,7 +356,7 @@ char *myDirname(char *path) {
 }
 
 char *getBasePath(void) {
-    static char path[PATH_MAX];
+    static char path[MAX_PATH];
 
 #ifdef _WIN32
     GetModuleFileNameA(NULL, path, sizeof(path));
@@ -512,6 +487,277 @@ int16_t strrchar(const char *str, int8_t chr) {
         if (i == 0) break;
     }
     return -1;
+}
+
+void lsCmdLinux(const char *dirPath, uint8_t showAll) {
+#ifndef _WIN32
+    DIR *dir = opendir(dirPath);
+    if (!dir) {
+        perror("erro");
+        return;
+    }
+
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != NULL) {
+
+        if (!showAll) {
+            if (!strcmp(entry->d_name, ".") || !strcmp(entry->d_name, ".."))
+                continue;
+            if (entry->d_name[0] == '.')
+                continue;
+        }
+
+        char fullPath[0x1000];
+        snprintf(fullPath, sizeof(fullPath), "%s/%s", dirPath, entry->d_name);
+
+        int8_t t = isDir(fullPath);
+
+        if (t == 1)
+            printf("\033[94m%s\033[0m\n", entry->d_name);
+        else
+            printf("\033[37m%s\033[0m\n", entry->d_name);
+    }
+
+    closedir(dir);
+#endif
+}
+
+void lsCmdWin(const char *dirPath, uint8_t showAll) {
+#ifdef _WIN32
+    char searchPath[0x1000];
+
+    size_t len = strlen(dirPath);
+    if (len + 3 >= sizeof(searchPath)) {
+        fprintf(stderr, "path too long\n");
+        return;
+    }
+
+    strcpy(searchPath, dirPath);
+    if (len > 0 && (searchPath[len-1] == '/' || searchPath[len-1] == '\\'))
+        searchPath[len-1] = '\0';
+
+    strcat(searchPath, "\\*");
+
+    WIN32_FIND_DATAA fd;
+    HANDLE hFind = FindFirstFileA(searchPath, &fd);
+    if (hFind == INVALID_HANDLE_VALUE) {
+        fprintf(stderr, "erro: FindFirstFile failed (%lu)\n", GetLastError());
+        return;
+    }
+
+    do {
+        const char *name = fd.cFileName;
+
+        if (!showAll) {
+            if (!strcmp(name, ".") || !strcmp(name, ".."))
+                continue;
+            if (name[0] == '.')
+                continue;
+        }
+
+        char fullPath[0x1000];
+        snprintf(fullPath, sizeof(fullPath), "%s\\%s", dirPath, name);
+
+        int8_t t = isDir(fullPath);
+
+        if (t == 1)
+            printf("\033[94m%s\033[0m\n", name);
+        else
+            printf("\033[37m%s\033[0m\n", name);
+
+    } while (FindNextFileA(hFind, &fd));
+
+    FindClose(hFind);
+#endif
+}
+
+char *unameCmdWin(uint8_t flags) {
+#ifdef _WIN32
+    static char result[0x400];
+    char buffer[0x100];
+    result[0] = '\0';
+    
+    OSVERSIONINFOEX ver;
+    SYSTEM_INFO sysInfo;
+
+    ZeroMemory(&ver, sizeof(ver));
+    ver.dwOSVersionInfoSize = sizeof(ver);
+
+    if (!GetVersionEx((OSVERSIONINFO*)&ver)) {
+        strcpy(result, "Windows");
+        return result;
+    }
+    
+    GetSystemInfo(&sysInfo);
+
+    if (flags & U_KERN_NAME)
+        strcat(result, "Windows ");
+
+    if (flags & U_HOST_NAME) {
+        char* hostname = get_hostname();
+        if (hostname) {
+            sprintf(buffer, "%s ", hostname);
+            strcat(result, buffer);
+        }
+    }
+
+    if (flags & U_KERN_RELEASE) {
+        sprintf(buffer, "%lu.%lu ", ver.dwMajorVersion, ver.dwMinorVersion);
+        strcat(result, buffer);
+    }
+
+    if (flags & U_KERN_VERSION) {
+        sprintf(buffer, "build %lu ", ver.dwBuildNumber);
+        strcat(result, buffer);
+    }
+
+    if (flags & U_MACHINE) {
+        switch (sysInfo.wProcessorArchitecture) {
+            case PROCESSOR_ARCHITECTURE_AMD64:  strcat(result, "x86_64 "); break;
+            case PROCESSOR_ARCHITECTURE_INTEL:  strcat(result, "x86 ");    break;
+            case PROCESSOR_ARCHITECTURE_ARM64:  strcat(result, "ARM64 ");  break;
+            case PROCESSOR_ARCHITECTURE_ARM:    strcat(result, "ARM ");    break;
+            default: strcat(result, "unknown "); break;
+        }
+    }
+
+    if (flags & U_OPERATING_SYSTEM) {
+        const char* os_name = "Windows";
+        
+        if (ver.dwMajorVersion == 10) {
+            if (ver.dwBuildNumber >= 22000)
+                os_name = "Windows 11";
+            else if (ver.dwBuildNumber >= 20348)
+                os_name = "Windows Server 2022";
+            else if (ver.dwBuildNumber >= 19045)
+                os_name = "Windows 10 (22H2)";
+            else if (ver.dwBuildNumber >= 19044)
+                os_name = "Windows 10 (21H2)";
+            else if (ver.dwBuildNumber >= 19043)
+                os_name = "Windows 10 (21H1)";
+            else if (ver.dwBuildNumber >= 19042)
+                os_name = "Windows 10 (20H2)";
+            else if (ver.dwBuildNumber >= 19041)
+                os_name = "Windows 10 (2004)";
+            else
+                os_name = "Windows 10";
+        }
+        else if (ver.dwMajorVersion == 6) {
+            switch (ver.dwMinorVersion) {
+                case 3: os_name = "Windows 8.1"; break;
+                case 2: os_name = "Windows 8"; break;
+                case 1: os_name = "Windows 7"; break;
+                case 0: os_name = "Windows Vista"; break;
+            }
+        }
+        else if (ver.dwMajorVersion == 5) {
+            switch (ver.dwMinorVersion) {
+                case 2: 
+                    if (GetSystemMetrics(SM_SERVERR2))
+                        os_name = "Windows Server 2003 R2";
+                    else if (ver.wSuiteMask & VER_SUITE_WH_SERVER)
+                        os_name = "Windows Home Server";
+                    else if (ver.wProductType == VER_NT_WORKSTATION)
+                        os_name = "Windows XP x64";
+                    else
+                        os_name = "Windows Server 2003";
+                    break;
+                case 1: os_name = "Windows XP"; break;
+                case 0: os_name = "Windows 2000"; break;
+            }
+        }
+        
+        sprintf(buffer, "%s ", os_name);
+        strcat(result, buffer);
+    }
+
+    if (result[0] == '\0') {
+        strcpy(result, "Windows");
+    } else {
+        trimEnd(result);
+    }
+    
+    return result;
+#else
+    return NULL;
+#endif
+}
+
+char *unameCmdLinux(uint8_t flags) {
+#ifndef _WIN32
+    static char result[0x400];
+    char buffer[0x100];
+    result[0] = '\0';
+    
+    struct utsname pc;
+
+    if (uname(&pc) == -1) {
+        strcpy(result, "Linux");
+        return result;
+    }
+
+    if (flags & U_KERN_NAME) {
+        sprintf(buffer, "%s ", pc.sysname);
+        strcat(result, buffer);
+    }
+    
+    if (flags & U_HOST_NAME) {
+        sprintf(buffer, "%s ", pc.nodename);
+        strcat(result, buffer);
+    }
+    
+    if (flags & U_KERN_RELEASE) {
+        sprintf(buffer, "%s ", pc.release);
+        strcat(result, buffer);
+    }
+    
+    if (flags & U_KERN_VERSION) {
+        sprintf(buffer, "%s ", pc.version);
+        strcat(result, buffer);
+    }
+    
+    if (flags & U_MACHINE) {
+        sprintf(buffer, "%s ", pc.machine);
+        strcat(result, buffer);
+    }
+    
+    if (flags & U_OPERATING_SYSTEM) {
+        #ifdef __linux__
+            FILE *fp = fopen("/proc/version", "r");
+            if (fp) {
+                char version[0x100];
+                if (fgets(version, sizeof(version), fp)) {
+                    if (strstr(version, "GNU")) {
+                        strcat(result, "GNU/Linux ");
+                    } else {
+                        sprintf(buffer, "%s ", pc.sysname);
+                        strcat(result, buffer);
+                    }
+                } else {
+                    sprintf(buffer, "%s ", pc.sysname);
+                    strcat(result, buffer);
+                }
+                fclose(fp);
+            } else {
+                sprintf(buffer, "%s ", pc.sysname);
+                strcat(result, buffer);
+            }
+        #else
+            sprintf(buffer, "%s ", pc.sysname);
+            strcat(result, buffer);
+        #endif
+    }
+
+    if (result[0] == '\0') {
+        strcpy(result, pc.sysname);
+    } else {
+        trimEnd(result);
+    }
+    
+    return result;
+#else
+    return NULL;
+#endif
 }
 
 char *get_hostname(void) {
