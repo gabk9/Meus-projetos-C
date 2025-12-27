@@ -4,7 +4,7 @@
 #include "CheckCmd.h"
 #include "terminal.h"
 
-#define PROJ_SIZE_APPROX 160500
+#define PROJ_SIZE_APPROX 161000
 #define PROJ_LINES_APPROX 5700
 
 #define ALIAS_FILE "shortcut.txt"
@@ -824,28 +824,28 @@ void GetProjDir(char *program_root, uint16_t root_size, char *data_folder, uint1
 #endif
 }
 
-void setColor(int8_t color) {
+void setColor(color4_t color) {
 #ifdef _WIN32
     SetConsoleTextAttribute(hConsole, color);
 #else
     switch(color) {
-        case 0:  printf("\033[30m"); break; // Black
-        case 1:  printf("\033[34m"); break; // Blue
-        case 2:  printf("\033[32m"); break; // Green
-        case 3:  printf("\033[36m"); break; // Cyan
-        case 4:  printf("\033[31m"); break; // Red
-        case 5:  printf("\033[35m"); break; // Magenta
-        case 6:  printf("\033[33m"); break; // Yellow
-        case 7:  printf("\033[37m"); break; // White
-        case 8:  printf("\033[90m"); break; // Gray
-        case 9:  printf("\033[94m"); break; // Light Blue
-        case 10: printf("\033[92m"); break; // Light Green
-        case 11: printf("\033[96m"); break; // Light Cyan
-        case 12: printf("\033[91m"); break; // Light Red
-        case 13: printf("\033[95m"); break; // Light Magenta
-        case 14: printf("\033[93m"); break; // Light Yellow
-        case 15: printf("\033[97m"); break; // Bright White
-        default: printf("\033[0m");  break; // Reset
+        case BLACK:           printf("\033[30m"); break;
+        case BLUE:            printf("\033[34m"); break;
+        case GREEN:           printf("\033[32m"); break;
+        case CYAN:            printf("\033[36m"); break;
+        case RED:             printf("\033[31m"); break;
+        case MAGENTA:         printf("\033[35m"); break;
+        case YELLOW:          printf("\033[33m"); break;
+        case WHITE:           printf("\033[37m"); break;
+        case GRAY:            printf("\033[90m"); break;
+        case LIGHT_BLUE:      printf("\033[94m"); break;
+        case LIGHT_GREEN:     printf("\033[92m"); break;
+        case LIGHT_CYAN:      printf("\033[96m"); break;
+        case LIGHT_RED:       printf("\033[91m"); break;
+        case LIGHT_MAGENTA:   printf("\033[95m"); break;
+        case LIGHT_YELLOW:    printf("\033[93m"); break;
+        case BRIGHT_WHITE:    printf("\033[97m"); break;
+        default:              printf("\033[0m");  break;
     }
 #endif
 } 
@@ -1270,7 +1270,7 @@ const char *strcasestr_ptr(const char *haystack, const char *needle) {
     return NULL;
 }
 
-void printTarg(const char *str, const char *targ, int8_t markColor, int8_t ignoreCase) {
+void printTarg(const char *str, const char *targ, color4_t markColor, int8_t ignoreCase) {
     const char *p = str;
     uint16_t targLen = strlen(targ);
 
@@ -1695,8 +1695,8 @@ char *get_default_address(void) {
     return strdup(".");
 }
 
-void printc(const char *str, int8_t color, int8_t resetColor, ...) {
-    setColor(color);
+void printc(const char *str, color4_t initColor, color4_t resetColor, ...) {
+    setColor(initColor);
 
     va_list args;
     va_start(args, resetColor);

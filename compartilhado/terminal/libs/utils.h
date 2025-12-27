@@ -60,6 +60,12 @@
     } \
 } while (0)
 
+typedef enum color4_t {
+    BLACK, BLUE, GREEN, CYAN, RED, MAGENTA, YELLOW,
+    WHITE, GRAY, LIGHT_BLUE, LIGHT_GREEN, LIGHT_CYAN,
+    LIGHT_RED, LIGHT_MAGENTA, LIGHT_YELLOW, BRIGHT_WHITE
+} color4_t;
+
 char randChr(void);
 char *get_user(void);
 void trim(char *str);
@@ -78,11 +84,11 @@ void sleepF(double seconds);
 bool isBin(const char *str);
 bool isHex(const char *str);
 bool isOct(const char *str);
-void setColor(int8_t color);
 void trimBetween(char *str);
 char *myDirname(char *path);
 void echoHandler(char *str);
 bool isValidFile(char *file);
+void setColor(color4_t color);
 void enableAnsiIfNeeded(void);
 char *revStr(const char *str);
 char *extractPath(char **str);
@@ -120,10 +126,10 @@ uint16_t CountSubStr(const char *str, const char *sub);
 char *handle_normal_cd(const char *path, char *address);
 double parse_hex_pi_e_bin(const char *str, int16_t *ok);
 char **copyMat(char **dest, const char **src, uint16_t size);
-void printc(const char *str, int8_t color, int8_t resetColor, ...);
 const char *strcasestr_ptr(const char *haystack, const char *needle);
 void split_instruction_args(char *line, char **out_cmd, char **out_args);
-void printTarg(const char *str, const char *targ, int8_t markColor, int8_t ignoreCase);
+void printc(const char *str, color4_t initColor, color4_t resetColor, ...);
+void printTarg(const char *str, const char *targ, color4_t markColor, int8_t ignoreCase);
 int16_t find_main_operator_full(const char *s, const char **multiOps, const char *uniOps, char *foundOp);
 void GetProjDir(char *program_root, uint16_t root_size, char *data_folder, uint16_t data_size, char *history_path, uint16_t hist_size);
 bool isalias(char *operation, char *args, const char **cmds, uint16_t cmdCount, char **address, char *history_path, char *data_folder, uint16_t isInsideBash);

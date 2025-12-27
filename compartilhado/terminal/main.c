@@ -101,10 +101,10 @@ int main(int argc, char **argv) {
     #ifdef _WIN32
         charReplace(wd, '/', '\\');
     #endif
-        printc("❯ lsw ❮ ", 3, 7);
-        printc("%s@%s", 10, 7, userName, hostName); // Light Green to White
+        printc("❯ lsw ❮ ", CYAN, WHITE);
+        printc("%s@%s", LIGHT_GREEN, WHITE, userName, hostName);
         putchar(':');
-        printc("%s", 9, 7, wd); // Light Blue to White
+        printc("%s", LIGHT_BLUE, WHITE, wd);
         printf("$ ");
 
         if (!fgets(input, MAX_CHAR, stdin))

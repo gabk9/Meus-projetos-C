@@ -384,12 +384,11 @@ void manCmdMulti(char *instruction, const char **cmds, uint8_t isInsideBash) {
     strncpy(buffer, instruction, sizeof(buffer));
     buffer[sizeof(buffer)-1] = '\0';
 
-    char *option = NULL;
     char *rest = buffer;
 
     if (buffer[0] == '-') {
-        option = strtok(buffer, " ");
-        rest = strtok(NULL, "");
+        strtok(buffer, " ");
+        rest = strtok(NULL, " ");
     }
 
     if (!rest || strlen(rest) == 0) {
@@ -501,9 +500,9 @@ void bcCmd(uint16_t argc, char **argv, const char **cmds) {
                    "binary, hexadecimal and octal numbers\n");
             printf("Mathlib status: ");
             if (mathlib)
-                printc("on\n\n", 2, 7);
+                printc("on\n\n", GREEN, WHITE);
             else 
-                printc("off\n\n", 4, 7);
+                printc("off\n\n", RED, WHITE);
         }
 
 
@@ -676,7 +675,7 @@ void grepCmd(char *instruction) {
                                : (strstr(line, pattern) != NULL);
 
         if (match) {
-            printTarg(line, pattern, 4, ignoreCase);
+            printTarg(line, pattern, RED, ignoreCase);
             found = 1;
         }
     }
@@ -1595,10 +1594,10 @@ void neofetchCmd(void) {
 
     uint8_t lines = sizeof(ascii_art) / sizeof(ascii_art[0]);
     
-    int8_t title_color = 6;    // Yellow
-    int8_t label_color = 11;   // Light Cyan 
-    int8_t art_color = 2;      // Green
-    int8_t art_bg_color = 10;  // Light green
+    color4_t title_color = YELLOW;
+    color4_t label_color = LIGHT_CYAN;
+    color4_t art_color = GREEN;
+    color4_t art_bg_color = LIGHT_GREEN;
 
     for (uint8_t i = 0; i < lines; i++) {
         for (size_t j = 0; ascii_art[i][j]; j++) {
@@ -1618,9 +1617,9 @@ void neofetchCmd(void) {
         putchar('\n');
     }
     
-    printc("═══════════════════════════════════════════════════\n", 6, 7);
+    printc("═══════════════════════════════════════════════════\n", title_color, WHITE);
     
-    printc("SYSTEM\n", title_color, 7);
+    printc("SYSTEM\n", title_color, WHITE);
     
     printc("OS: ", label_color, 7);
     printf("%s ", SYSTEM);
@@ -1632,7 +1631,7 @@ void neofetchCmd(void) {
 #endif
 
 
-    printc("KERNEL-RELEASE: ", label_color, 7);
+    printc("KERNEL-RELEASE: ", label_color, WHITE);
 #ifdef _WIN32
     puts(unameCmdWin(0b10));
 #else
@@ -1640,7 +1639,7 @@ void neofetchCmd(void) {
 #endif
 
 
-    printc("KERNEL-VERSION: ", label_color, 7);
+    printc("KERNEL-VERSION: ", label_color, WHITE);
 #ifdef _WIN32
     puts(unameCmdWin(0b1000));
 #else
@@ -1648,81 +1647,81 @@ void neofetchCmd(void) {
 #endif
     
 
-    printc("───────────────────────────────────────────────────\n", 6, 7);
+    printc("───────────────────────────────────────────────────\n", title_color, WHITE);
     
-    printc("INFO", title_color, 7);
+    printc("INFO", title_color, WHITE);
     putchar('\n');
     
-    printc("USER: ", label_color, 7);
+    printc("USER: ", label_color, WHITE);
     static char *userName;
     userName = get_user();
 
     puts(userName);
 
 
-    printc("HOST: ", label_color, 7);
+    printc("HOST: ", label_color, WHITE);
     static char *hostName;
     hostName = get_hostname();
 
     puts(hostName);
 
 
-    printc("DATE: ", label_color, 7);
+    printc("DATE: ", label_color, WHITE);
     static char *today;
     today = get_time("%a %b %d %H:%M:%S %z %Y");
     
     puts(today);
 
 
-    printc("───────────────────────────────────────────────────\n", 6, 7);
+    printc("───────────────────────────────────────────────────\n", title_color, WHITE);
 
-    printc("TERMINAL\n", title_color, 7);
+    printc("TERMINAL\n", title_color, WHITE);
 
-    printc("LANGUAGES USED: ", label_color, 7);
+    printc("LANGUAGES USED: ", label_color, WHITE);
     puts("C");
 
 
-    printc("LINES OF CODE: ", label_color, 7);
+    printc("LINES OF CODE: ", label_color, WHITE);
     static char *linesNum; 
     linesNum =  linesNumber();
 
     puts(linesNum);
     
 
-    printc("SIZE: ", label_color, 7);
+    printc("SIZE: ", label_color, WHITE);
     static char *size;
     size = charNumber();
     
     puts(size);
 
     
-    printc("VERSION: ", label_color, 7);
+    printc("VERSION: ", label_color, WHITE);
     printf("lsw - Gab-OS  %s\n", VERSION);
 
 
-    printc("CREATION DATE: ", label_color, 7);
+    printc("CREATION DATE: ", label_color, WHITE);
     puts("10/18/2025");
     
 
-    printc("AUTHOR: ", label_color, 7);
+    printc("AUTHOR: ", label_color, WHITE);
     printf("Gabriel Oliveira Miranda\n");
 
-    printc("───────────────────────────────────────────────────\n", 6, 7);
+    printc("───────────────────────────────────────────────────\n", title_color, WHITE);
 
-    printc("SPECS\n", title_color, 7);
+    printc("SPECS\n", title_color, WHITE);
 
-    printc("CPU: ", label_color, 7);
+    printc("CPU: ", label_color, WHITE);
     static char *cpuName;
     cpuName = get_cpu_model();
     cpuName[strcspn(cpuName, "\n")] = '\0';
 
     puts(cpuName);
 
-    printc("Memory: ", label_color, 7);
+    printc("Memory: ", label_color, WHITE);
     static uint64_t memTotal;
     memTotal = get_total_ram_mb();
     
     printf("%"PRIu64"Mib\n", memTotal);
 
-    printc("═══════════════════════════════════════════════════\n", 6, 7);
+    printc("═══════════════════════════════════════════════════\n", title_color, WHITE);
 }
