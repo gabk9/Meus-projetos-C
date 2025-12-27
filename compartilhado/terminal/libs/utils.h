@@ -17,6 +17,11 @@
 #define U_NAN (uint64_t)-1
 #define MAX_CHAR (1ULL << 10)
 
+#define SAFE_FREE(ptr) do { \
+    if (ptr) \
+        free(ptr); \
+} while (0); \
+
 char randChr(void);
 char *get_user(void);
 void trim(char *str);

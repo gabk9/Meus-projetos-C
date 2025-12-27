@@ -377,7 +377,7 @@ void processCommand(char *input, char *args, const char **cmds, uint16_t cmdCoun
                 break;
         }
 
-        free(temp);
+        SAFE_FREE(temp);
         return;
     }
 
@@ -388,7 +388,7 @@ void processCommand(char *input, char *args, const char **cmds, uint16_t cmdCoun
                 if (!SetCurrentDirectory(path))
                     printf("Error: Drive %c: not accessible or does not exist\n", temp[0]);
             }
-            free(*address);
+            SAFE_FREE(*address);
             *address = getcwd(NULL, 0);
             return;
         }
@@ -397,7 +397,7 @@ void processCommand(char *input, char *args, const char **cmds, uint16_t cmdCoun
     char *instruction = strtok(temp, " ");
 
     if (!instruction) {
-        free(temp);
+        SAFE_FREE(temp);
         return;
     }
 
@@ -428,11 +428,11 @@ void processCommand(char *input, char *args, const char **cmds, uint16_t cmdCoun
 
         if (args) {
             char *new_address = cdCmd(args, *address);
-            free(*address);
+            SAFE_FREE(*address);
             *address = new_address;
         } else {
             char *new_address = get_default_address();
-            free(*address);
+            SAFE_FREE(*address);
             *address = new_address;
         }
     }
@@ -549,7 +549,7 @@ void processCommand(char *input, char *args, const char **cmds, uint16_t cmdCoun
         if (str)
             puts(str);
 
-        free(str);
+        SAFE_FREE(str);
     }
 
     else if (strcmp(instruction, cmds[33]) == 0) //! rev
@@ -560,11 +560,11 @@ void processCommand(char *input, char *args, const char **cmds, uint16_t cmdCoun
                     history_path, data_folder, isInsideBash))
         printf("The command '%s' was not found!!\n", instruction);
 
-    free(temp);
+    SAFE_FREE(temp);
 }
 
 double CheckFunc(char *operation, char **functions, const char *uniOps, const char **multiOps, bool mathlib) {
-    char op[3] = {0};
+    char op[0x3] = {0};
 
     if (mathlib) {
         int16_t main_op = find_main_operator_full(

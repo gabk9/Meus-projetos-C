@@ -193,12 +193,12 @@ double s_miles(char *operation) {
 
     if (km == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }    
 
     double result = KM_TO_MI(km);
-    free(test);
+    SAFE_FREE(test);
     return result;
 }
 
@@ -210,12 +210,12 @@ double s_km(char *operation) {
 
     if (miles == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
     double result = MI_TO_KM(miles);
-    free(test);
+    SAFE_FREE(test);
     return result;
 }
 
@@ -227,12 +227,12 @@ double s_pounds(char *operation) {
     
     if (kg == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
     double result = KG_TO_LB(kg);
-    free(test);
+    SAFE_FREE(test);
     return result;
 }
 
@@ -244,12 +244,12 @@ double s_kg(char *operation) {
     
     if (lbs == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
     double result = LB_TO_KG(lbs);
-    free(test);
+    SAFE_FREE(test);
     return result;
 }
 
@@ -261,12 +261,12 @@ double s_fah(char *operation) {
     
     if (cel == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
     double result = C_TO_F(cel);
-    free(test);
+    SAFE_FREE(test);
     return result;
 }
 
@@ -278,12 +278,12 @@ double s_cel(char *operation) {
     
     if (fah == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
     double result = F_TO_C(fah);
-    free(test);
+    SAFE_FREE(test);
     return result;
 }
 
@@ -295,13 +295,13 @@ char *s_oct(char *operation) {
     
     if (num == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NULL;
     }
 
     if (ceil(num) != num) {
         printf("Error: must be integer\n\n");
-        free(test);
+        SAFE_FREE(test);
         return NULL;
     }
 
@@ -312,13 +312,13 @@ char *s_oct(char *operation) {
 
     char *buffer = malloc(64);
     if (!buffer) {
-        free(test);
+        SAFE_FREE(test);
         return NULL;
     }
 
     snprintf(buffer, 64, "0%" PRIo64, value);
 
-    free(test);
+    SAFE_FREE(test);
     return buffer;
 }
 
@@ -330,13 +330,13 @@ char *s_hex(char *operation) {
 
     if (val == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NULL;
     }
 
     if (ceil(val) != val) {
         printf("Error: must be integer!\n\n");
-        free(test);
+        SAFE_FREE(test);
         return NULL;
     }
 
@@ -347,7 +347,7 @@ char *s_hex(char *operation) {
 
     char *buffer = malloc(64);
     if (!buffer) {
-        free(test);
+        SAFE_FREE(test);
         return NULL;
     }
 
@@ -356,7 +356,7 @@ char *s_hex(char *operation) {
     for (uint16_t i = 2; buffer[i]; i++)
         buffer[i] = toupper((unsigned char)buffer[i]);
 
-    free(test);
+    SAFE_FREE(test);
     return buffer;
 }
 
@@ -367,11 +367,11 @@ char *s_bin(char *operation) {
 
     double val = eval(test, true);
 
-    free(test);
+    SAFE_FREE(test);
     
     if (val == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NULL;
     }
 
@@ -424,12 +424,12 @@ double s_trunc(char *operation) {
 
     if (num == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }    
 
     double result = trunc(num);
-    free(test);
+    SAFE_FREE(test);
     return result;
 }
 
@@ -441,12 +441,12 @@ double s_rad(char *operation) {
 
     if (deg == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }    
 
     double result = DEG_TO_RAD(deg);
-    free(test);
+    SAFE_FREE(test);
     return result;
 }
 
@@ -458,12 +458,12 @@ double s_deg(char *operation) {
 
     if (rad == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
     double result = RAD_TO_DEG(rad);
-    free(test);
+    SAFE_FREE(test);
     return result;
 }
 
@@ -475,18 +475,18 @@ double s_sqrt(char *operation) {
 
     if (num == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
     if (num < 0) {
         puts("Error: can't be negative!\n");
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
     double result = sqrt(num);
-    free(test);
+    SAFE_FREE(test);
     return result;
 }
 
@@ -499,12 +499,12 @@ double s_scale(char *operation) {
 
     if (value == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }    
 
     if (isnan(value) || isinf(value)) {
-        free(test);
+        SAFE_FREE(test);
         return 0;
     }
 
@@ -516,7 +516,7 @@ double s_scale(char *operation) {
 
     char *dot = strchr(buf, '.');
     if (!dot) {
-        free(test);
+        SAFE_FREE(test);
         return 0;
     }
 
@@ -526,7 +526,7 @@ double s_scale(char *operation) {
 
     double scale = strlen(dot + 1);
 
-    free(test);
+    SAFE_FREE(test);
     return scale;
 }
 
@@ -541,7 +541,7 @@ double s_sin(char *operation) {
 
     if (num == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }    
 
@@ -550,7 +550,7 @@ double s_sin(char *operation) {
     if (fabs(result) < 1e-6)
         result = 0.0;
 
-    free(test);
+    SAFE_FREE(test);
     return result;
 }
 
@@ -565,7 +565,7 @@ double s_cos(char *operation) {
 
     if (num == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }    
 
@@ -574,7 +574,7 @@ double s_cos(char *operation) {
     if (fabs(result) < 1e-6)
         result = 0.0;
 
-    free(test);
+    SAFE_FREE(test);
     return result;
 }
 
@@ -590,14 +590,14 @@ double s_tan(char *operation) {
 
     if (angle == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }    
 
     double modPi = fmod(fabs(angle), PI);
     if (fabs(modPi - PI / 2.0) < 1e-8) {
         printf("Error: tan() undefined for %.10g rad\n\n", angle);
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
@@ -606,7 +606,7 @@ double s_tan(char *operation) {
     if (fabs(result) < 1e-6)
         result = 0.0;
 
-    free(test);
+    SAFE_FREE(test);
     return result;
 }
 
@@ -618,12 +618,12 @@ double s_ln(char *operation) {
 
     if (num == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }    
 
     double result = log(num);
-    free(test);
+    SAFE_FREE(test);
     return result;
 }
 
@@ -635,12 +635,12 @@ double s_log10(char *operation) {
 
     if (num == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }    
 
     double result = log10(num);
-    free(test);
+    SAFE_FREE(test);
     return result;
 }
 
@@ -652,12 +652,12 @@ double s_log2(char *operation) {
 
     if (num == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }    
 
     double result = log2(num);
-    free(test);
+    SAFE_FREE(test);
     return result;
 }
 
@@ -669,7 +669,7 @@ double s_root(char *operation) {
 
     if (!comma) {
         printf("Error: root() requires exactly 2 arguments\n\n");
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
@@ -680,7 +680,7 @@ double s_root(char *operation) {
     uint8_t nullCount = isnull(2, indexStr, rootingStr);
     if (nullCount) {
         printf("Error: root() requires exactly 2 arguments (missing %"PRIu8")\n\n", nullCount);
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
@@ -691,7 +691,7 @@ double s_root(char *operation) {
 
     if (index == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }  
     
@@ -699,7 +699,7 @@ double s_root(char *operation) {
 
     if (rooting == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }  
     
@@ -707,13 +707,13 @@ double s_root(char *operation) {
 
     if (index == 0) {
         printf("Error: the index can't be 0\n\n");
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
     if (floor(index) != index) {
         printf("Error: the index must be an integer\n\n");
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
@@ -724,7 +724,7 @@ double s_root(char *operation) {
 
     if (rooting < 0 && ((int)index % 2 == 0)) {
         printf("Error: even index root of a negative number\n\n");
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
@@ -739,7 +739,7 @@ double s_root(char *operation) {
     if (invert)
         result = 1.0 / result;
 
-    free(test);
+    SAFE_FREE(test);
     return result;
 }
 
@@ -751,7 +751,7 @@ double s_log(char *operation) {
 
     if (!comma) {
         printf("Error: log() requires exactly 2 arguments\n\n");
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
@@ -762,7 +762,7 @@ double s_log(char *operation) {
     uint8_t nullCount = isnull(2, baseStr, numStr);
     if (nullCount) {
         printf("Error: log() requires exactly 2 arguments (missing %"PRIu8")\n\n", nullCount);
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
@@ -773,7 +773,7 @@ double s_log(char *operation) {
 
     if (base == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }  
 
@@ -781,18 +781,18 @@ double s_log(char *operation) {
     
     if (num == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }  
 
     if (base <= 1 || num <= 0) {
         printf("Error: invalid values for log()\n\n");
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
     double result = log(num) / log(base);
-    free(test);
+    SAFE_FREE(test);
     return result;
 }
 
@@ -804,7 +804,7 @@ double s_randFloat(char *operation) {
 
     if (!comma) {
         printf("Error: randf() requires exactly 2 arguments\n\n");
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
@@ -815,7 +815,7 @@ double s_randFloat(char *operation) {
     uint8_t nullCount = isnull(2, str_min, str_max);
     if (nullCount) {
         printf("Error: randf() requires exactly 2 arguments (missing %"PRIu8")\n\n", nullCount);
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
@@ -834,7 +834,7 @@ double s_randFloat(char *operation) {
 
     if (maxLf == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }  
     
@@ -845,11 +845,11 @@ double s_randFloat(char *operation) {
     
     if (minLf == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }  
 
-    free(test);
+    SAFE_FREE(test);
     return random_range_float(minLf, maxLf);
 }
 
@@ -861,7 +861,7 @@ double s_randInt(char *operation) {
 
     if (!comma) {
         printf("Error: rand() requires exactly 2 arguments\n\n");
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
@@ -872,7 +872,7 @@ double s_randInt(char *operation) {
     uint8_t nullCount = isnull(2, str_min, str_max);
     if (nullCount) {
         printf("Error: rand() requires exactly 2 arguments (missing %"PRIu8")\n\n", nullCount);
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
@@ -891,7 +891,7 @@ double s_randInt(char *operation) {
 
     if (maxInt == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }  
     
@@ -902,7 +902,7 @@ double s_randInt(char *operation) {
     
     if (minInt == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }  
     
@@ -911,7 +911,7 @@ double s_randInt(char *operation) {
         return NAN;
     }
 
-    free(test);
+    SAFE_FREE(test);
     return random_range_int((int)minInt, (int)maxInt);
 }
 
@@ -923,12 +923,12 @@ double s_floor(char *operation) {
 
     if (num == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }   
 
     double result = floor(num);
-    free(test);
+    SAFE_FREE(test);
     return result;
 }
 
@@ -940,12 +940,12 @@ double s_ceil(char *operation) {
 
     if (num == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }   
 
     double result = ceil(num);
-    free(test);
+    SAFE_FREE(test);
     return result;
 }
 
@@ -957,12 +957,12 @@ double s_round(char *operation) {
 
     if (num == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }   
 
     double result = round(num);
-    free(test);
+    SAFE_FREE(test);
     return result;
 }
 
@@ -984,7 +984,7 @@ uint64_t s_fact(char *operation) {
     if (strcmp(test, BC_ERROR) == 0) return U_NAN;
 
     double num = eval(test, true);
-    free(test);
+    SAFE_FREE(test);
 
     if (num == U_NAN) {
         putchar('\n');
@@ -1004,7 +1004,7 @@ double s_sign(char *operation) {
     if (strcmp(test, BC_ERROR) == 0) return NAN;
 
     double num = eval(test, true);
-    free(test);
+    SAFE_FREE(test);
 
     if (num == U_NAN) {
         putchar('\n');
@@ -1027,7 +1027,7 @@ double s_sum(char *operation) {
 
     if (!parentheses_balanced(test)) {
         printf("Error: unbalanced parentheses\n\n");
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
@@ -1037,13 +1037,13 @@ double s_sum(char *operation) {
         printf(
             "Error: sum() function requires at least 2 arguments and at most 3 arguments\n\n"
         );
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
     char *comma1 = find_top_level_comma(test);
     if (!comma1) {
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
@@ -1069,7 +1069,7 @@ double s_sum(char *operation) {
 
     if (nullCount) {
         printf("Error: sum() missing %"PRIu8" argument(s)\n\n", nullCount);
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }
 
@@ -1082,7 +1082,7 @@ double s_sum(char *operation) {
 
     if (init == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }   
 
@@ -1090,7 +1090,7 @@ double s_sum(char *operation) {
 
     if (end == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }   
 
@@ -1099,7 +1099,7 @@ double s_sum(char *operation) {
 
     if (diff == U_NAN) {
         putchar('\n');
-        free(test);
+        SAFE_FREE(test);
         return NAN;
     }   
 
@@ -1109,6 +1109,6 @@ double s_sum(char *operation) {
         printf("Warning: that's an issue that I don't know the origin yet, soon it'll be fixed\n\n");
     }
 
-    free(test);
+    SAFE_FREE(test);
     return result;
 }

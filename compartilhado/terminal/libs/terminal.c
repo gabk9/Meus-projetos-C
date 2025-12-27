@@ -13,7 +13,7 @@
 #include "terminal.h"
 #include <inttypes.h>
 
-#define VERSION "b0.9.85"
+#define VERSION "b0.9.89"
 
 #define BC_QUIET 0x1
 #define BC_MATHLIB 0x2
@@ -90,8 +90,8 @@ void revCmd(char *instruction) {
 
             if (stop) {
                 printf("%s\n", copy);
-                free(copy);
-                free(string);
+                SAFE_FREE(copy);
+                SAFE_FREE(string);
                 break;
             }
 
@@ -148,7 +148,7 @@ void revCmd(char *instruction) {
             if (!dest) {
                 printf("Error: could not create '%s'\n", destFile);
                 fclose(source);
-                free(line);
+                SAFE_FREE(line);
                 return;
             }
 
@@ -169,10 +169,10 @@ void revCmd(char *instruction) {
                 if (has_nl)
                     fputc('\n', dest);
 
-                free(rev);
+                SAFE_FREE(rev);
             }
 
-            free(line);
+            SAFE_FREE(line);
             fclose(source);
             fclose(dest);
         } else {
@@ -218,7 +218,7 @@ void revCmd(char *instruction) {
 
                 puts(rev);
 
-                free(rev);
+                SAFE_FREE(rev);
             }
 
         }
@@ -356,8 +356,8 @@ int32_t lcCmd(char *instruction) {
     }
 
     for (uint16_t i = 0; i < fileCount; i++)
-        free(files[i]);
-    free(files);
+        SAFE_FREE(files[i]);
+    SAFE_FREE(files);
 
     return lines;
 }
@@ -576,7 +576,7 @@ void bcCmd(uint16_t argc, char **argv, const char **cmds) {
                 fflush(stdout);
             }
 
-            free(value);
+            SAFE_FREE(value);
             continue;
         }
         else if (strncmp(operation, "oct", 3) == 0 && mathlib) {
@@ -586,7 +586,7 @@ void bcCmd(uint16_t argc, char **argv, const char **cmds) {
                 fflush(stdout);
             }
 
-            free(value);
+            SAFE_FREE(value);
             continue;
         }
         else if (strncmp(operation, "bin", 3) == 0 && mathlib) {
@@ -596,7 +596,7 @@ void bcCmd(uint16_t argc, char **argv, const char **cmds) {
                 fflush(stdout);
             }
 
-            free(value);
+            SAFE_FREE(value);
             continue;
         }
 
@@ -796,10 +796,10 @@ void rmCmd(char *instruction) {
         } else {
             printf("'%s' deleted successfully\n", files[i]);
         }
-        free(files[i]);
+        SAFE_FREE(files[i]);
     }
 
-    free(files);
+    SAFE_FREE(files);
 }
 
 void touchCmd(char *instruction) {
@@ -880,13 +880,13 @@ void touchCmd(char *instruction) {
         if (count <= 0) {
             errno = EINVAL;
             perror("Error");
-            free(test);
+            SAFE_FREE(test);
             return;
         }
 
         if (ceil(count) != count) {
             printf("Error: must be integer\n");
-            free(test);
+            SAFE_FREE(test);
             return;
         }
 
@@ -907,10 +907,10 @@ void touchCmd(char *instruction) {
 
         fclose(f);
 
-        free(test);
+        SAFE_FREE(test);
     }
 
-    free(copy);
+    SAFE_FREE(copy);
 }
 
 void catCmd(char *instruction, uint32_t max_lines, char *cmdName) {
@@ -1038,10 +1038,10 @@ void rmdirCmd(char *instruction) {
         } else {
             printf("'%s' deleted successfully\n", files[i]);
         }
-        free(files[i]);
+        SAFE_FREE(files[i]);
     }
 
-    free(files);
+    SAFE_FREE(files);
 }
 
 void mkdirCmd(char *command) {
@@ -1070,7 +1070,7 @@ void mkdirCmd(char *command) {
         if (_mkdir(files[i]) != 0) {
             perror(files[i]);
         }
-        free(files[i]);
+        SAFE_FREE(files[i]);
     }        
 #else
     uint16_t mode = 0777;
@@ -1079,11 +1079,11 @@ void mkdirCmd(char *command) {
         if (mkdir(files[i], mode) != 0) {
             perror(files[i]);
         }
-        free(files[i]);
+        SAFE_FREE(files[i]);
     }        
 #endif
 
-    free(files);
+    SAFE_FREE(files);
 }
 
 char *cdCmd(const char *instruction, char *address) {
@@ -1096,7 +1096,7 @@ char *cdCmd(const char *instruction, char *address) {
 #endif
     
     if (strcmp(path, "-") == 0) {
-        free(raw);
+        SAFE_FREE(raw);
         return handle_cd_dash(address);
     }
 
@@ -1115,14 +1115,14 @@ char *cdCmd(const char *instruction, char *address) {
         strcat(buffer, Default);
         strcat(buffer, path);
 
-        free(Default);
+        SAFE_FREE(Default);
     }
 
     char *final = buffer ? buffer : path;
     char *result = handle_normal_cd(final, address);
 
-    free(raw);
-    if (buffer) free(buffer);
+    SAFE_FREE(raw);
+    if (buffer) SAFE_FREE(buffer);
 
     return result;
 }
@@ -1310,7 +1310,8 @@ void updatehistory(void) {
         "b0.9.63 - minor changes\n\tRemoved: some useless functions from the source code\n",
         "b0.9.7 - big changes\n\tEdited: improved the sleep() function, now it has more precision and works with sigle point precision numbers\n",
         "b0.9.76 - small changes\n\tEdited: in neofetch KERNEL -> KERNEL-RELEASE + KERNEL-VERSION\n",
-        "b0.9.85 - big changes\n\tFixed: now commands that randomizes values works properly outside the terminal\n"
+        "b0.9.85 - big changes\n\tFixed: now commands that randomizes values works properly outside the terminal\n",
+        "b0.9.89 - minor changes\n\tEdited: now the source code is a little more safe\n"
     };
 
     uint16_t logCount = sizeof(logs) / sizeof(logs[0]);
@@ -1604,7 +1605,7 @@ void echoCmd(char *instruction) {
         char *str = strtok_r(copy, "*", &save);
         char *num = strtok_r(NULL, "*", &save);
 
-        if (!str || !num) { puts("Error: invalid syntax"); free(copy); return; }
+        if (!str || !num) { puts("Error: invalid syntax"); SAFE_FREE(copy); return; }
 
         trim(str);
         trimEnd(str);
@@ -1617,7 +1618,7 @@ void echoCmd(char *instruction) {
         if (count <= 0) {
             errno = EINVAL;
             perror("Error");
-            free(copy);
+            SAFE_FREE(copy);
             return;
         }
 
@@ -1636,7 +1637,7 @@ void echoCmd(char *instruction) {
             for (int32_t i = 0; i < count; i++)
                 puts(str);
 
-        free(copy);
+        SAFE_FREE(copy);
         return;
     }
 
@@ -1645,7 +1646,7 @@ void echoCmd(char *instruction) {
         echoHandler(copy);
         puts(copy);
 
-        free(copy);
+        SAFE_FREE(copy);
         return;
     }
 
@@ -1654,7 +1655,7 @@ void echoCmd(char *instruction) {
         char *inFile = strtok_r(copy, ">", &save);
         char *filename = strtok_r(NULL, ">", &save);
 
-        if (!inFile || !filename) { puts("Error: invalid syntax"); free(copy); return; }
+        if (!inFile || !filename) { puts("Error: invalid syntax"); SAFE_FREE(copy); return; }
 
         trim(inFile); trimEnd(inFile);
         trim(filename); trimEnd(filename);
@@ -1667,12 +1668,12 @@ void echoCmd(char *instruction) {
         }
 
         FILE *f = fopen(filename, "w");
-        if (!f) { perror("fopen"); free(copy); return; }
+        if (!f) { perror("fopen"); SAFE_FREE(copy); return; }
 
         fprintf(f, "%s", inFile);
         fclose(f);
 
-        free(copy);
+        SAFE_FREE(copy);
         return;
     }
 
@@ -1685,7 +1686,7 @@ void echoCmd(char *instruction) {
         
         if (!inFile || !filename) {
             puts("Error: invalid syntax");
-            free(copy);
+            SAFE_FREE(copy);
             return;
         }
         
@@ -1695,7 +1696,7 @@ void echoCmd(char *instruction) {
         char *str = strtok_r(inFile, "*", &save);
         char *num = strtok_r(NULL, "*", &save);
 
-        if (!str || !num) { puts("Error: invalid syntax"); free(copy); return; }
+        if (!str || !num) { puts("Error: invalid syntax"); SAFE_FREE(copy); return; }
 
         trim(str); trimEnd(str);
         trim(filename); trimEnd(filename);
@@ -1705,7 +1706,7 @@ void echoCmd(char *instruction) {
             char *afterDot = dot + 1;
             if (strchr(afterDot, '*')) {
                 puts("Error: invalid arguments, use \"man echo\" to check the manual");
-                free(copy);
+                SAFE_FREE(copy);
                 return;
             }
         }
@@ -1723,7 +1724,7 @@ void echoCmd(char *instruction) {
         if (count <= 0) {
             errno = EINVAL;
             perror("Error");
-            free(copy);
+            SAFE_FREE(copy);
             return;
         }
 
@@ -1737,8 +1738,8 @@ void echoCmd(char *instruction) {
         FILE *f = fopen(filename, "w");
         if (!f) { 
             perror("Error");
-            free(test);
-            free(copy);
+            SAFE_FREE(test);
+            SAFE_FREE(copy);
             return;
         }
         
@@ -1755,8 +1756,8 @@ void echoCmd(char *instruction) {
             }
 
         fclose(f);
-        free(copy);
-        free(test);
+        SAFE_FREE(copy);
+        SAFE_FREE(test);
     }
 }
 

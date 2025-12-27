@@ -13,8 +13,8 @@
 #include "terminal.h"
 #include <inttypes.h>
 
-#define PROJ_SIZE_APPROX 159500
-#define PROJ_LINES_APPROX 5700
+#define PROJ_SIZE_APPROX 160500
+#define PROJ_LINES_APPROX 5800
 
 #define PATH_MAIN_C "./main.c"
 #define ALIAS_FILE "shortcut.txt"
@@ -166,11 +166,11 @@ char *defaultAddressReplace(const char *address) {
         (strncmp(copy, Default, len) == 0 && copy[len] == '/')
     ) {
         char *tmp = strrm(copy, Default);
-        free(copy);
+        SAFE_FREE(copy);
         copy = tmp;
     } else {
-        free(copy);
-        free(Default);
+        SAFE_FREE(copy);
+        SAFE_FREE(Default);
         return strdup(address);
     }
 
@@ -179,8 +179,8 @@ char *defaultAddressReplace(const char *address) {
     buffer[1] = '\0';
     strcat(buffer, copy);
 
-    free(copy);
-    free(Default);
+    SAFE_FREE(copy);
+    SAFE_FREE(Default);
 
     return buffer;
 }
@@ -774,11 +774,11 @@ bool aliasExists(const char *filePath, const char *shortcutName) {
         char *original = line;
         char *clean = strrm(line, "alias");
         line = clean;
-        free(original);
+        SAFE_FREE(original);
 
         char *aliasName = strtok(line, "=");
         if (!aliasName) {
-            free(line);
+            SAFE_FREE(line);
             fclose(f);
             return false;
         }
@@ -786,16 +786,16 @@ bool aliasExists(const char *filePath, const char *shortcutName) {
         trim(aliasName);
 
         if (strcmp(shortcutName, aliasName) == 0) {
-            free(line);
+            SAFE_FREE(line);
             fclose(f);
             return true;
         }
 
-        free(line);
+        SAFE_FREE(line);
         line = calloc(MAX_CHAR, sizeof(char));
     }
 
-    free(line);
+    SAFE_FREE(line);
     fclose(f);
     return false;
 }
@@ -816,7 +816,7 @@ void createShortcut(char *instruction, char *path) {
     
     if (alias[0] == '\0') {
         puts("alias: missing operand\nUse \"man alias\" to check the manual");
-        free(alias);
+        SAFE_FREE(alias);
         return;
     }
     
@@ -827,7 +827,7 @@ void createShortcut(char *instruction, char *path) {
 
     if (!eq) {
         puts("Error: syntax error for 'alias', use \"man alias\" to check the manual");
-        free(alias);
+        SAFE_FREE(alias);
         return;
     }
 
@@ -837,7 +837,7 @@ void createShortcut(char *instruction, char *path) {
 
     if (!shortcutName || !action) {
         puts("Error: syntax error for 'alias', use \"man alias\" to check the manual");
-        free(alias);
+        SAFE_FREE(alias);
         return;
     }
 
@@ -847,7 +847,7 @@ void createShortcut(char *instruction, char *path) {
 
     if (action[0] != '\'' || action[strlen(action)-1] != '\'') {
         puts("Error: syntax error for 'alias', use \"man alias\" to check the manual");
-        free(alias);
+        SAFE_FREE(alias);
         return;
     }
 
@@ -870,8 +870,8 @@ void createShortcut(char *instruction, char *path) {
     fprintf(f, "alias %s='%s'\n", shortcutName, action);
     fclose(f);
 
-    free(buffer);
-    free(alias);
+    SAFE_FREE(buffer);
+    SAFE_FREE(alias);
 }
 
 void removeComments(char *str) {
@@ -888,7 +888,7 @@ void removeComments(char *str) {
 bool isalias(char *operation, char *args, const char **cmds, uint16_t cmdCount, char **address, char *history_path, char *data_folder, uint16_t isInsideBash) {
     char *aliasPath = buildAliasPath(data_folder);
     FILE *f = fopen(aliasPath, "r");
-    free(aliasPath);
+    SAFE_FREE(aliasPath);
 
     if (!f) return false;
 
@@ -902,7 +902,7 @@ bool isalias(char *operation, char *args, const char **cmds, uint16_t cmdCount, 
 
         char *eq = strchr(clean, '=');
         if (!eq) {
-            free(clean);
+            SAFE_FREE(clean);
             continue;
         }
 
@@ -942,7 +942,7 @@ bool isalias(char *operation, char *args, const char **cmds, uint16_t cmdCount, 
 
             bashCmd(option);
 
-            free(clean);
+            SAFE_FREE(clean);
             return true;
         }
 
@@ -964,17 +964,17 @@ bool isalias(char *operation, char *args, const char **cmds, uint16_t cmdCount, 
                 args = strtok_r(NULL, " ", &save);
 
             processCommand(fullAction, args, cmds, cmdCount, address, history_path, data_folder, isInsideBash);
-            free(fullAction);
-            free(clean);
-            free(line);
+            SAFE_FREE(fullAction);
+            SAFE_FREE(clean);
+            SAFE_FREE(line);
             fclose(f);
             return true;
         }
 
-        free(clean);
+        SAFE_FREE(clean);
     }
 
-    free(line);
+    SAFE_FREE(line);
     fclose(f);
     return false;
 }
@@ -1245,7 +1245,7 @@ char *handle_cd_dash(char *address) {
     if (getcwd(new_cwd, sizeof(new_cwd)) != NULL) {
         char *temp = last_directory;
         last_directory = strdup(address);
-        free(temp);
+        SAFE_FREE(temp);
         return strdup(new_cwd);
     }
     
@@ -1254,7 +1254,7 @@ char *handle_cd_dash(char *address) {
 
 void update_last_directory(char *address) {
     if (last_directory != NULL)
-        free(last_directory);
+        SAFE_FREE(last_directory);
 
     last_directory = strdup(address);
 }

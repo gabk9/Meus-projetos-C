@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
         for (uint16_t i = 1; i < argc; i++)
             total_len += strlen(argv[i]) + 1;
 
-        free(input);
+        SAFE_FREE(input);
         input = calloc(total_len + 1, sizeof(char));
 
         for (uint16_t i = 1; i < argc; i++) {
@@ -92,11 +92,11 @@ int main(int argc, char **argv) {
         else
             processCommand(input, arguments, cmds, cmdCount, &address, history_path, data_folder, false);
 
-        free(data_folder);
-        free(program_root);
-        free(history_path);
-        free(input);
-        free(address);
+        SAFE_FREE(data_folder);
+        SAFE_FREE(program_root);
+        SAFE_FREE(history_path);
+        SAFE_FREE(input);
+        SAFE_FREE(address);
         return 0;
     }
     
@@ -149,10 +149,10 @@ int main(int argc, char **argv) {
         processCommand(input, args, cmds, cmdCount, &address, history_path, data_folder, true);
     }
     
-    free(data_folder);
-    free(program_root);
-    free(history_path);
-    free(input);
-    free(address);
+    SAFE_FREE(data_folder);
+    SAFE_FREE(program_root);
+    SAFE_FREE(history_path);
+    SAFE_FREE(input);
+    SAFE_FREE(address);
     return 0;
 }
