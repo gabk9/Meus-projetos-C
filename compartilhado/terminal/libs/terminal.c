@@ -4,7 +4,7 @@
 #include "CheckCmd.h"
 #include "terminal.h"
 
-#define VERSION "b1.0.5"
+#define VERSION "b1.0.54"
 
 #define BC_QUIET 0x1
 #define BC_MATHLIB 0x2
@@ -120,7 +120,7 @@ void revCmd(char *instruction) {
             FILE *dest = fopen(destFile, "w");
             if (!dest) {
                 printf("Error: could not create '%s'\n", destFile);
-                fclose(source);
+                SAFE_FCLOSE(source);
                 SAFE_FREE(line);
                 return;
             }
@@ -146,8 +146,8 @@ void revCmd(char *instruction) {
             }
 
             SAFE_FREE(line);
-            fclose(source);
-            fclose(dest);
+            SAFE_FCLOSE(source);
+            SAFE_FCLOSE(dest);
         } else {
 
             uint8_t isPath = (strchar(instruction, '/') != -1 || strchar(instruction, '/') != -1);
@@ -325,7 +325,7 @@ int32_t lcCmd(char *instruction) {
         while (fgets(buffer, sizeof(buffer), f)) {
             lines++;
         }
-        fclose(f);
+        SAFE_FCLOSE(f);
     }
 
     for (uint16_t i = 0; i < fileCount; i++)
@@ -684,7 +684,7 @@ void grepCmd(char *instruction) {
     if (!found)
         printf("pattern '%s' not found in '%s'\n", pattern, file);
 
-    fclose(f);
+    SAFE_FCLOSE(f);
 }
 
 void historyCmd(const char *path) {
@@ -808,7 +808,7 @@ void touchCmd(char *instruction) {
         }
 
         FILE *f = fopen(instruction, "w");
-        fclose(f);
+        SAFE_FCLOSE(f);
     } else if (string != -1 && reps ==  -1){
         char *filename = strtok_r(instruction, "<", &save);
         char *inFile = strtok_r(NULL, ">", &save);
@@ -830,7 +830,7 @@ void touchCmd(char *instruction) {
     
         fprintf(f, "%s", inFile);
 
-        fclose(f);
+        SAFE_FCLOSE(f);
 
     } else {
         char *filename = strtok_r(copy, "<", &save);
@@ -888,7 +888,7 @@ void touchCmd(char *instruction) {
                     fprintf(f, "%s", str);
             }
 
-        fclose(f);
+        SAFE_FCLOSE(f);
 
         SAFE_FREE(test);
     }
@@ -936,7 +936,7 @@ void catCmd(char *instruction, uint32_t max_lines, char *cmdName) {
     if (last != '\n')
         putchar('\n');
 
-    fclose(f);
+    SAFE_FCLOSE(f);
 }
 
 void tailCmd(char *instruction, uint32_t max_lines) {
@@ -991,7 +991,7 @@ void tailCmd(char *instruction, uint32_t max_lines) {
 
     putchar('\n');
 
-    fclose(f);
+    SAFE_FCLOSE(f);
 }
 
 void rmdirCmd(char *instruction) {
@@ -1297,7 +1297,8 @@ void updatehistory(void) {
         "b0.9.89 - minor changes\n\tEdited: now the source code is a little more safe\n",
         "b0.9.95 - small changes\n\tFixed: now echo and touch works a lot better when multiplying strings\n",
         "b1.0.4 - big changes\n\tEdited: edited the calculator initial message\n",
-        "b1.0.5 - big changes\n\tEdited: file headers organization\n"
+        "b1.0.5 - big changes\n\tEdited: file headers organization\n",
+        "b1.0.54 - minor changes\n\tEdited: now the source code is safer\n"
     };
 
     uint16_t logCount = sizeof(logs) / sizeof(logs[0]);
@@ -1473,7 +1474,7 @@ void echoCmd(char *instruction) {
         if (!f) { perror("fopen"); SAFE_FREE(copy); return; }
 
         fprintf(f, "%s", inFile);
-        fclose(f);
+        SAFE_FCLOSE(f);
 
         SAFE_FREE(copy);
         return;
@@ -1557,7 +1558,7 @@ void echoCmd(char *instruction) {
                     fprintf(f, "%s", str);
             }
 
-        fclose(f);
+        SAFE_FCLOSE(f);
         SAFE_FREE(copy);
         SAFE_FREE(test);
     }

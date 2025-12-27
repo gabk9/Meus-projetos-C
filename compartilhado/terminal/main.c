@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
         FILE *f = fopen(history_path, "a");
         if (f) {
             fprintf(f, "%s\n", input);
-            fclose(f);
+            SAFE_FCLOSE(f);
         }
 
         char *arguments = strchr(input, ' ');
@@ -127,7 +127,8 @@ int main(int argc, char **argv) {
         FILE *f = fopen(history_path, "a");
         if (f) {
             fprintf(f, "%s\n", input);
-            fclose(f);
+            SAFE_FCLOSE(f);
+            SAFE_FCLOSE(f);
         }
 
         char *args = strchr(input, ' ');

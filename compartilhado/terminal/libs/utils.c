@@ -402,7 +402,7 @@ char *linesNumber(void) {
         if (!files[i]) {
             for (uint8_t j = 0; j < i; j++) {
                 if (files[j]) {
-                    fclose(files[j]);
+                    SAFE_FCLOSE(files[j]);
                 }
             }
             snprintf(result, sizeof(result), "%d", PROJ_LINES_APPROX);
@@ -415,7 +415,7 @@ char *linesNumber(void) {
             while (fgets(buffer, sizeof(buffer), files[i])) {
                 lines++;
             }
-            fclose(files[i]);
+            SAFE_FCLOSE(files[i]);
             files[i] = NULL;
         }
     }
@@ -451,7 +451,7 @@ char *charNumber(void) {
 
         fseek(f, 0, SEEK_END);
         totalSize += ftell(f);
-        fclose(f);
+        SAFE_FCLOSE(f);
     }
 
     snprintf(result, sizeof(result), "%"PRIu32" B / %.2lf KB / %.2lf Mib", totalSize, (double)totalSize / 0x0400, (double)totalSize / 0x00100000);
@@ -737,7 +737,7 @@ char *unameCmdLinux(uint8_t flags) {
                     sprintf(buffer, "%s ", pc.sysname);
                     strcat(result, buffer);
                 }
-                fclose(fp);
+                SAFE_FCLOSE(fp);
             } else {
                 sprintf(buffer, "%s ", pc.sysname);
                 strcat(result, buffer);
@@ -1025,7 +1025,7 @@ bool aliasExists(const char *filePath, const char *shortcutName) {
         char *aliasName = strtok(line, "=");
         if (!aliasName) {
             SAFE_FREE(line);
-            fclose(f);
+            SAFE_FCLOSE(f);
             return false;
         }
 
@@ -1033,7 +1033,7 @@ bool aliasExists(const char *filePath, const char *shortcutName) {
 
         if (strcmp(shortcutName, aliasName) == 0) {
             SAFE_FREE(line);
-            fclose(f);
+            SAFE_FCLOSE(f);
             return true;
         }
 
@@ -1042,7 +1042,7 @@ bool aliasExists(const char *filePath, const char *shortcutName) {
     }
 
     SAFE_FREE(line);
-    fclose(f);
+    SAFE_FCLOSE(f);
     return false;
 }
 char *findFirstEqualOutsideQuotes(char *s) {
@@ -1114,7 +1114,7 @@ void createShortcut(char *instruction, char *path) {
     FILE *f = fopen(buffer, "a");
 
     fprintf(f, "alias %s='%s'\n", shortcutName, action);
-    fclose(f);
+    SAFE_FCLOSE(f);
 
     SAFE_FREE(buffer);
     SAFE_FREE(alias);
@@ -1213,7 +1213,7 @@ bool isalias(char *operation, char *args, const char **cmds, uint16_t cmdCount, 
             SAFE_FREE(fullAction);
             SAFE_FREE(clean);
             SAFE_FREE(line);
-            fclose(f);
+            SAFE_FCLOSE(f);
             return true;
         }
 
@@ -1221,7 +1221,7 @@ bool isalias(char *operation, char *args, const char **cmds, uint16_t cmdCount, 
     }
 
     SAFE_FREE(line);
-    fclose(f);
+    SAFE_FCLOSE(f);
     return false;
 }
 
@@ -1730,12 +1730,12 @@ char* get_cpu_model(void) {
     if (!fp) return "Unknown";
     while (fgets(cpu, sizeof(cpu), fp)) {
         if (strncmp(cpu, "model name", 10) == 0) {
-            fclose(fp);
+            SAFE_FCLOSE(fp);
             char *colon = strchr(cpu, ':');
             return colon ? colon + 2 : "Unknown";
         }
     }
-    fclose(fp);
+    SAFE_FCLOSE(fp);
     return "Unknown";
 #elif __APPLE__
     static char cpu[0x80];
@@ -1757,7 +1757,7 @@ uint64_t get_total_ram_mb(void) {
     FILE *fp = fopen("/proc/meminfo", "r");
     if (!fp) return -1;
     fscanf(fp, "MemTotal: %"PRIu32" kB", &mem_kb);
-    fclose(fp);
+    SAFE_FCLOSE(fp);
     return mem_kb / 1024;
 #elif __APPLE__
     int64_t mem;

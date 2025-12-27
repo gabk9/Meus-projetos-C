@@ -47,9 +47,18 @@
 #define U_ALL (U_KERN_NAME | U_KERN_RELEASE | U_MACHINE | U_KERN_VERSION | U_HOST_NAME | U_OPERATING_SYSTEM)
 
 #define SAFE_FREE(ptr) do { \
-    if (ptr) \
+    if (ptr) { \
         free(ptr); \
-} while (0); \
+        ptr = NULL; \
+    } \
+} while (0)
+
+#define SAFE_FCLOSE(file) do { \
+    if (file) { \
+        fclose(file); \
+        file = NULL; \
+    } \
+} while (0)
 
 char randChr(void);
 char *get_user(void);
