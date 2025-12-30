@@ -236,7 +236,7 @@ void Desincriptografar() {
 
 void setCor(int cor) {
     #ifdef _WIN32
-        SetConsoleTextAttribute(hConsole, color);
+        SetConsoleTextAttribute(hConsole, cor);
     #else
         switch(cor) {
             case 0:    printf("\033[30m"); break;
@@ -291,8 +291,8 @@ void linha() {
 // Gambiarra para fazer funcionar no VScode, (feita com GPT)
 void obterCaminhoArquivo(char* caminhoCompleto, size_t tamanho, const char* nomeArquivo) {
 #ifdef _WIN32
-    char pathEXE[MAX_PATH_LEN];
-    GetModuleFileName(NULL, pathEXE, MAX_PATH_LEN);
+    char pathEXE[MAX_PATH];
+    GetModuleFileName(NULL, pathEXE, MAX_PATH);
 
     char* p = strrchr(pathEXE, '\\');
     if (p) {

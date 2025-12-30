@@ -73,7 +73,7 @@ void typewriter(const char *texto, int delay_ms) {
 
 void setCor(int cor) {
     #ifdef _WIN32
-        SetConsoleTextAttribute(hConsole, color);
+        SetConsoleTextAttribute(hConsole, cor);
     #else
         switch(cor) {
             case 0:    printf("\033[30m"); break;
