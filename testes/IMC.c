@@ -1,8 +1,24 @@
 #include <stdio.h>
 #include <string.h>
 #include <locale.h>
-#include <windows.h>
 #include <stdlib.h>
+
+#ifdef _WIN32
+    #include <windows.h>
+
+    #define CLEAR "cls"
+    #define Pause(void) system("pause")
+    HANDLE hConsole;
+#else
+    #include <unistd.h>
+
+    #define Pause(void) do { \
+        printf("\nPressione ENTER para continuar..."); \
+        getchar(); \
+    } while(0)
+    #define CLEAR "clear"
+    #define Sleep(ms) usleep((ms) * 1000)
+#endif
 
 void setCor(int cor);
 void typewriter(const char *texto, int delay_ms);
@@ -30,7 +46,6 @@ typedef struct {
     float IMC;
 } tipoDados;
 
-HANDLE hConsole;
 tipoDados lista;
 
 void limparBuffer() {
@@ -39,8 +54,10 @@ void limparBuffer() {
 }
 
 int main() {
-    setlocale(LC_ALL, "Portuguese_Brazil");
+#ifdef _WIN32
     hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+#endif
+    setlocale(LC_ALL, "Portuguese_Brazil");
     menuPr(1);
     return 0;
 }
@@ -55,7 +72,29 @@ void typewriter(const char *texto, int delay_ms) {
 }
 
 void setCor(int cor) {
-    SetConsoleTextAttribute(hConsole, cor);
+    #ifdef _WIN32
+        SetConsoleTextAttribute(hConsole, color);
+    #else
+        switch(cor) {
+            case 0:    printf("\033[30m"); break;
+            case 1:    printf("\033[34m"); break;
+            case 2:    printf("\033[32m"); break;
+            case 3:    printf("\033[36m"); break;
+            case 4:    printf("\033[31m"); break;
+            case 5:    printf("\033[35m"); break;
+            case 6:    printf("\033[33m"); break;
+            case 7:    printf("\033[37m"); break;
+            case 8:    printf("\033[90m"); break;
+            case 9:    printf("\033[94m"); break;
+            case 10:   printf("\033[92m"); break;
+            case 11:   printf("\033[96m"); break;
+            case 12:   printf("\033[91m"); break;
+            case 13:   printf("\033[95m"); break;
+            case 14:   printf("\033[93m"); break;
+            case 15:   printf("\033[97m"); break;
+            default:   printf("\033[0m");  break;
+        }
+    #endif
 }
 
 void linha() {
@@ -117,7 +156,7 @@ float calcularIMCENIM() {
     scanf("%f", &lista.peso);
     limparBuffer();
 
-    system("cls");
+    system(CLEAR);
     float alturaPolegadas = lista.altura * 12;
     lista.IMC = (lista.peso * 703) / (alturaPolegadas * alturaPolegadas);
     return lista.IMC;
@@ -140,7 +179,7 @@ float calcularIMCENM() {
     scanf("%f", &lista.peso);
     limparBuffer();
 
-    system("cls");
+    system(CLEAR);
     float alturaMetros = lista.altura / 100.0;
     lista.IMC = lista.peso / (alturaMetros * alturaMetros);
     return lista.IMC;
@@ -163,7 +202,7 @@ float calcularIMCPTIM() {
     scanf("%f", &lista.peso);
     limparBuffer();
 
-    system("cls");
+    system(CLEAR);
     float alturaPolegadas = lista.altura * 12;
     lista.IMC = (lista.peso * 703) / (alturaPolegadas * alturaPolegadas);
     return lista.IMC;
@@ -186,36 +225,36 @@ float calcularIMCPTM() {
     scanf("%f", &lista.peso);
     limparBuffer();
 
-    system("cls");
+    system(CLEAR);
     float alturaMetros = lista.altura / 100.0;
     lista.IMC = lista.peso / (alturaMetros * alturaMetros);
     return lista.IMC;
 }
 
 void mostrarIMCEN() {
-    system("cls");
+    system(CLEAR);
     printf("Your BMI is: ");
     setCor(11);
     printf("%.2f\n", lista.IMC);
     setCor(7);
     comparacaoEn();
-    system("pause");
+    Pause();
 }
 
 void mostrarIMCPT() {
-    system("cls");
+    system(CLEAR);
     printf("Seu IMC é: ");
     setCor(11); // Aqua claro
     printf("%.2f\n", lista.IMC);
     setCor(7); // Branco padrão
     comparacaoPt();
-    system("pause");
+    Pause();
 }
 
 int EnMenu() {
     int op;
     do {
-        system("cls");
+        system(CLEAR);
         setCor(2); // Verde
         puts("\n===== BMI MENU =====\n");
         setCor(9);
@@ -247,7 +286,7 @@ int EnMenu() {
             setCor(12);
             puts("\n\aInvalid option!\n");
             setCor(7);
-            system("pause");
+            Pause();
             break;
         }
     } while (op != 4);
@@ -257,7 +296,7 @@ int EnMenu() {
 int PtImMenu() {
     int op;
     do {
-        system("cls");
+        system(CLEAR);
         setCor(2); // Verde
         puts("\n===== MENU IMC =====\n");
         setCor(9); // Azul claro
@@ -289,7 +328,7 @@ int PtImMenu() {
             setCor(12); // Vermelho claro
             puts("\n\aOpção inválida!\n");
             setCor(7); // Branco padrão
-            system("pause");
+            Pause();
             break;
         }
     } while (op != 4);
@@ -299,7 +338,7 @@ int PtImMenu() {
 int PtMeMenu() {
     int op;
     do {
-        system("cls");
+        system(CLEAR);
         setCor(2); // Verde
         puts("\n===== MENU IMC MÉTRICO =====\n");
         setCor(9); // Azul claro
@@ -331,7 +370,7 @@ int PtMeMenu() {
             setCor(12); // Vermelho claro
             puts("\n\aOpção inválida!\n");
             setCor(7); // Branco padrão
-            system("pause");
+            Pause();
             break;
         }
     } while (op != 4);
@@ -340,7 +379,7 @@ int PtMeMenu() {
 
 int menuEn(int op) {
     do {
-        system("cls");
+        system(CLEAR);
         setCor(2); // Verde
         puts("\n===== SYSTEM =====\n");
         setCor(9); // Azul claro
@@ -374,7 +413,7 @@ int menuEn(int op) {
             setCor(12); // Vermelho claro
             printf("\a\nInvalid option! Try again.\n");
             setCor(7); // Branco padrão
-            system("pause");
+            Pause();
             break;
         }
     } while (op != 4);
@@ -383,7 +422,7 @@ int menuEn(int op) {
 
 int menuPt(int op) {
     do {
-        system("cls");
+        system(CLEAR);
         setCor(2);
         puts("\n===== SISTEMA =====\n");
         setCor(9);
@@ -417,7 +456,7 @@ int menuPt(int op) {
             setCor(12); // Vermelho claro
             printf("\a\nOpção inválida! Tente denovo\n");
             setCor(7);
-            system("pause");
+            Pause();
             break;
         }
     } while (op != 4);
@@ -426,7 +465,7 @@ int menuPt(int op) {
 
 int menuPr(int op) {
     do {
-        system("cls");
+        system(CLEAR);
         setCor(2); // Verde
         puts("\n===== MENU =====\n");
         setCor(9); // Azul claro
@@ -440,22 +479,22 @@ int menuPr(int op) {
 
         switch (op) {
         case 1:
-            system("cls");
+            system(CLEAR);
             setCor(2); // Verde
             typewriter("Welcome to the BMI calculator!!\n", 40);
             setCor(7); // Branco padrão
             Sleep(1500);
             if (menuEn(1) == -1) return 0;
-            system("cls");
+            system(CLEAR);
             break;
         case 2:
-            system("cls");
+            system(CLEAR);
             setCor(2); // Verde
             typewriter("Seja bem vindo à calculadora de IMC!!\n", 40);
             setCor(7); // Branco padrão
             Sleep(1500);
             if (menuPt(1) == -1) return 0;
-            system("cls");
+            system(CLEAR);
             break;
         case 3:
             setCor(4);  // Vermelho
@@ -466,7 +505,7 @@ int menuPr(int op) {
             setCor(12); // Vermelho claro
             printf("\a\nERROR!!\n");
             setCor(7); // Branco padrão
-            system("pause");
+            Pause();
             break;
         }
     } while (op != 3);
