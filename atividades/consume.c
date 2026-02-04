@@ -7,21 +7,19 @@
 
 struct float_vector {
     float *data;
-    int32_t size;
+    int32_t length;
 };
 
 void charRm(char *str, uint8_t chr);
 uint8_t is_valid_number(const char *str);
-float get_biggest_value(struct float_vector arr);
-float get_smallest_value(struct float_vector arr);
 uint32_t count_index(const char *str, uint8_t targ);
 
 int main(void) {
     char buff[MAX_CHAR];
     float houses_number = 0;
     struct float_vector houses_kWh = {.data = NULL,
-                            .size = 0
-                            };
+                                        .length = 0
+                                    };
     uint32_t surpasses_limit = 0;
 
     float limit = 0.0; 
@@ -54,7 +52,7 @@ int main(void) {
             continue;
         }
 
-        houses_kWh.size = houses_number;
+        houses_kWh.length = houses_number;
         houses_kWh.data = malloc(houses_number * sizeof(*houses_kWh.data));
 
         if (!houses_kWh.data) {
@@ -109,13 +107,21 @@ int main(void) {
         break;
     }
 
-    for (uint32_t i = 0; i < houses_kWh.size; i++)
+    float max = *houses_kWh.data;
+    float min = *houses_kWh.data;
+
+    for (uint32_t i = 0; i < houses_kWh.length; i++) {
         if (houses_kWh.data[i] > limit)
             surpasses_limit++;
 
-            
-    float max = get_biggest_value(houses_kWh);
-    float min = get_smallest_value(houses_kWh);
+        if (max < houses_kWh.data[i])
+            max = houses_kWh.data[i];
+
+        if (min > houses_kWh.data[i])
+            min = houses_kWh.data[i];
+    }
+
+    
             
     printf("\nHouses that are above the limit: %"PRIu32"\n", surpasses_limit);
     printf("Biggest consume: %g\n", max);
@@ -133,26 +139,6 @@ uint32_t count_index(const char *str, uint8_t targ) {
             count++;
 
     return count;
-}
-
-float get_smallest_value(struct float_vector arr) {
-    float smallest = arr.data[0];
-
-    for (uint32_t i = 1; i < arr.size; i++)
-        if (smallest > arr.data[i])
-            smallest = arr.data[i];
-
-    return smallest;
-}
-
-float get_biggest_value(struct float_vector arr) {
-    float biggest = arr.data[0];
-
-    for (uint32_t i = 1; i < arr.size; i++) {
-        if (biggest < arr.data[i])
-            biggest = arr.data[i];
-    }
-    return biggest;
 }
 
 void charRm(char *str, uint8_t chr) {

@@ -24,7 +24,7 @@ int main(void) {
 
     scanf("%f", &limit);
 
-    printf("\n"LINE"\n\n");
+    puts("\n"LINE"\n");
 
     float min = *consume;
     float max = *consume;
